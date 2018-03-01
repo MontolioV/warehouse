@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.myapp</groupId>
+    <artifactId>warehouse</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>warehouse-api</module>
+        <module>warehouse-web</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <name>Warehouse</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <api.version>1.0-SNAPSHOT</api.version>
+        <web.version>1.0-SNAPSHOT</web.version>
+        <javaEE.version>8.0</javaEE.version>
+        <apacheCommons.version>3.7</apacheCommons.version>
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <mockito.version>1.10.19</mockito.version>
+        <glassfishAll.version>5.0</glassfishAll.version>
+
+    </properties>
+
+    <dependencies>
+        <!-- API -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>${javaEE.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apacheCommons.version}</version>
+        </dependency>
+
+        <!-- TESTS -->
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.main.extras/glassfish-embedded-all -->
+        <dependency>
+            <groupId>org.glassfish.main.extras</groupId>
+            <artifactId>glassfish-embedded-all</artifactId>
+            <version>${glassfishAll.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

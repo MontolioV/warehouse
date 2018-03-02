@@ -21,7 +21,8 @@ import java.util.Objects;
         @Index(columnList = "LOGIN", unique = true)
 })
 public class Account implements Serializable {
-    public static final String GET_BY_LOGIN = "Account.GET_BY_LOGIN";
+    private static final String PREFIX = "com.myapp.security.Account.";
+    public static final String GET_BY_LOGIN = PREFIX + "GET_BY_LOGIN";
 
     private long id;
     private String login;

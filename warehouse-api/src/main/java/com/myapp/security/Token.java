@@ -20,8 +20,9 @@ import java.util.Objects;
         @Index(columnList = "TOKEN_HASH", unique = true)
 })
 public class Token implements Serializable {
-    public static final String DELETE_BY_HASH = "Token.DELETE_BY_HASH";
-    public static final String DELETE_OLDER_THAN = "Token.DELETE_OLDER_THAN";
+    private static final String PREFIX = "com.myapp.security.Token.";
+    public static final String DELETE_BY_HASH = PREFIX + "DELETE_BY_HASH";
+    public static final String DELETE_OLDER_THAN = PREFIX + "Token.DELETE_OLDER_THAN";
 
     private long id;
     private String tokenHash;

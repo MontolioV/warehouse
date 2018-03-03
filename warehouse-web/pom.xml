@@ -10,7 +10,6 @@
 
     <artifactId>warehouse-web</artifactId>
     <packaging>war</packaging>
-    <version>${web.version}</version>
 
     <name>warehouse-web</name>
 
@@ -18,7 +17,7 @@
         <dependency>
             <groupId>com.myapp</groupId>
             <artifactId>warehouse-api</artifactId>
-            <version>${api.version}</version>
+            <version>${parent.version}</version>
         </dependency>
     </dependencies>
 

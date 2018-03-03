@@ -15,13 +15,15 @@ import java.util.Objects;
 @Entity
 @Access(value = AccessType.PROPERTY)
 @NamedQueries({
-        @NamedQuery(name = Account.GET_BY_LOGIN, query ="select a from Account a where a.login = :login")
+        @NamedQuery(name = Account.GET_ALL, query = "select a from Account a"),
+        @NamedQuery(name = Account.GET_BY_LOGIN, query = "select a from Account a where a.login = :login"),
 })
 @Table(indexes = {
         @Index(columnList = "LOGIN", unique = true)
 })
 public class Account implements Serializable {
     private static final String PREFIX = "com.myapp.security.Account.";
+    public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_LOGIN = PREFIX + "GET_BY_LOGIN";
 
     private long id;
@@ -30,6 +32,18 @@ public class Account implements Serializable {
     private String email;
     private List<Token> tokens = new ArrayList<>();
     private List<Roles> roles = new ArrayList<>();
+
+    public Account() {
+    }
+
+    public Account(long id, String login, String passHash, String email, List<Token> tokens, List<Roles> roles) {
+        this.id = id;
+        this.login = login;
+        this.passHash = passHash;
+        this.email = email;
+        this.tokens = tokens;
+        this.roles = roles;
+    }
 
     @NotNull
     @Id
@@ -93,17 +107,26 @@ public class Account implements Serializable {
         this.roles = roles;
     }
 
+    public void addToken(Token token) {
+        tokens.add(token);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account)) return false;
         Account account = (Account) o;
-        return id == account.id;
+        return id == account.id &&
+                Objects.equals(login, account.login) &&
+                Objects.equals(passHash, account.passHash) &&
+                Objects.equals(email, account.email) &&
+                Objects.equals(tokens, account.tokens) &&
+                Objects.equals(roles, account.roles);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id);
+        return Objects.hash(id, login, passHash, email, tokens, roles);
     }
 }

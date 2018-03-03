@@ -9,7 +9,6 @@
 
     <artifactId>warehouse-api</artifactId>
     <packaging>jar</packaging>
-    <version>${api.version}</version>
 
     <name>warehouse_api</name>
 </project>

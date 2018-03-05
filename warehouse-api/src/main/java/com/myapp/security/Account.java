@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @Table(indexes = {
         @Index(columnList = "LOGIN", unique = true)
 })
+@XmlRootElement
 public class Account implements Serializable {
     private static final String PREFIX = "com.myapp.security.Account.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
@@ -32,6 +34,7 @@ public class Account implements Serializable {
     private String email;
     private List<Token> tokens = new ArrayList<>();
     private List<Roles> roles = new ArrayList<>();
+    private boolean active = false;
 
     public Account() {
     }
@@ -111,12 +114,21 @@ public class Account implements Serializable {
         tokens.add(token);
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account)) return false;
         Account account = (Account) o;
         return id == account.id &&
+                active == account.active &&
                 Objects.equals(login, account.login) &&
                 Objects.equals(passHash, account.passHash) &&
                 Objects.equals(email, account.email) &&
@@ -127,6 +139,6 @@ public class Account implements Serializable {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, login, passHash, email, tokens, roles);
+        return Objects.hash(id, login, passHash, email, tokens, roles, active);
     }
 }

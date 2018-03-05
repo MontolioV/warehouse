@@ -3,6 +3,7 @@ package com.myapp.security;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Objects;
 @Table(indexes = {
         @Index(columnList = "TOKEN_HASH", unique = true)
 })
+@XmlRootElement
 public class Token implements Serializable {
     private static final String PREFIX = "com.myapp.security.Token.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
@@ -29,17 +31,15 @@ public class Token implements Serializable {
     private long id;
     private String tokenHash;
     private TokenType tokenType;
-    private Account account;
     private Instant creation;
 
     public Token() {
     }
 
-    public Token(long id, String tokenHash, TokenType tokenType, Account account, Instant creation) {
+    public Token(long id, String tokenHash, TokenType tokenType, Instant creation) {
         this.id = id;
         this.tokenHash = tokenHash;
         this.tokenType = tokenType;
-        this.account = account;
         this.creation = creation;
     }
 
@@ -63,16 +63,6 @@ public class Token implements Serializable {
 
     public void setTokenType(TokenType tokenType) {
         this.tokenType = tokenType;
-    }
-
-    @NotNull
-    @ManyToOne(optional = false)
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 
     @NotNull
@@ -104,13 +94,12 @@ public class Token implements Serializable {
         return id == token.id &&
                 Objects.equals(tokenHash, token.tokenHash) &&
                 tokenType == token.tokenType &&
-                Objects.equals(account, token.account) &&
                 Objects.equals(creation, token.creation);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, tokenHash, tokenType, account, creation);
+        return Objects.hash(id, tokenHash, tokenType, creation);
     }
 }

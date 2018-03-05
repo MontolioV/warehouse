@@ -10,5 +10,5 @@
     <artifactId>warehouse-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>warehouse_api</name>
+    <name>warehouse-api</name>
 </project>

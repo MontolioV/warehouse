@@ -6,8 +6,8 @@ import com.myapp.security.Token;
 import com.myapp.security.TokenType;
 import org.junit.Test;
 
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -16,12 +16,11 @@ public class AccountTokenIT extends WithEmbeddedDB{
 
     @Test
     public void success() {
-        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, null, Instant.now());
+        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date());
         ArrayList<Roles> roles = new ArrayList<>();
         roles.add(Roles.ADMIN);
         Account expectedAccount = new Account(0, "test", "akdmsaldk", "test@test.com", new ArrayList<>(), roles);
         expectedAccount.addToken(expectedToken);
-        expectedToken.setAccount(expectedAccount);
 
         transaction.begin();
         em.persist(expectedAccount);

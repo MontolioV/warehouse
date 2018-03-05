@@ -2,10 +2,9 @@ package com.myapp.security;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -31,12 +30,12 @@ public class Token implements Serializable {
     private long id;
     private String tokenHash;
     private TokenType tokenType;
-    private Instant creation;
+    private Date creation;
 
     public Token() {
     }
 
-    public Token(long id, String tokenHash, TokenType tokenType, Instant creation) {
+    public Token(long id, String tokenHash, TokenType tokenType, Date creation) {
         this.id = id;
         this.tokenHash = tokenHash;
         this.tokenType = tokenType;
@@ -65,14 +64,12 @@ public class Token implements Serializable {
         this.tokenType = tokenType;
     }
 
-    @NotNull
-    @PastOrPresent
     @Column(nullable = false)
-    public Instant getCreation() {
+    public Date getCreation() {
         return creation;
     }
 
-    public void setCreation(Instant creation) {
+    public void setCreation(Date creation) {
         this.creation = creation;
     }
 

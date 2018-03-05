@@ -88,7 +88,7 @@ public class Account implements Serializable {
         this.email = email;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "account")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Token> getTokens() {
         return tokens;
     }

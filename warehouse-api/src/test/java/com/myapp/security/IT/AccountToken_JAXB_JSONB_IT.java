@@ -4,15 +4,15 @@ import com.myapp.security.Account;
 import com.myapp.security.Roles;
 import com.myapp.security.Token;
 import com.myapp.security.TokenType;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.json.bind.JsonbBuilder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.*;
-import java.time.Instant;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,14 +29,12 @@ public class AccountToken_JAXB_JSONB_IT {
     }
 
     @Test
-    @Ignore
     public void name() throws Exception {
-        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, null, Instant.now());
+        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date());
         ArrayList<Roles> roles = new ArrayList<>();
         roles.add(Roles.ADMIN);
         Account expectedAccount = new Account(0, "test", "akdmsaldk", "test@test.com", new ArrayList<>(), roles);
         expectedAccount.addToken(expectedToken);
-        expectedToken.setAccount(expectedAccount);
 
         Account accountFromXML = null;
         Account accountFromJSON = null;

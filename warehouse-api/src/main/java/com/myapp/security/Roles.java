@@ -7,5 +7,13 @@ public enum Roles {
     ADMIN,
     MODERATOR,
     TRUSTED_USER,
-    USER
+    USER;
+
+    public static class Const {
+        public static final String ADMIN = "ADMIN";
+        public static final String MODERATOR = "MODERATOR";
+        public static final String TRUSTED_USER = "TRUSTED_USER";
+        public static final String USER = "USER";
+    }
+
 }

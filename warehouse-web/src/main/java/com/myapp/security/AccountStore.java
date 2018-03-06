@@ -1,15 +1,21 @@
 package com.myapp.security;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
+
+import static com.myapp.security.Roles.Const.*;
 
 public class AccountStore {
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
     @EJB
     private Encryptor encryptor;
+    private String[] passMustHavePatterns = {".*[a-z].*", ".*[A-Z].*", ".*[0-9].*"};
 
     public Account createAccount(Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
@@ -25,25 +31,35 @@ public class AccountStore {
         String encryptedPass = encryptor.generate(account.getPassHash());
         account.setPassHash(encryptedPass);
 
+        account.addRole(Roles.USER);
+
         em.persist(account);
         return account;
     }
 
-    public Account findAccountByLogin(String login) {
-        return em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
-                .setParameter("login", login)
-                .getSingleResult();
+    public Optional<Account> findAccountByLogin(String login) {
+        try {
+            return Optional.of(em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
+                    .setParameter("login", login)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
+    @RolesAllowed(ADMIN)
     public List<Account> getAllAccounts() {
         return em.createNamedQuery(Account.GET_ALL, Account.class).getResultList();
     }
 
+    @RolesAllowed(MODERATOR)
     public Account changeAccountStatus(Account account, boolean isActive) {
+
         account.setActive(isActive);
         return em.merge(account);
     }
 
+    @RolesAllowed(USER)
     public Account changeAccountPassword(Account account, String newPassword) throws UnsecurePasswordException {
         if (!isPasswordSecure(newPassword)) {
             throw new UnsecurePasswordException();
@@ -53,11 +69,13 @@ public class AccountStore {
         return em.merge(account);
     }
 
+    @RolesAllowed(USER)
     public Account changeAccountEmail(Account account, String newEmail) {
         account.setEmail(newEmail);
         return em.merge(account);
     }
 
+    @RolesAllowed(ADMIN)
     public Account addRoleToAccount(Account account, Roles role) {
         if (account.getRoles().contains(role)) {
             return account;
@@ -66,6 +84,7 @@ public class AccountStore {
         return em.merge(account);
     }
 
+    @RolesAllowed(ADMIN)
     public Account removeRoleFromAccount(Account account, Roles role) {
         if (!account.getRoles().contains(role)) {
             return account;
@@ -75,11 +94,16 @@ public class AccountStore {
     }
 
     private boolean isPasswordSecure(String password) {
-        boolean matchesPattern = password.matches("(\\p{Lower}+)&&(\\p{Upper}+)&&(\\d+)");
-        if (password.length() > 6 && matchesPattern) {
-            return true;
+        if (password == null || password.length() < 7) {
+            return false;
+        } else {
+            for (String passMustHavePattern : passMustHavePatterns) {
+                if (!password.matches(passMustHavePattern)) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     }
 
     public EntityManager getEntityManager() {

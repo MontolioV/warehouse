@@ -71,6 +71,7 @@ public class Account implements Serializable {
     }
 
     @NotNull
+    @Size(min = 128, max = 128)
     public String getPassHash() {
         return passHash;
     }
@@ -97,6 +98,10 @@ public class Account implements Serializable {
         this.tokens = tokens;
     }
 
+    public void addToken(Token token) {
+        tokens.add(token);
+    }
+
     @NotNull
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -110,8 +115,8 @@ public class Account implements Serializable {
         this.roles = roles;
     }
 
-    public void addToken(Token token) {
-        tokens.add(token);
+    public void addRole(Roles role) {
+        roles.add(role);
     }
 
     public boolean isActive() {

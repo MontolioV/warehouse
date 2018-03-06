@@ -9,15 +9,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static com.myapp.security.Roles.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -32,71 +33,93 @@ public class AccountStoreTest {
     private Encryptor encryptorMock;
     @Mock
     private EntityManager emMock;
-    private Account accountTest;
+    @Mock
+    private Account accountMock;
+    private Account accountNew;
+    private Account accountExisting;
+    private String password = "PassWord1";
+    private String passHash = "hash";
+    private String passBadHash = "badHash";
+    private String[] badPasswords = {"Shrt12", "NoNumerals", "nocapitals238",};
 
     @Before
     public void setUp() throws Exception {
-        ArrayList<Roles> roles = new ArrayList<>();
-        roles.add(ADMIN);
-        accountTest = new Account(0, "test", "PassWord1", "test", new ArrayList<>(), roles);
-        when(emMock.merge(accountTest)).thenReturn(accountTest);
-        when(encryptorMock.generate("test")).thenReturn("hash");
+        accountNew = new Account(1L, "test", password, "test", new ArrayList<>(), new ArrayList<>());
+        accountExisting = new Account(0L, "existing", passHash, "existing", new ArrayList<>(), new ArrayList<>());
+
+        when(encryptorMock.generate(password)).thenReturn(passHash);
+        for (String badPassword : badPasswords) {
+            when(encryptorMock.generate(badPassword)).thenReturn(passBadHash);
+        }
+
+        when(emMock.merge(accountNew)).thenReturn(accountNew);
+        when(emMock.merge(accountExisting)).thenReturn(accountExisting);
+        when(emMock.merge(accountMock)).thenReturn(accountMock);
+
+        TypedQuery<Account> getByLoginQueryMock = mock(TypedQuery.class);
+        when(emMock.createNamedQuery(Account.GET_BY_LOGIN, Account.class)).thenReturn(getByLoginQueryMock);
+
+        ArrayList<Account> accountsEmpty = new ArrayList<>();
+        TypedQuery<Account> uniqueLoginQueryMock = mock(TypedQuery.class);
+        when(getByLoginQueryMock.setParameter("login", accountNew.getLogin())).thenReturn(uniqueLoginQueryMock);
+        when(uniqueLoginQueryMock.getResultList()).thenReturn(accountsEmpty);
+        when(uniqueLoginQueryMock.getSingleResult()).thenThrow(new NoResultException());
+
+        ArrayList<Account> accountsNotEmpty = new ArrayList<>();
+        accountsNotEmpty.add(accountExisting);
+        TypedQuery<Account> existingLoginQueryMock = mock(TypedQuery.class);
+        when(getByLoginQueryMock.setParameter("login", accountExisting.getLogin())).thenReturn(existingLoginQueryMock);
+        when(existingLoginQueryMock.getResultList()).thenReturn(accountsNotEmpty);
+        when(existingLoginQueryMock.getSingleResult()).thenReturn(accountExisting);
     }
 
     @Test
     public void createAccount() throws LoginExistsException, UnsecurePasswordException {
-        accountStore.createAccount(accountTest);
-        verify(emMock).persist(accountTest);
-        assertThat(accountTest.getPassHash(), is("hash"));
-        assertThat(accountTest.isActive(), is(false));
-        assertThat(accountTest.getRoles().size(), is(2));
-        assertTrue(accountTest.getRoles().contains(USER));
+        accountStore.createAccount(accountNew);
+        verify(emMock).persist(accountNew);
+
+        assertThat(accountNew.getId(), is(1L));
+        assertThat(accountNew.getLogin(), is("test"));
+        assertThat(accountNew.getPassHash(), is(passHash));
+        assertThat(accountNew.getEmail(), is("test"));
+        assertThat(accountNew.isActive(), is(false));
+        assertThat(accountNew.getRoles().size(), is(1));
+        assertTrue(accountNew.getRoles().contains(USER));
+        assertTrue(accountNew.getTokens().isEmpty());
     }
 
     @Test
     public void createExistingAccount() throws UnsecurePasswordException {
-        ArrayList<Account> accounts = new ArrayList<>();
-        accounts.add(new Account(1, "existing", "existing", "existing", new ArrayList<>(), new ArrayList<>()));
-        TypedQuery<Account> customQueryMock = mock(TypedQuery.class);
-        when(emMock.createNamedQuery(Account.GET_BY_LOGIN, Account.class)).thenReturn(customQueryMock);
-        when(customQueryMock.setParameter("login", "existing")).thenReturn(customQueryMock);
-        when(customQueryMock.getResultList()).thenReturn(accounts);
-
-        accountTest.setLogin("existing");
         try {
-            accountStore.createAccount(accountTest);
+            accountStore.createAccount(accountExisting);
         } catch (LoginExistsException e) {
             //as expected
         }
-
-        verify(emMock, never()).persist(accountTest);
+        verify(emMock, never()).persist(accountNew);
     }
 
     @Test
     public void createAccountWithBadPass() throws LoginExistsException {
-        String[] passwords = {"Shrt12", "NoNumerals", "nocapitals238",};
-        for (String password : passwords) {
-            accountTest.setPassHash(password);
+        for (String password : badPasswords) {
+            accountNew.setPassHash(password);
             try {
-                accountStore.createAccount(accountTest);
+                accountStore.createAccount(accountNew);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
         }
-
-        verify(emMock, never()).persist(accountTest);
+        verify(emMock, never()).persist(accountNew);
     }
 
 
     @Test
     public void findAccountByLogin() {
-        TypedQuery<Account> customQueryMock = mock(TypedQuery.class);
-        when(emMock.createNamedQuery(anyString(), Account.class)).thenReturn(customQueryMock);
-        when(customQueryMock.setParameter("login", anyString())).thenReturn(customQueryMock);
-        when(customQueryMock.getSingleResult()).thenReturn(any(Account.class));
+        Optional<Account> accountNotExists = accountStore.findAccountByLogin(accountNew.getLogin());
+        Optional<Account> accountExists = accountStore.findAccountByLogin(accountExisting.getLogin());
 
-        Account account = accountStore.findAccountByLogin(anyString());
-        assertThat(account, is(any(Account.class)));
+        assertFalse(accountNotExists.isPresent());
+        assertTrue(accountExists.isPresent());
+        verify(emMock, times(2)).createNamedQuery(Account.GET_BY_LOGIN, Account.class);
     }
 
     @Test
@@ -110,53 +133,65 @@ public class AccountStoreTest {
 
     @Test
     public void changeAccountStatus() {
-        Account account = accountStore.changeAccountStatus(accountTest, true);
-        verify(emMock).merge(accountTest);
-        assertThat(account.isActive(), is(true));
+        accountStore.changeAccountStatus(accountMock, true);
+        verify(accountMock).setActive(true);
+        verify(emMock).merge(accountMock);
     }
 
     @Test
     public void changeAccountPassword() throws UnsecurePasswordException {
-        Account account = accountStore.changeAccountPassword(accountTest, "PassWord132");
-        verify(emMock).merge(accountTest);
-        assertThat(account.getPassHash(), is("hash"));
+        accountStore.changeAccountPassword(accountMock, password);
+        verify(encryptorMock).generate(password);
+        verify(accountMock).setPassHash(passHash);
+        verify(emMock).merge(accountMock);
     }
+
     @Test
     public void changeAccountPasswordFail() {
-        String[] passwords = {"Shrt12", "NoNumerals", "nocapitals238",};
-        for (String password : passwords) {
+        for (String password : badPasswords) {
             try {
-                accountStore.changeAccountPassword(accountTest, password);
+                accountStore.changeAccountPassword(accountMock, password);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
+            verify(encryptorMock, never()).generate(password);
+            verify(accountMock, never()).setPassHash(passBadHash);
+            verify(emMock, never()).merge(accountMock);
         }
-        verify(emMock, never()).merge(accountTest);
     }
 
     @Test
     public void changeAccountEmail() {
-        Account account = accountStore.changeAccountEmail(accountTest, anyString());
-        verify(emMock).merge(accountTest);
-        assertThat(account.getEmail(), is(anyString()));
+        accountStore.changeAccountEmail(accountMock, anyString());
+        verify(accountMock).setEmail(anyString());
+        verify(emMock).merge(accountMock);
     }
 
     @Test
     public void addRoleToAccount() {
-        Account account = accountStore.addRoleToAccount(accountTest, MODERATOR);
-        assertThat(account.getRoles().size(), is(2));
+        Account account = accountStore.addRoleToAccount(accountNew, MODERATOR);
+        assertThat(account.getRoles().size(), is(1));
         assertTrue(account.getRoles().contains(MODERATOR));
 
-        accountStore.addRoleToAccount(accountTest, MODERATOR);
-        assertThat(account.getRoles().size(), is(2));
-        verify(emMock).merge(accountTest);
+        account = accountStore.addRoleToAccount(accountNew, MODERATOR);
+        assertThat(account.getRoles().size(), is(1));
+
+        verify(emMock).merge(accountNew);
     }
 
     @Test
     public void removeRoleFromAccount() {
-        Account account = accountStore.addRoleToAccount(accountTest, ADMIN);
-        verify(emMock).merge(accountTest);
+        accountNew.getRoles().add(ADMIN);
+        Account account = accountStore.removeRoleFromAccount(accountNew, ADMIN);
+        
         assertThat(account.getRoles().size(), is(0));
         assertFalse(account.getRoles().contains(ADMIN));
+
+        for (Roles role : Roles.values()) {
+            accountStore.removeRoleFromAccount(accountNew, role);
+        }
+
+        assertThat(account.getRoles().size(), is(0));
+        verify(emMock).merge(accountNew);
     }
 }

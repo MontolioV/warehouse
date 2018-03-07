@@ -1,7 +1,9 @@
 package com.myapp.security;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +17,7 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = Token.GET_ALL, query = "select t from Token t"),
         @NamedQuery(name = Token.DELETE_BY_HASH, query = "delete from Token t where t.tokenHash=:hash"),
-        @NamedQuery(name = Token.DELETE_OLDER_THAN, query = "delete from Token t where t.creation < :instant"),
+        @NamedQuery(name = Token.DELETE_EXPIRED_TO_DATE, query = "delete from Token t where t.expiredDate < :date"),
 })
 @Table(indexes = {
         @Index(columnList = "TOKEN_HASH", unique = true)
@@ -25,21 +27,23 @@ public class Token implements Serializable {
     private static final String PREFIX = "com.myapp.security.Token.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String DELETE_BY_HASH = PREFIX + "DELETE_BY_HASH";
-    public static final String DELETE_OLDER_THAN = PREFIX + "Token.DELETE_OLDER_THAN";
+    public static final String DELETE_EXPIRED_TO_DATE = PREFIX + "Token.DELETE_EXPIRED_TO_DATE";
 
     private long id;
     private String tokenHash;
     private TokenType tokenType;
-    private Date creation;
+    private Date creationDate;
+    private Date expiredDate;
 
     public Token() {
     }
 
-    public Token(long id, String tokenHash, TokenType tokenType, Date creation) {
+    public Token(long id, String tokenHash, TokenType tokenType, Date creationDate, Date expiredDate) {
         this.id = id;
         this.tokenHash = tokenHash;
         this.tokenType = tokenType;
-        this.creation = creation;
+        this.creationDate = creationDate;
+        this.expiredDate = expiredDate;
     }
 
     @NotNull
@@ -64,13 +68,26 @@ public class Token implements Serializable {
         this.tokenType = tokenType;
     }
 
+    @NotNull
+    @PastOrPresent
     @Column(nullable = false)
-    public Date getCreation() {
-        return creation;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreation(Date creation) {
-        this.creation = creation;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @NotNull
+    @Future
+    @Column(nullable = false)
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 
     @NotNull
@@ -91,12 +108,12 @@ public class Token implements Serializable {
         return id == token.id &&
                 Objects.equals(tokenHash, token.tokenHash) &&
                 tokenType == token.tokenType &&
-                Objects.equals(creation, token.creation);
+                Objects.equals(creationDate, token.creationDate);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, tokenHash, tokenType, creation);
+        return Objects.hash(id, tokenHash, tokenType, creationDate);
     }
 }

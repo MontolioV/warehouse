@@ -2,6 +2,7 @@ package com.myapp.security;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 import static com.myapp.security.Roles.Const.*;
 
+@Stateless
 public class AccountStore {
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;

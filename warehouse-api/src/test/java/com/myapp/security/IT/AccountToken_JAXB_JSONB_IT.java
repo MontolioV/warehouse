@@ -13,6 +13,8 @@ import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -30,7 +32,8 @@ public class AccountToken_JAXB_JSONB_IT {
 
     @Test
     public void name() throws Exception {
-        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date());
+        Instant instant = Instant.now().plus(14, ChronoUnit.DAYS);
+        Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date(), Date.from(instant));
         ArrayList<Roles> roles = new ArrayList<>();
         roles.add(Roles.ADMIN);
         Account expectedAccount = new Account(0, "test", "akdmsaldk", "test@test.com", new ArrayList<>(), roles);

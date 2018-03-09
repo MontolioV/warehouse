@@ -6,6 +6,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ public class AccountStore {
     private Encryptor encryptor;
     private String[] passMustHavePatterns = {".*[a-z].*", ".*[A-Z].*", ".*[0-9].*"};
 
-    public Account createAccount(Account account) throws LoginExistsException, UnsecurePasswordException {
+    public Account createAccount(@NotNull Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                 .setParameter("login", account.getLogin())
                 .getResultList();
@@ -55,14 +57,14 @@ public class AccountStore {
     }
 
     @RolesAllowed(MODERATOR)
-    public Account changeAccountStatus(Account account, boolean isActive) {
+    public Account changeAccountStatus(@NotNull Account account, boolean isActive) {
 
         account.setActive(isActive);
         return em.merge(account);
     }
 
     @RolesAllowed(USER)
-    public Account changeAccountPassword(Account account, String newPassword) throws UnsecurePasswordException {
+    public Account changeAccountPassword(@NotNull Account account, @NotBlank String newPassword) throws UnsecurePasswordException {
         if (!isPasswordSecure(newPassword)) {
             throw new UnsecurePasswordException();
         }
@@ -72,13 +74,13 @@ public class AccountStore {
     }
 
     @RolesAllowed(USER)
-    public Account changeAccountEmail(Account account, String newEmail) {
+    public Account changeAccountEmail(@NotNull Account account, String newEmail) {
         account.setEmail(newEmail);
         return em.merge(account);
     }
 
     @RolesAllowed(ADMIN)
-    public Account addRoleToAccount(Account account, Roles role) {
+    public Account addRoleToAccount(@NotNull Account account, @NotNull Roles role) {
         if (account.getRoles().contains(role)) {
             return account;
         }
@@ -87,7 +89,7 @@ public class AccountStore {
     }
 
     @RolesAllowed(ADMIN)
-    public Account removeRoleFromAccount(Account account, Roles role) {
+    public Account removeRoleFromAccount(@NotNull Account account, Roles role) {
         if (!account.getRoles().contains(role)) {
             return account;
         }

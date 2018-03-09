@@ -90,6 +90,7 @@ public class Account implements Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "ACCOUNT_ID")
     public List<Token> getTokens() {
         return tokens;
     }

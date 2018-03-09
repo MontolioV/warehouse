@@ -11,17 +11,14 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AccountTokenIT extends WithEmbeddedDB{
+public class AccountToken_DB_IT extends WithEmbeddedDB{
     private Instant instant;
     private Token expectedToken;
     private Account expectedAccount;
@@ -43,6 +40,7 @@ public class AccountTokenIT extends WithEmbeddedDB{
         tokensExpected = new ArrayList<>();
         tokensExpected.add(expectedToken);
         tokensExpected.add(expiringToken);
+        tokensExpected.sort(Comparator.comparing(Token::getTokenHash));
 
         transaction.begin();
         try {
@@ -59,6 +57,9 @@ public class AccountTokenIT extends WithEmbeddedDB{
         }
         transaction.commit();
 
+        assertThat(expectedToken.getId(), not(equalTo(expiringToken.getId())));
+
+        queryTests();
     }
 
     private void queryTests() {
@@ -71,21 +72,27 @@ public class AccountTokenIT extends WithEmbeddedDB{
 
         List<Token> tokensFromAll = em.createNamedQuery(Token.GET_ALL, Token.class)
                 .getResultList();
-        Token tokenFromLogin = em.createNamedQuery(Token.GET_ALL, Token.class)
+        Token tokenFromHash = em.createNamedQuery(Token.GET_BY_HASH, Token.class)
+                .setParameter("hash", "sajdaj")
                 .getSingleResult();
+        tokensFromAll.sort(Comparator.comparing(Token::getTokenHash));
         assertThat(tokensFromAll, is(tokensExpected));
-        assertThat(tokenFromLogin, is(expectedToken));
+        assertThat(tokenFromHash, is(expectedToken));
 
+        transaction.begin();
         instant = Instant.now().plus(10, ChronoUnit.DAYS);
         em.createNamedQuery(Token.DELETE_EXPIRED_TO_DATE)
                 .setParameter("date", Date.from(instant)).executeUpdate();
+        transaction.commit();
         tokensExpected.remove(expiringToken);
         tokensFromAll = em.createNamedQuery(Token.GET_ALL, Token.class)
                 .getResultList();
         assertThat(tokensFromAll, is(tokensExpected));
 
+        transaction.begin();
         em.createNamedQuery(Token.DELETE_BY_HASH)
                 .setParameter("hash", expectedToken.getTokenHash()).executeUpdate();
+        transaction.commit();
         tokensFromAll = em.createNamedQuery(Token.GET_ALL, Token.class)
                 .getResultList();
         assertTrue(tokensFromAll.isEmpty());

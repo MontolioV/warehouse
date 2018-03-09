@@ -8,6 +8,7 @@
     <modules>
         <module>warehouse-api</module>
         <module>warehouse-web</module>
+        <module>warehouse-core</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -75,6 +76,20 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
             <version>10.14.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jboss.arquillian.junit/arquillian-junit-container -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>1.4.0.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jboss.arquillian.container/arquillian-glassfish-embedded-3.1 -->
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+            <version>1.0.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

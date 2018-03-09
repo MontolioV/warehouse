@@ -16,6 +16,7 @@ import java.util.Objects;
 @Access(value = AccessType.PROPERTY)
 @NamedQueries({
         @NamedQuery(name = Token.GET_ALL, query = "select t from Token t"),
+        @NamedQuery(name = Token.GET_BY_HASH, query = "select t from Token t where t.tokenHash=:hash"),
         @NamedQuery(name = Token.DELETE_BY_HASH, query = "delete from Token t where t.tokenHash=:hash"),
         @NamedQuery(name = Token.DELETE_EXPIRED_TO_DATE, query = "delete from Token t where t.expiredDate < :date"),
 })
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class Token implements Serializable {
     private static final String PREFIX = "com.myapp.security.Token.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
+    public static final String GET_BY_HASH = PREFIX + "GET_BY_HASH";
     public static final String DELETE_BY_HASH = PREFIX + "DELETE_BY_HASH";
     public static final String DELETE_EXPIRED_TO_DATE = PREFIX + "Token.DELETE_EXPIRED_TO_DATE";
 

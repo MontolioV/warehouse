@@ -15,11 +15,12 @@ import static com.myapp.security.Roles.Const.*;
 
 @Stateless
 public class AccountStore {
+    private static final String[] PASS_MUST_HAVE_PATTERNS = {".*[a-z].*", ".*[A-Z].*", ".*[0-9].*"};
+
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
     @EJB
     private Encryptor encryptor;
-    private String[] passMustHavePatterns = {".*[a-z].*", ".*[A-Z].*", ".*[0-9].*"};
 
     public Account createAccount(@NotNull Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
@@ -41,13 +42,22 @@ public class AccountStore {
         return account;
     }
 
-    public Optional<Account> findAccountByLogin(String login) {
+    public Optional<Account> getAccountByLogin(String login) {
         try {
             return Optional.of(em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                     .setParameter("login", login)
                     .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
+        }
+    }
+
+    public Optional<Account> getAccountByLoginAndPassword(String login, String password) {
+        Optional<Account> optionalAccount = getAccountByLogin(login);
+        if (optionalAccount.isPresent() && !encryptor.verify(password, optionalAccount.get().getPassHash())) {
+            return Optional.empty();
+        } else {
+            return optionalAccount;
         }
     }
 
@@ -101,7 +111,7 @@ public class AccountStore {
         if (password == null || password.length() < 7) {
             return false;
         } else {
-            for (String passMustHavePattern : passMustHavePatterns) {
+            for (String passMustHavePattern : PASS_MUST_HAVE_PATTERNS) {
                 if (!password.matches(passMustHavePattern)) {
                     return false;
                 }

@@ -38,6 +38,7 @@ public class AccountStoreTest {
     private Account accountNew;
     private Account accountExisting;
     private String password = "PassWord1";
+    private String wrongPassword = "wrongPassword";
     private String passHash = "hash";
     private String passBadHash = "badHash";
     private String[] badPasswords = {"Shrt12", "NoNumerals", "nocapitals238",};
@@ -48,9 +49,12 @@ public class AccountStoreTest {
         accountExisting = new Account(0L, "existing", passHash, "existing", new ArrayList<>(), new ArrayList<>());
 
         when(encryptorMock.generate(password)).thenReturn(passHash);
+        when(encryptorMock.generate(wrongPassword)).thenReturn(passBadHash);
         for (String badPassword : badPasswords) {
             when(encryptorMock.generate(badPassword)).thenReturn(passBadHash);
         }
+        when(encryptorMock.verify(password, passHash)).thenReturn(true);
+        when(encryptorMock.verify(wrongPassword, passHash)).thenReturn(false);
 
         when(emMock.merge(accountNew)).thenReturn(accountNew);
         when(emMock.merge(accountExisting)).thenReturn(accountExisting);
@@ -111,15 +115,26 @@ public class AccountStoreTest {
         verify(emMock, never()).persist(accountNew);
     }
 
-
     @Test
-    public void findAccountByLogin() {
-        Optional<Account> accountNotExists = accountStore.findAccountByLogin(accountNew.getLogin());
-        Optional<Account> accountExists = accountStore.findAccountByLogin(accountExisting.getLogin());
+    public void getAccountByLogin() {
+        Optional<Account> accountNotExists = accountStore.getAccountByLogin(accountNew.getLogin());
+        Optional<Account> accountExists = accountStore.getAccountByLogin(accountExisting.getLogin());
 
         assertFalse(accountNotExists.isPresent());
         assertTrue(accountExists.isPresent());
+        assertThat(accountExists.get(), is(accountExisting));
         verify(emMock, times(2)).createNamedQuery(Account.GET_BY_LOGIN, Account.class);
+    }
+
+    @Test
+    public void getAccountByLoginAndPassword() {
+        Optional<Account> accountPassRight = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), password);
+        Optional<Account> accountPassWrong = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), wrongPassword);
+
+        verify(encryptorMock, times(2)).verify(any(String.class), any(String.class));
+        assertTrue(accountPassRight.isPresent());
+        assertFalse(accountPassWrong.isPresent());
+        assertThat(accountPassRight.get(), is(accountExisting));
     }
 
     @Test

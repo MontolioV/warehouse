@@ -130,19 +130,19 @@ public class AccountStore {
         return true;
     }
 
-    public EntityManager getEntityManager() {
-        return em;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.em = entityManager;
-    }
-
     public Encryptor getEncryptor() {
         return encryptor;
     }
 
     public void setEncryptor(Encryptor encryptor) {
         this.encryptor = encryptor;
+    }
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
     }
 }

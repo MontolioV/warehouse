@@ -48,4 +48,20 @@ public class TokenStore {
                 .setParameter("date", new Date())
                 .executeUpdate();
     }
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
+
+    public Encryptor getEncryptor() {
+        return encryptor;
+    }
+
+    public void setEncryptor(Encryptor encryptor) {
+        this.encryptor = encryptor;
+    }
 }

@@ -78,4 +78,20 @@ public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
     public void removeLoginToken(String tokenStr) {
         tokenStore.removeToken(tokenStr);
     }
+
+    public AccountStore getAccountStore() {
+        return accountStore;
+    }
+
+    public void setAccountStore(AccountStore accountStore) {
+        this.accountStore = accountStore;
+    }
+
+    public TokenStore getTokenStore() {
+        return tokenStore;
+    }
+
+    public void setTokenStore(TokenStore tokenStore) {
+        this.tokenStore = tokenStore;
+    }
 }

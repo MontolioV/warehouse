@@ -13,4 +13,12 @@ public class TokenScheduler {
     public void hourly() {
         tokenStore.removeExpiredTokens();
     }
+
+    public TokenStore getTokenStore() {
+        return tokenStore;
+    }
+
+    public void setTokenStore(TokenStore tokenStore) {
+        this.tokenStore = tokenStore;
+    }
 }

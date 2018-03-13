@@ -49,4 +49,12 @@ public class CustomIdentityStore implements IdentityStore {
         }
         return CredentialValidationResult.INVALID_RESULT;
     }
+
+    public AccountStore getAccountStore() {
+        return accountStore;
+    }
+
+    public void setAccountStore(AccountStore accountStore) {
+        this.accountStore = accountStore;
+    }
 }

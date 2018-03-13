@@ -18,6 +18,7 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = Account.GET_ALL, query = "select a from Account a"),
         @NamedQuery(name = Account.GET_BY_LOGIN, query = "select a from Account a where a.login = :login"),
+        @NamedQuery(name = Account.GET_BY_TOKEN_HASH, query = "select a from Account a inner join Token t where t.tokenHash=:hash"),
 })
 @Table(indexes = {
         @Index(columnList = "LOGIN", unique = true)
@@ -27,6 +28,7 @@ public class Account implements Serializable {
     private static final String PREFIX = "com.myapp.security.Account.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_LOGIN = PREFIX + "GET_BY_LOGIN";
+    public static final String GET_BY_TOKEN_HASH = PREFIX + "GET_BY_TOKEN_HASH";
 
     private long id;
     private String login;

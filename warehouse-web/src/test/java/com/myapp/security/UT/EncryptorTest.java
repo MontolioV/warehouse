@@ -12,23 +12,21 @@ import static org.mockito.Mockito.verify;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class EncryptorTest {
+public class EncryptorTest implements SecurityConstants{
     @Mock
     private Pbkdf2PasswordHashImpl hashMock;
     @InjectMocks
     private Encryptor encryptor;
-    private String pass = "test";
-    private String hash = "hash";
 
     @Test
     public void generate() {
-        encryptor.generate(pass);
-        verify(hashMock).generate(pass.toCharArray());
+        encryptor.generate(PASSWORD_VALID);
+        verify(hashMock).generate(PASSWORD_VALID.toCharArray());
     }
 
     @Test
     public void verifyT() {
-        encryptor.verify(pass, hash);
-        verify(hashMock).verify(pass.toCharArray(), hash);
+        encryptor.verify(PASSWORD_VALID, PASS_HASH_VALID);
+        verify(hashMock).verify(PASSWORD_VALID.toCharArray(), PASS_HASH_VALID);
     }
 }

@@ -3,7 +3,6 @@ package com.myapp.security.UT;
 import com.myapp.security.Account;
 import com.myapp.security.AccountStore;
 import com.myapp.security.CustomIdentityStore;
-import com.myapp.security.Roles;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.security.enterprise.credential.CallerOnlyCredential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
-import java.util.*;
+import java.util.Optional;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static org.hamcrest.CoreMatchers.is;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.when;
  * <p>Created by MontolioV on 12.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CustomIdentityStoreTest {
+public class CustomIdentityStoreTest implements SecurityConstants {
     @InjectMocks
     private CustomIdentityStore is;
     @Mock
@@ -38,21 +37,15 @@ public class CustomIdentityStoreTest {
     private CallerOnlyCredential callerOnlyCredentialMock;
     @Mock
     private Account accountMock;
-    private String login = "login";
-    private String pass = "pass";
-    private List<Roles> rolesList = new ArrayList<>();
-    private Set<String> rolesSet = new HashSet<>();
 
     @Before
     public void setUp() throws Exception {
-        when(callerOnlyCredentialMock.getCaller()).thenReturn(login);
-        when(usernamePasswordCredentialMock.getCaller()).thenReturn(login);
-        when(usernamePasswordCredentialMock.getPasswordAsString()).thenReturn(pass);
+        when(callerOnlyCredentialMock.getCaller()).thenReturn(LOGIN_VALID);
+        when(usernamePasswordCredentialMock.getCaller()).thenReturn(LOGIN_VALID);
+        when(usernamePasswordCredentialMock.getPasswordAsString()).thenReturn(PASSWORD_VALID);
         when(acMock.getAccountByLogin(anyString())).thenReturn(Optional.of(accountMock));
-        when(accountMock.getLogin()).thenReturn(login);
-        when(accountMock.getRoles()).thenReturn(rolesList);
-        rolesList.add(Roles.ADMIN);
-        rolesSet.add(Roles.ADMIN.name());
+        when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
+        when(accountMock.getRoles()).thenReturn(ROLES_LIST);
     }
 
     @Test
@@ -61,8 +54,8 @@ public class CustomIdentityStoreTest {
         when(accountMock.isActive()).thenReturn(true);
         CredentialValidationResult result = is.validate(usernamePasswordCredentialMock);
 
-        verify(acMock).getAccountByLoginAndPassword(login, pass);
-        checkValidResult(result);
+        verify(acMock).getAccountByLoginAndPassword(LOGIN_VALID, PASSWORD_VALID);
+        checkAuthenticationValidResult(result);
     }
 
     @Test
@@ -71,7 +64,7 @@ public class CustomIdentityStoreTest {
         when(accountMock.isActive()).thenReturn(false);
         CredentialValidationResult result = is.validate(usernamePasswordCredentialMock);
 
-        verify(acMock).getAccountByLoginAndPassword(login, pass);
+        verify(acMock).getAccountByLoginAndPassword(LOGIN_VALID, PASSWORD_VALID);
         assertThat(result, is(INVALID_RESULT));
     }
 
@@ -80,8 +73,8 @@ public class CustomIdentityStoreTest {
         when(accountMock.isActive()).thenReturn(true);
         CredentialValidationResult result = is.validate(callerOnlyCredentialMock);
 
-        verify(acMock).getAccountByLogin(login);
-        checkValidResult(result);
+        verify(acMock).getAccountByLogin(LOGIN_VALID);
+        checkAuthenticationValidResult(result);
     }
 
     @Test
@@ -89,12 +82,7 @@ public class CustomIdentityStoreTest {
         when(accountMock.isActive()).thenReturn(false);
         CredentialValidationResult result = is.validate(callerOnlyCredentialMock);
 
-        verify(acMock).getAccountByLogin(login);
+        verify(acMock).getAccountByLogin(LOGIN_VALID);
         assertThat(result, is(INVALID_RESULT));
-    }
-
-    private void checkValidResult(CredentialValidationResult result) {
-        assertThat(result.getCallerPrincipal().getName(), is(login));
-        assertThat(result.getCallerGroups(), is(rolesSet));
     }
 }

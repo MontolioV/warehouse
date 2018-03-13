@@ -42,7 +42,7 @@ public class AccountStore {
         return account;
     }
 
-    public Optional<Account> getAccountByLogin(String login) {
+    public Optional<Account> getAccountByLogin(@NotBlank String login) {
         try {
             return Optional.of(em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                     .setParameter("login", login)
@@ -52,12 +52,22 @@ public class AccountStore {
         }
     }
 
-    public Optional<Account> getAccountByLoginAndPassword(String login, String password) {
+    public Optional<Account> getAccountByLoginAndPassword(@NotBlank String login, @NotBlank String password) {
         Optional<Account> optionalAccount = getAccountByLogin(login);
         if (optionalAccount.isPresent() && !encryptor.verify(password, optionalAccount.get().getPassHash())) {
             return Optional.empty();
         } else {
             return optionalAccount;
+        }
+    }
+
+    public Optional<Account> getAccountByTokenHash(@NotBlank String tokenHash) {
+        try {
+            return Optional.of(em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
+                    .setParameter("hash", tokenHash)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
         }
     }
 
@@ -84,7 +94,7 @@ public class AccountStore {
     }
 
     @RolesAllowed(USER)
-    public Account changeAccountEmail(@NotNull Account account, String newEmail) {
+    public Account changeAccountEmail(@NotNull Account account, @NotBlank String newEmail) {
         account.setEmail(newEmail);
         return em.merge(account);
     }

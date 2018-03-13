@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 09.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TokenStoreTest {
+public class TokenStoreTest implements SecurityConstants{
     @InjectMocks
     private TokenStore tokenStore;
     @Mock
@@ -29,25 +29,24 @@ public class TokenStoreTest {
     private Encryptor encryptorMock;
     @Mock
     private Account accountMock;
-    private String hashString = "hash";
 
     @Test
     public void createToken() {
-        when(encryptorMock.generate(any(String.class))).thenReturn(hashString);
+        when(encryptorMock.generate(any(String.class))).thenReturn(TOKEN_HASH_VALID);
 
         Token token = tokenStore.createToken(accountMock, TokenType.REMEMBER_ME, any(Date.class));
 
         verify(encryptorMock).generate(any(String.class));
         verify(accountMock).addToken(token);
         verify(emMock).merge(accountMock);
-        assertThat(token.getTokenHash(), is(hashString));
+        assertThat(token.getTokenHash(), is(TOKEN_HASH_VALID));
     }
 
     @Test
     public void findToken() {
         Query queryMock = mock(Query.class);
         when(emMock.createNamedQuery(Token.DELETE_BY_HASH)).thenReturn(queryMock);
-        when(queryMock.setParameter("hash", hashString)).thenReturn(queryMock);
+        when(queryMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(queryMock);
 
     }
 
@@ -55,9 +54,9 @@ public class TokenStoreTest {
     public void removeToken() {
         Query queryMock = mock(Query.class);
         when(emMock.createNamedQuery(Token.DELETE_BY_HASH)).thenReturn(queryMock);
-        when(queryMock.setParameter("hash", hashString)).thenReturn(queryMock);
+        when(queryMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(queryMock);
 
-        tokenStore.removeToken(hashString);
+        tokenStore.removeToken(TOKEN_HASH_VALID);
         verify(queryMock).executeUpdate();
     }
 

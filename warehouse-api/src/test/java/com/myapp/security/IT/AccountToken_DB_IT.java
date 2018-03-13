@@ -25,6 +25,7 @@ public class AccountToken_DB_IT extends WithEmbeddedDB{
     private Token expiringToken;
     private List<Token> tokensExpected;
 
+
     @Test
     public void success() {
         instant = Instant.now().plus(14, ChronoUnit.DAYS);
@@ -66,9 +67,14 @@ public class AccountToken_DB_IT extends WithEmbeddedDB{
         Account accountFromAll = em.createNamedQuery(Account.GET_ALL, Account.class)
                 .getSingleResult();
         Account accountFromLogin = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
-                .setParameter("login",expectedAccount.getLogin())
+                .setParameter("login", expectedAccount.getLogin())
                 .getSingleResult();
-        assertThat(expectedAccount, allOf(is(accountFromAll), is(accountFromLogin)));
+        Account accountFromTokenHash = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
+                .setParameter("hash", expectedToken.getTokenHash())
+                .getSingleResult();
+        assertThat(expectedAccount, allOf(is(accountFromAll),
+                                          is(accountFromLogin),
+                                          is(accountFromTokenHash)));
 
         List<Token> tokensFromAll = em.createNamedQuery(Token.GET_ALL, Token.class)
                 .getResultList();

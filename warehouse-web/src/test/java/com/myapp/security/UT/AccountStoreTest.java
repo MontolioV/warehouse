@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 05.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AccountStoreTest {
+public class AccountStoreTest implements SecurityConstants{
     @InjectMocks
     private AccountStore accountStore;
     @Mock
@@ -37,24 +37,20 @@ public class AccountStoreTest {
     private Account accountMock;
     private Account accountNew;
     private Account accountExisting;
-    private String password = "PassWord1";
-    private String wrongPassword = "wrongPassword";
-    private String passHash = "hash";
-    private String passBadHash = "badHash";
     private String[] badPasswords = {"Shrt12", "NoNumerals", "nocapitals238",};
 
     @Before
     public void setUp() throws Exception {
-        accountNew = new Account(1L, "test", password, "test", new ArrayList<>(), new ArrayList<>());
-        accountExisting = new Account(0L, "existing", passHash, "existing", new ArrayList<>(), new ArrayList<>());
+        accountNew = new Account(1L, "test", PASSWORD_VALID, "test", new ArrayList<>(), new ArrayList<>());
+        accountExisting = new Account(0L, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new ArrayList<>());
 
-        when(encryptorMock.generate(password)).thenReturn(passHash);
-        when(encryptorMock.generate(wrongPassword)).thenReturn(passBadHash);
+        when(encryptorMock.generate(PASSWORD_VALID)).thenReturn(PASS_HASH_VALID);
+        when(encryptorMock.generate(PASSWORD_INVALID)).thenReturn(PASS_HASH_INVALID);
         for (String badPassword : badPasswords) {
-            when(encryptorMock.generate(badPassword)).thenReturn(passBadHash);
+            when(encryptorMock.generate(badPassword)).thenReturn(PASS_HASH_INVALID);
         }
-        when(encryptorMock.verify(password, passHash)).thenReturn(true);
-        when(encryptorMock.verify(wrongPassword, passHash)).thenReturn(false);
+        when(encryptorMock.verify(PASSWORD_VALID, PASS_HASH_VALID)).thenReturn(true);
+        when(encryptorMock.verify(PASSWORD_INVALID, PASS_HASH_VALID)).thenReturn(false);
 
         when(emMock.merge(accountNew)).thenReturn(accountNew);
         when(emMock.merge(accountExisting)).thenReturn(accountExisting);
@@ -62,10 +58,13 @@ public class AccountStoreTest {
 
         TypedQuery<Account> getByLoginQueryMock = mock(TypedQuery.class);
         when(emMock.createNamedQuery(Account.GET_BY_LOGIN, Account.class)).thenReturn(getByLoginQueryMock);
+        TypedQuery<Account> getByTokenHashMock = mock(TypedQuery.class);
+        when(emMock.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)).thenReturn(getByTokenHashMock);
 
         ArrayList<Account> accountsEmpty = new ArrayList<>();
         TypedQuery<Account> uniqueLoginQueryMock = mock(TypedQuery.class);
         when(getByLoginQueryMock.setParameter("login", accountNew.getLogin())).thenReturn(uniqueLoginQueryMock);
+        when(getByTokenHashMock.setParameter("hash", TOKEN_HASH_INVALID)).thenReturn(uniqueLoginQueryMock);
         when(uniqueLoginQueryMock.getResultList()).thenReturn(accountsEmpty);
         when(uniqueLoginQueryMock.getSingleResult()).thenThrow(new NoResultException());
 
@@ -73,6 +72,7 @@ public class AccountStoreTest {
         accountsNotEmpty.add(accountExisting);
         TypedQuery<Account> existingLoginQueryMock = mock(TypedQuery.class);
         when(getByLoginQueryMock.setParameter("login", accountExisting.getLogin())).thenReturn(existingLoginQueryMock);
+        when(getByTokenHashMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(existingLoginQueryMock);
         when(existingLoginQueryMock.getResultList()).thenReturn(accountsNotEmpty);
         when(existingLoginQueryMock.getSingleResult()).thenReturn(accountExisting);
     }
@@ -84,7 +84,7 @@ public class AccountStoreTest {
 
         assertThat(accountNew.getId(), is(1L));
         assertThat(accountNew.getLogin(), is("test"));
-        assertThat(accountNew.getPassHash(), is(passHash));
+        assertThat(accountNew.getPassHash(), is(PASS_HASH_VALID));
         assertThat(accountNew.getEmail(), is("test"));
         assertThat(accountNew.isActive(), is(false));
         assertThat(accountNew.getRoles().size(), is(1));
@@ -128,13 +128,22 @@ public class AccountStoreTest {
 
     @Test
     public void getAccountByLoginAndPassword() {
-        Optional<Account> accountPassRight = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), password);
-        Optional<Account> accountPassWrong = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), wrongPassword);
+        Optional<Account> accountPassRight = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_VALID);
+        Optional<Account> accountPassWrong = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_INVALID);
 
         verify(encryptorMock, times(2)).verify(any(String.class), any(String.class));
         assertTrue(accountPassRight.isPresent());
         assertFalse(accountPassWrong.isPresent());
         assertThat(accountPassRight.get(), is(accountExisting));
+    }
+
+    @Test
+    public void getAccountByTokenHash() {
+        Optional<Account> accountTokenValid = accountStore.getAccountByTokenHash(TOKEN_HASH_VALID);
+        Optional<Account> accountTokenInvalid = accountStore.getAccountByTokenHash(TOKEN_HASH_INVALID);
+
+        assertTrue(accountTokenValid.isPresent());
+        assertFalse(accountTokenInvalid.isPresent());
     }
 
     @Test
@@ -155,9 +164,9 @@ public class AccountStoreTest {
 
     @Test
     public void changeAccountPassword() throws UnsecurePasswordException {
-        accountStore.changeAccountPassword(accountMock, password);
-        verify(encryptorMock).generate(password);
-        verify(accountMock).setPassHash(passHash);
+        accountStore.changeAccountPassword(accountMock, PASSWORD_VALID);
+        verify(encryptorMock).generate(PASSWORD_VALID);
+        verify(accountMock).setPassHash(PASS_HASH_VALID);
         verify(emMock).merge(accountMock);
     }
 
@@ -170,7 +179,7 @@ public class AccountStoreTest {
                 //as expected
             }
             verify(encryptorMock, never()).generate(password);
-            verify(accountMock, never()).setPassHash(passBadHash);
+            verify(accountMock, never()).setPassHash(PASS_HASH_INVALID);
             verify(emMock, never()).merge(accountMock);
         }
     }

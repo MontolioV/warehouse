@@ -1,4 +1,4 @@
-package com.myapp.security.UT;
+package security.UT;
 
 import com.myapp.security.Account;
 import com.myapp.security.AccountStore;

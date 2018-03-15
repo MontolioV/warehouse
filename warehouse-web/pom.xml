@@ -19,6 +19,11 @@
             <artifactId>warehouse-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.myapp</groupId>
+            <artifactId>warehouse-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.omnifaces/omnifaces -->
         <dependency>
             <groupId>org.omnifaces</groupId>
@@ -40,4 +45,17 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.glassfish.maven.plugin</groupId>
+                        <artifactId>maven-glassfish-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

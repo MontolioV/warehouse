@@ -8,7 +8,6 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ public class CustomIdentityStore implements IdentityStore {
     private AccountStore accountStore;
 
     @Override
-    public CredentialValidationResult validate(@NotNull Credential credential) {
+    public CredentialValidationResult validate(Credential credential) {
         try {
             if (credential instanceof UsernamePasswordCredential) {
                 UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;

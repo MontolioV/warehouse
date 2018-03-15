@@ -19,7 +19,8 @@ import javax.servlet.http.HttpServletResponse;
         isRememberMeExpression = "#{self.isRememberMe(httpMessageContext)}"
 )
 @LoginToContinue(
-
+        loginPage = "/login.xhtml",
+        errorPage = "/login_error.xhtml"
 )
 @ApplicationScoped
 public class CustomHttpAuthenticationMechanism implements HttpAuthenticationMechanism {

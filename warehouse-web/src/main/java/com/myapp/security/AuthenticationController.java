@@ -41,7 +41,7 @@ public class AuthenticationController {
         if (status.equals(SUCCESS)) {
             redirect("index.xhtml");
         } else if (status.equals(SEND_FAILURE)) {
-            addGlobalError("auth.message.error.failure");
+            addGlobalError("Authentication fail!");
             validationFailed();
         }
     }

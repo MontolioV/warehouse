@@ -16,7 +16,7 @@ public class TokenStore {
     @EJB
     private Encryptor encryptor;
 
-    public Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate) {
+    public Token createToken(/*@NotNull*/ Account account, TokenType tokenType, Date expiringDate) {
         String uuid = randomUUID();
         String hash = encryptor.generate(uuid);
         Token newToken = new Token();

@@ -25,16 +25,17 @@
             <h:message id="m_password" for="password"/>
 
             <h:outputLabel value="Email" for="email"/>
-            <h:inputSecret id="email" value="#{registrationController.account.email}" required="true">
+            <h:inputText id="email" value="#{registrationController.account.email}" required="true">
                 <f:ajax event="blur" render="m_email"/>
-            </h:inputSecret>
+            </h:inputText>
             <h:message id="m_email" for="email"/>
 
             <h:commandButton value="Register" action="#{registrationController.register}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
-            <h:messages globalOnly="true" layout="table"/>
         </h:panelGrid>
+
+        <h:messages globalOnly="true" layout="table"/>
     </h:form>
 </h:body>
 </html>

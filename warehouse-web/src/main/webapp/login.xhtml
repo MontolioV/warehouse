@@ -6,11 +6,11 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-    <title>Login</title>
+    <title>Authentication</title>
 </h:head>
 
 <h:body>
-    <h:outputLabel value="Registration"/>
+    <h:outputLabel value="Authentication"/>
     <h:form>
         <h:panelGrid columns="2">
             <h:outputLabel value="Login" for="login"/>
@@ -22,7 +22,7 @@
             <h:outputLabel value="Remember me" for="rememberme"/>
             <h:selectBooleanCheckbox id="rememberme" value="#{authenticationController.rememberMe}"/>
 
-            <h:commandButton value="Register" action="#{authenticationController.submit}">
+            <h:commandButton value="Submit" action="#{authenticationController.submit}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
             <h:messages globalOnly="true" layout="table"/>

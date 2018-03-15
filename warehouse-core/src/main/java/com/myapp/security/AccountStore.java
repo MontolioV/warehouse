@@ -38,6 +38,8 @@ public class AccountStore {
 
         account.addRole(Roles.USER);
 
+        account.setActive(true);
+
         em.persist(account);
         return account;
     }

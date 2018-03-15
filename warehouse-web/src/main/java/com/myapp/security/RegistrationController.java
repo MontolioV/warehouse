@@ -17,15 +17,17 @@ public class RegistrationController {
     private AccountStore accountStore;
     private Account account = new Account();
 
-    public void register() {
+    public String register() {
         try {
             accountStore.createAccount(account);
             facesContext.addMessage(null, new FacesMessage("Account has been successfully registered!"));
+            return "index?faces-redirect=true";
         } catch (LoginExistsException e) {
             facesContext.addMessage("m_login", new FacesMessage("Login already exists!"));
         } catch (UnsecurePasswordException e) {
             facesContext.addMessage("m_password", new FacesMessage("Password is not secure!"));
         }
+        return "";
     }
 
     public AccountStore getAccountStore() {

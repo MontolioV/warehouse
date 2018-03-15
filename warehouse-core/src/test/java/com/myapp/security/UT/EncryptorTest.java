@@ -1,4 +1,4 @@
-package security.UT;
+package com.myapp.security.UT;
 
 import com.myapp.security.Encryptor;
 import org.glassfish.soteria.identitystores.hash.Pbkdf2PasswordHashImpl;

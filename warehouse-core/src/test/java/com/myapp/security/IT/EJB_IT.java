@@ -1,8 +1,7 @@
-package security.IT;
+package com.myapp.security.IT;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -17,12 +16,8 @@ import static org.junit.Assert.assertNotNull;
 /**
  * <p>Created by MontolioV on 15.03.18.
  */
-@Ignore
 public class EJB_IT {
     private static EJBContainer ejbContainer;
-
-    public EJB_IT() {
-    }
 
     @BeforeClass
     public static void init() {
@@ -36,18 +31,12 @@ public class EJB_IT {
         ejbContainer.close();
     }
 
-
     @Test
     public void ejbValidation() throws NamingException {
         Context context = ejbContainer.getContext();
 
         assertNotNull(context.lookup("java:global/classes/AccountStore"));
-        assertNotNull(context.lookup("java:global/classes/AuthenticationController"));
-        assertNotNull(context.lookup("java:global/classes/CustomHttpAuthenticationMechanism"));
-        assertNotNull(context.lookup("java:global/classes/CustomIdentityStore"));
-        assertNotNull(context.lookup("java:global/classes/CustomRememberMeIdentityStore"));
         assertNotNull(context.lookup("java:global/classes/Encryptor"));
-        assertNotNull(context.lookup("java:global/classes/RegistrationController"));
         assertNotNull(context.lookup("java:global/classes/TokenScheduler"));
         assertNotNull(context.lookup("java:global/classes/TokenStore"));
     }

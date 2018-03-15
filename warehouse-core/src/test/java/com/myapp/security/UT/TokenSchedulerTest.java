@@ -1,4 +1,4 @@
-package security.UT;
+package com.myapp.security.UT;
 
 import com.myapp.security.TokenScheduler;
 import com.myapp.security.TokenStore;

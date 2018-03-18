@@ -7,7 +7,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-import static com.sun.xml.ws.security.impl.policy.PolicyUtil.randomUUID;
+import static java.util.UUID.randomUUID;
 
 @Stateless
 public class TokenStore {
@@ -16,8 +16,8 @@ public class TokenStore {
     @EJB
     private Encryptor encryptor;
 
-    public Token createToken(/*@NotNull*/ Account account, TokenType tokenType, Date expiringDate) {
-        String uuid = randomUUID();
+    public Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate) {
+        String uuid = randomUUID().toString();
         String hash = encryptor.generate(uuid);
         Token newToken = new Token();
         newToken.setTokenHash(hash);

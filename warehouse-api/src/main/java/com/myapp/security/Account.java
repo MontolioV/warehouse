@@ -73,7 +73,7 @@ public class Account implements Serializable {
     }
 
     @NotNull
-    @Size(min = 128, max = 128)
+    //@Size(min = 128, max = 128)
     public String getPassHash() {
         return passHash;
     }

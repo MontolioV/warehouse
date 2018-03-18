@@ -22,7 +22,7 @@ public class AccountStore {
     @EJB
     private Encryptor encryptor;
 
-    public Account createAccount(/*@NotNull*/ Account account) throws LoginExistsException, UnsecurePasswordException {
+    public Account createAccount(@NotNull Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                 .setParameter("login", account.getLogin())
                 .getResultList();
@@ -44,7 +44,7 @@ public class AccountStore {
         return account;
     }
 
-    public Optional<Account> getAccountByLogin(/*@NotBlank*/ String login) {
+    public Optional<Account> getAccountByLogin(@NotBlank String login) {
         try {
             return Optional.of(em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                     .setParameter("login", login)
@@ -54,7 +54,7 @@ public class AccountStore {
         }
     }
 
-    public Optional<Account> getAccountByLoginAndPassword(/*@NotBlank*/ String login, /*@NotBlank*/ String password) {
+    public Optional<Account> getAccountByLoginAndPassword(@NotBlank String login, @NotBlank String password) {
         Optional<Account> optionalAccount = getAccountByLogin(login);
         if (optionalAccount.isPresent() && !encryptor.verify(password, optionalAccount.get().getPassHash())) {
             return Optional.empty();
@@ -63,7 +63,7 @@ public class AccountStore {
         }
     }
 
-    public Optional<Account> getAccountByTokenHash(/*@NotBlank*/ String tokenHash) {
+    public Optional<Account> getAccountByTokenHash(@NotBlank String tokenHash) {
         try {
             return Optional.of(em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
                     .setParameter("hash", tokenHash)
@@ -79,14 +79,14 @@ public class AccountStore {
     }
 
     @RolesAllowed(MODERATOR)
-    public Account changeAccountStatus(/*@NotNull*/ Account account, boolean isActive) {
+    public Account changeAccountStatus(@NotNull Account account, boolean isActive) {
 
         account.setActive(isActive);
         return em.merge(account);
     }
 
     @RolesAllowed(USER)
-    public Account changeAccountPassword(/*@NotNull*/ Account account, /*@NotBlank*/ String newPassword) throws UnsecurePasswordException {
+    public Account changeAccountPassword(@NotNull Account account, @NotBlank String newPassword) throws UnsecurePasswordException {
         if (!isPasswordSecure(newPassword)) {
             throw new UnsecurePasswordException();
         }
@@ -96,13 +96,13 @@ public class AccountStore {
     }
 
     @RolesAllowed(USER)
-    public Account changeAccountEmail(/*@NotNull*/ Account account, /*@NotBlank*/ String newEmail) {
+    public Account changeAccountEmail(@NotNull Account account, @NotBlank String newEmail) {
         account.setEmail(newEmail);
         return em.merge(account);
     }
 
     @RolesAllowed(ADMIN)
-    public Account addRoleToAccount(/*@NotNull*/ Account account, /*@NotNull*/ Roles role) {
+    public Account addRoleToAccount(@NotNull Account account, @NotNull Roles role) {
         if (account.getRoles().contains(role)) {
             return account;
         }
@@ -111,7 +111,7 @@ public class AccountStore {
     }
 
     @RolesAllowed(ADMIN)
-    public Account removeRoleFromAccount(/*@NotNull*/ Account account, Roles role) {
+    public Account removeRoleFromAccount(@NotNull Account account, Roles role) {
         if (!account.getRoles().contains(role)) {
             return account;
         }

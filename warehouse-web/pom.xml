@@ -51,8 +51,8 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.glassfish.maven.plugin</groupId>
-                        <artifactId>maven-glassfish-plugin</artifactId>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

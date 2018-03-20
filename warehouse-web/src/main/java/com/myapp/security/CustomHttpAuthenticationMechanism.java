@@ -1,6 +1,5 @@
 package com.myapp.security;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
@@ -12,17 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * <p>Created by MontolioV on 13.03.18.
  */
-@AutoApplySession
-@RememberMe(
-        cookieMaxAgeSeconds = 60 * 60 * 24 * 14,
-        cookieSecureOnly = false,
-        isRememberMeExpression = "#{self.isRememberMe(httpMessageContext)}"
-)
-@LoginToContinue(
-        loginPage = "/login.xhtml",
-        errorPage = "/login_error.xhtml"
-)
-@ApplicationScoped
+//@AutoApplySession
+//@RememberMe(
+//        cookieMaxAgeSeconds = 60 * 60 * 24 * 14,
+//        cookieSecureOnly = false,
+//        isRememberMeExpression = "#{self.isRememberMe(httpMessageContext)}"
+//)
+//@LoginToContinue(
+//        loginPage = "/login.xhtml",
+//        errorPage = "/login_error.xhtml"
+//)
+//@ApplicationScoped
 public class CustomHttpAuthenticationMechanism implements HttpAuthenticationMechanism {
     @Inject
     private CustomIdentityStore identityStore;

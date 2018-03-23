@@ -23,9 +23,6 @@
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.19</mockito.version>
-        <glassfishAll.version>5.0</glassfishAll.version>
-
-        <cargo.runtime.args>force=true</cargo.runtime.args>
     </properties>
 
     <dependencies>

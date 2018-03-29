@@ -21,12 +21,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static com.myapp.utils.TestSecurityConstants.*;
 
 /**
  * <p>Created by MontolioV on 12.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CustomIdentityStoreTest implements SecurityConstants {
+public class CustomIdentityStoreTest implements CommonChecks {
     @InjectMocks
     private CustomIdentityStore is;
     @Mock

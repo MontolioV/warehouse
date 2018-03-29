@@ -15,12 +15,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static com.myapp.utils.TestSecurityConstants.*;
 
 /**
  * <p>Created by MontolioV on 09.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TokenStoreTest implements SecurityConstants{
+public class TokenStoreTest implements CommonChecks {
     @InjectMocks
     private TokenStore tokenStore;
     @Mock

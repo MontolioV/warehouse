@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static com.myapp.utils.TestSecurityConstants.*;
 import static com.myapp.security.Roles.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 05.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AccountStoreTest implements SecurityConstants{
+public class AccountStoreTest implements CommonChecks {
     @InjectMocks
     private AccountStore accountStore;
     @Mock

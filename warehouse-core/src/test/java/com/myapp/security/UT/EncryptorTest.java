@@ -9,10 +9,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.verify;
+import static com.myapp.utils.TestSecurityConstants.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class EncryptorTest implements SecurityConstants{
+public class EncryptorTest implements CommonChecks {
     @Mock
     private Pbkdf2PasswordHashImpl hashMock;
     @InjectMocks

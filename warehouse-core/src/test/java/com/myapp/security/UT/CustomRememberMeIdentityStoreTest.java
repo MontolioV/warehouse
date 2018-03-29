@@ -21,12 +21,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static com.myapp.utils.TestSecurityConstants.*;
 
 /**
  * <p>Created by MontolioV on 13.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CustomRememberMeIdentityStoreTest implements SecurityConstants {
+public class CustomRememberMeIdentityStoreTest implements CommonChecks {
     @InjectMocks
     private CustomRememberMeIdentityStore rememberMeIS;
     @Mock

@@ -13,9 +13,10 @@
         <h:outputLabel value="Welcome friend!"/>
         <h:link outcome="/registration.xhtml" value="registration"/>
         <h:link outcome="/login.xhtml" value="login"/>
-        <h:link outcome="/private/test.txt" value="private"/>
-        <h:link outcome="/moderation/test.txt" value="moder"/>
-        <h:link outcome="/admin/test.txt" value="admin"/>
+        <h:link outcome="/test.xhtml" value="test"/>
+        <a href="${pageContext.request.contextPath}/private/test.txt">private</a>
+        <a href="${pageContext.request.contextPath}/moderation/test.txt">moder</a>
+        <a href="${pageContext.request.contextPath}/admin/test.txt">admin</a>
     </h:panelGrid>
 </h:body>
 

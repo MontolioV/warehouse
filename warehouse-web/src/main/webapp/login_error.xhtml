@@ -8,8 +8,11 @@
 </h:head>
 
 <h:body>
-    <h:outputLabel value="Authentication fail!"/>
-    <h:button outcome="login.xhtml" value="Try again"/>
-    <h:button outcome="registration.xhtml" value="Registration"/>
+    <h:panelGrid columns="1">
+        <h:outputLabel value="Authentication fail!"/>
+        <h:button outcome="login.xhtml" value="Try again"/>
+        <h:button outcome="registration.xhtml" value="Registration"/>
+        <h:button outcome="index.xhtml" value="Home"/>
+    </h:panelGrid>
 </h:body>
 </html>

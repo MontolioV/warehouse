@@ -14,15 +14,15 @@
     <h:form>
         <h:panelGrid columns="2">
             <h:outputLabel value="Login" for="login"/>
-            <h:inputText id="login" value="#{authenticationController.login}" required="true"/>
+            <h:inputText id="login" value="#{formAuthenticationController.login}" required="true"/>
 
             <h:outputLabel value="Password" for="password"/>
-            <h:inputSecret id="password" value="#{authenticationController.password}" required="true"/>
+            <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
 
             <h:outputLabel value="Remember me" for="rememberme"/>
-            <h:selectBooleanCheckbox id="rememberme" value="#{authenticationController.rememberMe}"/>
+            <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
 
-            <h:commandButton value="Submit" action="#{authenticationController.submit}">
+            <h:commandButton value="Submit" action="#{formAuthenticationController.submit}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
             <h:messages globalOnly="true" layout="table"/>

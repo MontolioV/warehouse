@@ -2,7 +2,6 @@ package com.myapp.security;
 
 import org.omnifaces.cdi.Param;
 
-import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.SecurityContext;
@@ -18,7 +17,7 @@ import static org.omnifaces.util.Messages.addGlobalError;
 /**
  * <p>Created by MontolioV on 13.03.18.
  */
-@Model
+//@Model
 public class AuthenticationController {
     @Inject
     private SecurityContext securityContext;

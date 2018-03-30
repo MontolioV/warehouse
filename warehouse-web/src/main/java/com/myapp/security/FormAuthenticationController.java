@@ -39,7 +39,7 @@ public class FormAuthenticationController {
         Account account = accountStore.getAccountByLogin(login).get();
         HttpServletRequest httpServletRequest = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         httpServletRequest.login(account.getLogin(), account.getPassHash());
-        return "";
+        return "/index?faces-redirect=true";
     }
 
     public CustomIdentityStore getIdentityStore() {

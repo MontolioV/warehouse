@@ -10,7 +10,7 @@
 
 <h:body>
     <h:panelGrid columns="1">
-        <h:outputLabel value="#{request.userPrincipal.toString}"/>
+        <h:outputLabel value="#{request.userPrincipal.name}"/>
         <h:outputLabel value="USER #{request.isUserInRole('USER')}"/>
         <h:outputLabel value="TRUSTED_USER #{request.isUserInRole('TRUSTED_USER')}"/>
         <h:outputLabel value="MODERATOR #{request.isUserInRole('MODERATOR')}"/>

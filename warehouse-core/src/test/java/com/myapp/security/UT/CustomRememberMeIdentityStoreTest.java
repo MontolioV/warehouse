@@ -14,6 +14,7 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.myapp.utils.TestSecurityConstants.*;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
@@ -21,7 +22,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static com.myapp.utils.TestSecurityConstants.*;
 
 /**
  * <p>Created by MontolioV on 13.03.18.
@@ -60,7 +60,7 @@ public class CustomRememberMeIdentityStoreTest implements CommonChecks {
         when(rememberMeCredValidMock.getToken()).thenReturn(TOKEN_HASH_VALID);
         when(rememberMeCredInvalidMock.getToken()).thenReturn(TOKEN_HASH_INVALID);
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
-        when(accountMock.getRoles()).thenReturn(ROLES_LIST);
+        when(accountMock.getRoles()).thenReturn(ROLES_SET);
     }
 
     @Test

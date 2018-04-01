@@ -30,7 +30,7 @@ public class AccountToken_DB_IT extends WithEmbeddedDB{
     public void success() {
         instant = Instant.now().plus(14, ChronoUnit.DAYS);
         expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date(), Date.from(instant));
-        ArrayList<Roles> roles = new ArrayList<>();
+        HashSet<Roles> roles = new HashSet<>();
         roles.add(Roles.ADMIN);
         String s126 = StringUtils.repeat("0", 128);
         expectedAccount = new Account(0, "test", s126, "test@test.com", new ArrayList<>(), roles);

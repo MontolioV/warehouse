@@ -23,11 +23,11 @@ public class RegistrationController {
             facesContext.addMessage(null, new FacesMessage("Account has been successfully registered!"));
             return "index?faces-redirect=true";
         } catch (LoginExistsException e) {
-            facesContext.addMessage("m_login", new FacesMessage("Login already exists!"));
+            facesContext.addMessage("reg_form:login", new FacesMessage("Login already exists!"));
         } catch (UnsecurePasswordException e) {
-            facesContext.addMessage("m_password", new FacesMessage("Password is not secure!"));
+            facesContext.addMessage("reg_form:password", new FacesMessage("Password is not secure!"));
         }
-        return "";
+        return null;
     }
 
     public AccountStore getAccountStore() {

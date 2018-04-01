@@ -15,13 +15,13 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import java.util.Optional;
 
+import static com.myapp.utils.TestSecurityConstants.*;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static com.myapp.utils.TestSecurityConstants.*;
 
 /**
  * <p>Created by MontolioV on 12.03.18.
@@ -46,7 +46,7 @@ public class CustomIdentityStoreTest implements CommonChecks {
         when(usernamePasswordCredentialMock.getPasswordAsString()).thenReturn(PASSWORD_VALID);
         when(acMock.getAccountByLogin(anyString())).thenReturn(Optional.of(accountMock));
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
-        when(accountMock.getRoles()).thenReturn(ROLES_LIST);
+        when(accountMock.getRoles()).thenReturn(ROLES_SET);
     }
 
     @Test

@@ -2,12 +2,18 @@ package com.myapp.security;
 
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
@@ -19,8 +25,12 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
  */
 @Model
 public class FormAuthenticationController {
+    public static final int REMEMBERME_MAX_AGE = 60 * 60 * 24 * 14;
+
     @Inject
     private CustomIdentityStore identityStore;
+    @Inject
+    private CustomRememberMeIdentityStore rememberMeIdentityStore;
     @EJB
     private AccountStore accountStore;
     @Inject
@@ -31,13 +41,24 @@ public class FormAuthenticationController {
 
     public String submit() throws ServletException {
         CredentialValidationResult result = identityStore.validate(new UsernamePasswordCredential(login, password));
-        // TODO: 29.03.18  Credential validation fails!
         if (result == null || result.equals(INVALID_RESULT) || result.equals(NOT_VALIDATED_RESULT)) {
             return "/login_error?faces-redirect=true";
         }
 
         Account account = accountStore.getAccountByLogin(login).get();
-        HttpServletRequest httpServletRequest = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
+
+        if (rememberMe) {
+            Map<String, Object> cookieProperties = new HashMap<>();
+            cookieProperties.put("maxAge", REMEMBERME_MAX_AGE);
+            Set<String> groups = new HashSet<>();
+            account.getRoles().forEach(roles -> groups.add(roles.name()));
+            String cookieValue = rememberMeIdentityStore.generateLoginToken(new CallerPrincipal(account.getLogin()), groups);
+            externalContext.addResponseCookie("JREMEMBERMEID", cookieValue, cookieProperties);
+        }
+
+        httpServletRequest.logout();
         httpServletRequest.login(account.getLogin(), account.getPassHash());
         return "/index?faces-redirect=true";
     }

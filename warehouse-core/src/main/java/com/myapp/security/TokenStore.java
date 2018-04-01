@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
 
@@ -17,6 +19,8 @@ public class TokenStore {
     private Encryptor encryptor;
 
     public Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate) {
+        removeRememberMeTokens(account);
+
         String uuid = randomUUID().toString();
         String hash = encryptor.generate(uuid);
         Token newToken = new Token();
@@ -47,6 +51,18 @@ public class TokenStore {
         return em.createNamedQuery(Token.DELETE_EXPIRED_TO_DATE)
                 .setParameter("date", new Date())
                 .executeUpdate();
+    }
+
+    public void removeRememberMeTokens(@NotNull Account account) {
+        List<Token> tokensToRemove = account.getTokens().stream()
+                .filter(token -> token.getTokenType() != null && token.getTokenType().equals(TokenType.REMEMBER_ME))
+                .collect(Collectors.toList());
+        if (tokensToRemove.isEmpty()) {
+            return;
+        }
+
+        account.getTokens().removeAll(tokensToRemove);
+        em.merge(account);
     }
 
     public EntityManager getEm() {

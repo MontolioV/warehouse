@@ -1,0 +1,18 @@
+connect
+batch
+
+/subsystem=elytron/jdbc-realm=warehouseJdbcRealm:add(principal-query=[{data-source=MySqlDS,sql="SELECT a.passHash FROM Account AS a WHERE login=?",clear-password-mapper={password-index=1}},{data-source=MySqlDS,sql="SELECT r.roles FROM Account_roles AS r, Account AS a WHERE a.login=? AND r.Account_id=a.id",attribute-mapping=[{index=1, to=groups}]},])
+
+/subsystem=elytron/security-domain=warehouseDbSD:add(realms=[{realm=warehouseJdbcRealm,role-decoder=groups-to-roles}],default-realm=warehouseJdbcRealm,permission-mapper=default-permission-mapper)
+
+/subsystem=elytron/http-authentication-factory=warehouse-db-http-auth:add(http-server-mechanism-factory=global,security-domain=warehouseDbSD,mechanism-configurations=[{mechanism-name=FORM,mechanism-realm-configurations=[{realm-name=warehouseDbSD}]}])
+
+/subsystem=undertow/application-security-domain=warehouseApplicationDomain:add(http-authentication-factory=warehouse-db-http-auth)
+
+/subsystem=ejb3/application-security-domain=warehouseApplicationDomain:add(security-domain=warehouseDbSD)
+
+/subsystem=ejb3:write-attribute(name=default-missing-method-permissions-deny-access,value=false)
+
+run-batch
+
+:reload

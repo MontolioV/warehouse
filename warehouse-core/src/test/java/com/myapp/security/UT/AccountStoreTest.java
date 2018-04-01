@@ -12,10 +12,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
-import static com.myapp.utils.TestSecurityConstants.*;
 import static com.myapp.security.Roles.*;
+import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -42,8 +43,8 @@ public class AccountStoreTest implements CommonChecks {
 
     @Before
     public void setUp() throws Exception {
-        accountNew = new Account(1L, "test", PASSWORD_VALID, "test", new ArrayList<>(), new ArrayList<>());
-        accountExisting = new Account(0L, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new ArrayList<>());
+        accountNew = new Account(1L, "test", PASSWORD_VALID, "test", new ArrayList<>(), new HashSet<>());
+        accountExisting = new Account(0L, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new HashSet<>());
 
         when(encryptorMock.generate(PASSWORD_VALID)).thenReturn(PASS_HASH_VALID);
         when(encryptorMock.generate(PASSWORD_INVALID)).thenReturn(PASS_HASH_INVALID);

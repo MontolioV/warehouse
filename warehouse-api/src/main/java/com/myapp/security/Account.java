@@ -6,9 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>Created by MontolioV on 01.03.18.
@@ -35,13 +33,13 @@ public class Account implements Serializable {
     private String passHash;
     private String email;
     private List<Token> tokens = new ArrayList<>();
-    private List<Roles> roles = new ArrayList<>();
+    private Set<Roles> roles = new HashSet<>();
     private boolean active = false;
 
     public Account() {
     }
 
-    public Account(long id, String login, String passHash, String email, List<Token> tokens, List<Roles> roles) {
+    public Account(long id, String login, String passHash, String email, List<Token> tokens, Set<Roles> roles) {
         this.id = id;
         this.login = login;
         this.passHash = passHash;
@@ -91,7 +89,7 @@ public class Account implements Serializable {
         this.email = email;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "ACCOUNT_ID")
     public List<Token> getTokens() {
         return tokens;
@@ -110,11 +108,11 @@ public class Account implements Serializable {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public List<Roles> getRoles() {
+    public Set<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Roles> roles) {
+    public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
 

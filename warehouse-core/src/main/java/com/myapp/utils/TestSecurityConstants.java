@@ -3,7 +3,6 @@ package com.myapp.utils;
 import com.myapp.security.Roles;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +17,7 @@ public interface TestSecurityConstants {
     String PASS_HASH_INVALID = "PASS_HASH_INVALID";
     String TOKEN_HASH_VALID = "TOKEN_HASH_VALID";
     String TOKEN_HASH_INVALID = "TOKEN_HASH_INVALID";
-    List<Roles> ROLES_LIST = Collections.singletonList(Roles.USER);
+    Set<Roles> ROLES_SET = Collections.singleton(Roles.USER);
     Set<String> ROLES_STR_SET = Collections.singleton(Roles.USER.name());
 
 }

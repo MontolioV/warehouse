@@ -1,9 +1,6 @@
 package com.myapp.security.UT;
 
-import com.myapp.security.Account;
-import com.myapp.security.AccountStore;
-import com.myapp.security.CustomIdentityStore;
-import com.myapp.security.FormAuthenticationController;
+import com.myapp.security.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +11,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,6 +37,8 @@ public class FormAuthenticationControllerTest {
     @Mock
     private CustomIdentityStore isMock;
     @Mock
+    private CustomRememberMeIdentityStore rmMock;
+    @Mock
     private AccountStore asMock;
     @Mock
     private Account accountMock;
@@ -48,6 +50,7 @@ public class FormAuthenticationControllerTest {
     private HttpServletRequest requestMock;
     private UsernamePasswordCredential credentialValid = new UsernamePasswordCredential(LOGIN_VALID, PASSWORD_VALID);
     private UsernamePasswordCredential credentialInvalid = new UsernamePasswordCredential(LOGIN_INVALID, PASSWORD_INVALID);
+    private String cookieValue = "1234567890";
 
     @Before
     public void setUp() throws Exception {
@@ -61,18 +64,30 @@ public class FormAuthenticationControllerTest {
         when(accountMock.getPassHash()).thenReturn(PASS_HASH_VALID);
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getRequest()).thenReturn(requestMock);
+        when(rmMock.generateLoginToken(any(CallerPrincipal.class), any(Set.class))).thenReturn(cookieValue);
 
         controller.setLogin(LOGIN_VALID);
         controller.setPassword(PASSWORD_VALID);
+        controller.setRememberMe(true);
         controller.submit();
 
-        ArgumentCaptor<UsernamePasswordCredential> captor = ArgumentCaptor.forClass(UsernamePasswordCredential.class);
-
-        verify(isMock).validate(captor.capture());
-        assertThat(credentialValid.getCaller(), is(captor.getValue().getCaller()));
-        assertThat(credentialValid.getPasswordAsString(), is(captor.getValue().getPasswordAsString()));
+        ArgumentCaptor<UsernamePasswordCredential> captorCredentials = ArgumentCaptor.forClass(UsernamePasswordCredential.class);
+        verify(isMock).validate(captorCredentials.capture());
+        assertThat(credentialValid.getCaller(), is(captorCredentials.getValue().getCaller()));
+        assertThat(credentialValid.getPasswordAsString(), is(captorCredentials.getValue().getPasswordAsString()));
 
         verify(asMock).getAccountByLogin(eq(LOGIN_VALID));
+        verify(rmMock).generateLoginToken(any(CallerPrincipal.class), any(Set.class));
+
+        ArgumentCaptor<String> captorCookieName = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> captorCookieValue = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> captorCookieProperties = ArgumentCaptor.forClass(Map.class);
+        verify(ecMock).addResponseCookie(captorCookieName.capture(), captorCookieValue.capture(), captorCookieProperties.capture());
+        assertThat(captorCookieName.getValue(), is("JREMEMBERMEID"));
+        assertThat(captorCookieValue.getValue(), is(cookieValue));
+        assertThat(captorCookieProperties.getValue().get("maxAge"), is(60 * 60 * 24 * 14));
+
+        verify(requestMock).logout();
         verify(requestMock).login(eq(LOGIN_VALID), eq(PASS_HASH_VALID));
     }
 
@@ -91,6 +106,7 @@ public class FormAuthenticationControllerTest {
         assertThat(credentialInvalid.getPasswordAsString(), is(captor.getValue().getPasswordAsString()));
 
         verify(asMock, never()).getAccountByLogin(any(String.class));
+        verify(requestMock, never()).logout();
         verify(requestMock, never()).login(any(String.class), any(String.class));
         assertThat(redirect,is("/login_error?faces-redirect=true"));
     }

@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -34,7 +35,7 @@ public class AccountToken_JAXB_JSONB_IT {
     public void name() throws Exception {
         Instant instant = Instant.now().plus(14, ChronoUnit.DAYS);
         Token expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date(), Date.from(instant));
-        ArrayList<Roles> roles = new ArrayList<>();
+        HashSet<Roles> roles = new HashSet<>();
         roles.add(Roles.ADMIN);
         Account expectedAccount = new Account(0, "test", "akdmsaldk", "test@test.com", new ArrayList<>(), roles);
         expectedAccount.addToken(expectedToken);

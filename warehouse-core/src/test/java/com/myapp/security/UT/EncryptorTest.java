@@ -8,8 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.myapp.utils.TestSecurityConstants.PASSWORD_VALID;
+import static com.myapp.utils.TestSecurityConstants.PASS_HASH_VALID;
 import static org.mockito.Mockito.verify;
-import static com.myapp.utils.TestSecurityConstants.*;
 
 
 @RunWith(MockitoJUnitRunner.class)

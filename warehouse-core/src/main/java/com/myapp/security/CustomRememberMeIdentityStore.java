@@ -1,6 +1,7 @@
 package com.myapp.security;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.RememberMeCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
@@ -17,6 +18,8 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
 /**
  * <p>Created by MontolioV on 13.03.18.
  */
+
+@ApplicationScoped
 public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
     @EJB
     private AccountStore accountStore;

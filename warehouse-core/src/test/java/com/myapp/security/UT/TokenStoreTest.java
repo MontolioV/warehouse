@@ -59,9 +59,8 @@ public class TokenStoreTest implements CommonChecks {
 
         verify(encryptorMock).generate(any(String.class));
         verify(accountMock).addToken(token);
-        verify(emMock, times(2)).merge(accountMock);
+        verify(emMock).merge(accountMock);
         assertThat(token.getTokenHash(), is(TOKEN_HASH_VALID));
-        removeRememberMeTokensAssertations();
     }
 
     @Test
@@ -95,14 +94,11 @@ public class TokenStoreTest implements CommonChecks {
 
     @Test
     public void removeRememberMeTokens() {
-        tokenStore.removeRememberMeTokens(accountMock);
+        tokenStore.removeAllRememberMeTokens(accountMock);
         verify(emMock).merge(accountMock);
-        removeRememberMeTokensAssertations();
-    }
-
-    private void removeRememberMeTokensAssertations() {
         assertThat(tokens.size(), is(1));
         assertThat(tokens.contains(rmToken), is(false));
         assertThat(tokens.contains(otherToken), is(true));
+
     }
 }

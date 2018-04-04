@@ -16,7 +16,7 @@ import java.util.*;
 @NamedQueries({
         @NamedQuery(name = Account.GET_ALL, query = "select a from Account a"),
         @NamedQuery(name = Account.GET_BY_LOGIN, query = "select a from Account a where a.login = :login"),
-        @NamedQuery(name = Account.GET_BY_TOKEN_HASH, query = "select a from Account a inner join Token t where t.tokenHash=:hash"),
+        @NamedQuery(name = Account.GET_BY_TOKEN_HASH, query = "select a from Account a inner join a.tokens t where t.tokenHash=:hash"),
 })
 @Table(indexes = {
         @Index(columnList = "LOGIN", unique = true)

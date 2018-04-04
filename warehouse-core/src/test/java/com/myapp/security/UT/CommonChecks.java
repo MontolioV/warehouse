@@ -2,7 +2,8 @@ package com.myapp.security.UT;
 
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 
-import static com.myapp.utils.TestSecurityConstants.*;
+import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
+import static com.myapp.utils.TestSecurityConstants.ROLES_STR_SET;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 

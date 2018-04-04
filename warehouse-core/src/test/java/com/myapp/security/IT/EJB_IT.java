@@ -1,6 +1,9 @@
 package com.myapp.security.IT;
 
-import com.myapp.security.*;
+import com.myapp.security.Account;
+import com.myapp.security.AccountStore;
+import com.myapp.security.LoginExistsException;
+import com.myapp.security.UnsecurePasswordException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;

@@ -15,11 +15,14 @@ import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
+import static com.myapp.utils.CookiesConstants.MAX_AGE_PARAM;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -50,7 +53,8 @@ public class FormAuthenticationControllerTest {
     private HttpServletRequest requestMock;
     private UsernamePasswordCredential credentialValid = new UsernamePasswordCredential(LOGIN_VALID, PASSWORD_VALID);
     private UsernamePasswordCredential credentialInvalid = new UsernamePasswordCredential(LOGIN_INVALID, PASSWORD_INVALID);
-    private String cookieValue = "1234567890";
+    private String cookieValueNew = "hash1";
+    private String cookieValueOld = "hash2";
 
     @Before
     public void setUp() throws Exception {
@@ -64,7 +68,8 @@ public class FormAuthenticationControllerTest {
         when(accountMock.getPassHash()).thenReturn(PASS_HASH_VALID);
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getRequest()).thenReturn(requestMock);
-        when(rmMock.generateLoginToken(any(CallerPrincipal.class), any(Set.class))).thenReturn(cookieValue);
+        when(requestMock.getCookies()).thenReturn(new Cookie[]{new Cookie(JREMEMBERMEID, cookieValueOld)});
+        when(rmMock.generateLoginToken(any(CallerPrincipal.class), any(Set.class))).thenReturn(cookieValueNew);
 
         controller.setLogin(LOGIN_VALID);
         controller.setPassword(PASSWORD_VALID);
@@ -77,15 +82,16 @@ public class FormAuthenticationControllerTest {
         assertThat(credentialValid.getPasswordAsString(), is(captorCredentials.getValue().getPasswordAsString()));
 
         verify(asMock).getAccountByLogin(eq(LOGIN_VALID));
+        verify(rmMock).removeLoginToken(cookieValueOld);
         verify(rmMock).generateLoginToken(any(CallerPrincipal.class), any(Set.class));
 
         ArgumentCaptor<String> captorCookieName = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> captorCookieValue = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Map> captorCookieProperties = ArgumentCaptor.forClass(Map.class);
         verify(ecMock).addResponseCookie(captorCookieName.capture(), captorCookieValue.capture(), captorCookieProperties.capture());
-        assertThat(captorCookieName.getValue(), is("JREMEMBERMEID"));
-        assertThat(captorCookieValue.getValue(), is(cookieValue));
-        assertThat(captorCookieProperties.getValue().get("maxAge"), is(60 * 60 * 24 * 14));
+        assertThat(captorCookieName.getValue(), is(JREMEMBERMEID));
+        assertThat(captorCookieValue.getValue(), is(cookieValueNew));
+        assertThat(captorCookieProperties.getValue().get(MAX_AGE_PARAM), is(60 * 60 * 24 * 14));
 
         verify(requestMock).logout();
         verify(requestMock).login(eq(LOGIN_VALID), eq(PASS_HASH_VALID));

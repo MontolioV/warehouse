@@ -1,5 +1,7 @@
 package com.myapp.security;
 
+import com.myapp.utils.HttpUtils;
+
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
@@ -9,12 +11,15 @@ import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
+import static com.myapp.utils.CookiesConstants.MAX_AGE_PARAM;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
 
@@ -50,12 +55,17 @@ public class FormAuthenticationController {
         HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
 
         if (rememberMe) {
+            Cookie rmCookie = HttpUtils.findCookie(httpServletRequest, JREMEMBERMEID);
+            if (rmCookie != null) {
+                rememberMeIdentityStore.removeLoginToken(rmCookie.getValue());
+            }
+
             Map<String, Object> cookieProperties = new HashMap<>();
-            cookieProperties.put("maxAge", REMEMBERME_MAX_AGE);
+            cookieProperties.put(MAX_AGE_PARAM, REMEMBERME_MAX_AGE);
             Set<String> groups = new HashSet<>();
             account.getRoles().forEach(roles -> groups.add(roles.name()));
             String cookieValue = rememberMeIdentityStore.generateLoginToken(new CallerPrincipal(account.getLogin()), groups);
-            externalContext.addResponseCookie("JREMEMBERMEID", cookieValue, cookieProperties);
+            externalContext.addResponseCookie(JREMEMBERMEID, cookieValue, cookieProperties);
         }
 
         httpServletRequest.logout();

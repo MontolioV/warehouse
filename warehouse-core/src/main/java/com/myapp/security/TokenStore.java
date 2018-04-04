@@ -1,5 +1,6 @@
 package com.myapp.security;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.myapp.security.Roles.Const.USER;
 import static java.util.UUID.randomUUID;
 
 @Stateless
@@ -19,8 +21,6 @@ public class TokenStore {
     private Encryptor encryptor;
 
     public Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate) {
-        removeRememberMeTokens(account);
-
         String uuid = randomUUID().toString();
         String hash = encryptor.generate(uuid);
         Token newToken = new Token();
@@ -41,6 +41,7 @@ public class TokenStore {
                 .getSingleResult();
     }
 
+    @RolesAllowed(USER)
     public void removeToken(String tokenHash) {
         em.createNamedQuery(Token.DELETE_BY_HASH)
                 .setParameter("hash", tokenHash)
@@ -53,7 +54,9 @@ public class TokenStore {
                 .executeUpdate();
     }
 
-    public void removeRememberMeTokens(@NotNull Account account) {
+
+    @RolesAllowed(USER)
+    public void removeAllRememberMeTokens(@NotNull Account account) {
         List<Token> tokensToRemove = account.getTokens().stream()
                 .filter(token -> token.getTokenType() != null && token.getTokenType().equals(TokenType.REMEMBER_ME))
                 .collect(Collectors.toList());

@@ -1,27 +1,21 @@
 package com.myapp.security;
 
-import com.myapp.utils.HttpUtils;
-
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
-
-import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
 
 /**
  * <p>Created by MontolioV on 04.04.18.
  */
 @WebFilter(value = "/*")
 public class RememberMeAuthFilter extends HttpFilter {
-    @EJB
-    private AccountStore accountStore;
+    @Inject
+    private RememberMeAuthenticator authenticator;
 
     /**
      * <p>The <code>doFilter</code> method of the Filter is called by the
@@ -47,15 +41,7 @@ public class RememberMeAuthFilter extends HttpFilter {
      */
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        if (req.getUserPrincipal() == null) {
-            Cookie rmCookie = HttpUtils.findCookie(req, JREMEMBERMEID);
-            if (rmCookie != null) {
-                Optional<Account> accountByTokenHash = accountStore.getAccountByTokenHash(rmCookie.getValue());
-                if (accountByTokenHash.isPresent()) {
-                    req.login(accountByTokenHash.get().getLogin(), accountByTokenHash.get().getPassHash());
-                }
-            }
-        }
+        authenticator.cookieAuth(req);
         chain.doFilter(req, res);
     }
 }

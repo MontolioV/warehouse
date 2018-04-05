@@ -17,6 +17,8 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +40,8 @@ public class FormAuthenticationControllerTest {
     @InjectMocks
     private FormAuthenticationController controller;
     @Mock
+    private RememberMeAuthenticator rmAuthMock;
+    @Mock
     private CustomIdentityStore isMock;
     @Mock
     private CustomRememberMeIdentityStore rmMock;
@@ -55,9 +59,14 @@ public class FormAuthenticationControllerTest {
     private UsernamePasswordCredential credentialInvalid = new UsernamePasswordCredential(LOGIN_INVALID, PASSWORD_INVALID);
     private String cookieValueNew = "hash1";
     private String cookieValueOld = "hash2";
+    private String contextPath = "contextPath";
 
     @Before
     public void setUp() throws Exception {
+        when(fcMock.getExternalContext()).thenReturn(ecMock);
+        when(ecMock.getRequest()).thenReturn(requestMock);
+        when(requestMock.getCookies()).thenReturn(new Cookie[]{new Cookie(JREMEMBERMEID, cookieValueOld)});
+        when(requestMock.getContextPath()).thenReturn(contextPath);
     }
 
     @Test
@@ -66,9 +75,6 @@ public class FormAuthenticationControllerTest {
         when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(accountMock));
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
         when(accountMock.getPassHash()).thenReturn(PASS_HASH_VALID);
-        when(fcMock.getExternalContext()).thenReturn(ecMock);
-        when(ecMock.getRequest()).thenReturn(requestMock);
-        when(requestMock.getCookies()).thenReturn(new Cookie[]{new Cookie(JREMEMBERMEID, cookieValueOld)});
         when(rmMock.generateLoginToken(any(CallerPrincipal.class), any(Set.class))).thenReturn(cookieValueNew);
 
         controller.setLogin(LOGIN_VALID);
@@ -115,5 +121,26 @@ public class FormAuthenticationControllerTest {
         verify(requestMock, never()).logout();
         verify(requestMock, never()).login(any(String.class), any(String.class));
         assertThat(redirect,is("/login_error?faces-redirect=true"));
+    }
+
+    @Test
+    public void cookieAuthSuccess() throws ServletException, IOException {
+        Principal principalMock = mock(Principal.class);
+        when(ecMock.getUserPrincipal()).thenReturn(principalMock);
+
+        controller.checkCookie();
+
+        verify(rmAuthMock).cookieAuth(requestMock);
+        verify(ecMock).redirect(contextPath);
+    }
+
+    @Test
+    public void cookieAuthFail() throws ServletException, IOException {
+        when(ecMock.getUserPrincipal()).thenReturn(null);
+
+        controller.checkCookie();
+
+        verify(rmAuthMock).cookieAuth(requestMock);
+        verify(ecMock, never()).redirect(anyString());
     }
 }

@@ -2,6 +2,7 @@ package com.myapp.security;
 
 import com.myapp.utils.HttpUtils;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
@@ -13,6 +14,7 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +35,8 @@ public class FormAuthenticationController {
     public static final int REMEMBERME_MAX_AGE = 60 * 60 * 24 * 14;
 
     @Inject
+    private RememberMeAuthenticator rmAuthenticator;
+    @Inject
     private CustomIdentityStore identityStore;
     @Inject
     private CustomRememberMeIdentityStore rememberMeIdentityStore;
@@ -43,6 +47,14 @@ public class FormAuthenticationController {
     private String login;
     private String password;
     private boolean rememberMe;
+    private ExternalContext externalContext;
+    private HttpServletRequest httpServletRequest;
+
+    @PostConstruct
+    public void init() {
+        externalContext = facesContext.getExternalContext();
+        httpServletRequest = (HttpServletRequest) externalContext.getRequest();
+    }
 
     public String submit() throws ServletException {
         CredentialValidationResult result = identityStore.validate(new UsernamePasswordCredential(login, password));
@@ -51,9 +63,6 @@ public class FormAuthenticationController {
         }
 
         Account account = accountStore.getAccountByLogin(login).get();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
-
         if (rememberMe) {
             Cookie rmCookie = HttpUtils.findCookie(httpServletRequest, JREMEMBERMEID);
             if (rmCookie != null) {
@@ -71,6 +80,14 @@ public class FormAuthenticationController {
         httpServletRequest.logout();
         httpServletRequest.login(account.getLogin(), account.getPassHash());
         return "/index?faces-redirect=true";
+    }
+
+    public void checkCookie() throws ServletException, IOException {
+        rmAuthenticator.cookieAuth(httpServletRequest);
+
+        if (externalContext.getUserPrincipal() != null) {
+            externalContext.redirect(httpServletRequest.getContextPath());
+        }
     }
 
     public CustomIdentityStore getIdentityStore() {
@@ -103,5 +120,37 @@ public class FormAuthenticationController {
 
     public void setRememberMe(boolean rememberMe) {
         this.rememberMe = rememberMe;
+    }
+
+    public RememberMeAuthenticator getRmAuthenticator() {
+        return rmAuthenticator;
+    }
+
+    public void setRmAuthenticator(RememberMeAuthenticator rmAuthenticator) {
+        this.rmAuthenticator = rmAuthenticator;
+    }
+
+    public CustomRememberMeIdentityStore getRememberMeIdentityStore() {
+        return rememberMeIdentityStore;
+    }
+
+    public void setRememberMeIdentityStore(CustomRememberMeIdentityStore rememberMeIdentityStore) {
+        this.rememberMeIdentityStore = rememberMeIdentityStore;
+    }
+
+    public AccountStore getAccountStore() {
+        return accountStore;
+    }
+
+    public void setAccountStore(AccountStore accountStore) {
+        this.accountStore = accountStore;
+    }
+
+    public FacesContext getFacesContext() {
+        return facesContext;
+    }
+
+    public void setFacesContext(FacesContext facesContext) {
+        this.facesContext = facesContext;
     }
 }

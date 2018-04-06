@@ -3,8 +3,74 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-<f:view>
-    <h:outputLabel value="Hello, world"/>
-</f:view>
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:o="http://omnifaces.org/ui">
+<h:head>
+    <title>User management</title>
+</h:head>
+
+<h:body>
+    <compc:access/>
+    <h:panelGrid columns="1">
+        <h:form  id="usersListForm">
+            <h:panelGrid columns="2">
+                <h:panelGrid columns="1">
+                    <h:panelGrid columns="3">
+                        <h:outputLabel for="login" value="Login"/>
+                        <h:inputText id="login" value="#{userManagementController.login}"/>
+                        <h:message for="login"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <h:commandButton value="Find user" action="#{userManagementController.fetchSingleAccount()}">
+                            <f:ajax execute="@form" render="@form"/>
+                        </h:commandButton>
+
+                        <h:commandButton value="Show all users" action="#{userManagementController.fetchAccounts()}">
+                            <f:ajax render="@form"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <c:if test="#{not empty userManagementController.singleAccount}">
+                    <o:importConstants type="com.myapp.security.Roles"/>
+                    <h:panelGrid columns="1">
+                        <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Is active"/>
+                            <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
+                        </h:panelGrid>
+                        <h:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
+                            <f:selectItems value="#{Roles}"/>
+                        </h:selectManyCheckbox>
+                    </h:panelGrid>
+                </c:if>
+            </h:panelGrid>
+
+            <h:dataTable value="#{userManagementController.accountList}" var="account">
+                <h:column>
+                    <f:facet name="header">id</f:facet>
+                    #{account.id}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">login</f:facet>
+                    #{account.login}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">email</f:facet>
+                    #{account.email}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">active</f:facet>
+                    #{account.active}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">roles</f:facet>
+                    #{account.roles}
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </h:panelGrid>
+</h:body>
 </html>

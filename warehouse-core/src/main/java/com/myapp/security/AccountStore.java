@@ -37,8 +37,6 @@ public class AccountStore {
         account.setPassHash(encryptedPass);
 
         account.addRole(Roles.USER);
-//
-//        account.setActive(true);
 
         em.persist(account);
         return account;

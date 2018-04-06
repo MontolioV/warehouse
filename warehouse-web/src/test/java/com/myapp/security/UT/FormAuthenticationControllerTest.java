@@ -120,7 +120,7 @@ public class FormAuthenticationControllerTest {
         verify(asMock, never()).getAccountByLogin(any(String.class));
         verify(requestMock, never()).logout();
         verify(requestMock, never()).login(any(String.class), any(String.class));
-        assertThat(redirect,is("/login_error?faces-redirect=true"));
+        assertThat(redirect,is("/login-error?faces-redirect=true"));
     }
 
     @Test

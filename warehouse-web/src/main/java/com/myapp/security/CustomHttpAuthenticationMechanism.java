@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 //)
 //@LoginToContinue(
 //        loginPage = "/login.xhtml",
-//        errorPage = "/login_error.xhtml"
+//        errorPage = "/login-error.xhtml"
 //)
 //@ApplicationScoped
 public class CustomHttpAuthenticationMechanism implements HttpAuthenticationMechanism {

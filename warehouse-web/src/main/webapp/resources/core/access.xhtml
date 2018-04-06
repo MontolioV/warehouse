@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<composite:interface>
+    <composite:attribute name="style" required="false"/>
+</composite:interface>
+
+<composite:implementation>
+    <h:panelGrid columns="2">
+        <c:choose>
+            <c:when test="#{empty request.userPrincipal}">
+                <h:button outcome="/login.xhtml" value="Login"/>
+                <h:button outcome="/registration.xhtml" value="Registration"/>
+            </c:when>
+            <c:otherwise>
+                <h:outputLabel value="#{request.userPrincipal.name}"/>
+                <a href="logout">Logout</a>
+            </c:otherwise>
+        </c:choose>
+    </h:panelGrid>
+</composite:implementation>
+</html>

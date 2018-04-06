@@ -59,7 +59,7 @@ public class FormAuthenticationController {
     public String submit() throws ServletException {
         CredentialValidationResult result = identityStore.validate(new UsernamePasswordCredential(login, password));
         if (result == null || result.equals(INVALID_RESULT) || result.equals(NOT_VALIDATED_RESULT)) {
-            return "/login_error?faces-redirect=true";
+            return "/login-error?faces-redirect=true";
         }
 
         Account account = accountStore.getAccountByLogin(login).get();

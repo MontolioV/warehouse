@@ -4,6 +4,7 @@ import com.myapp.administration.UserManagementController;
 import com.myapp.security.Account;
 import com.myapp.security.AccountStore;
 import com.myapp.security.Roles;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import java.util.*;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -34,6 +36,12 @@ public class UserManagementControllerTest {
     private AccountStore asMock;
     @Mock
     private FacesContext facesContext;
+    private Account accountMock;
+
+    @Before
+    public void setUp() throws Exception {
+        accountMock = mock(Account.class);
+    }
 
     @Test
     public void fetchAccounts() {
@@ -42,12 +50,11 @@ public class UserManagementControllerTest {
 
         controller.fetchAccounts();
         List<Account> result = controller.getAccountList();
-        assertThat(result, is(accounts));
+        assertThat(result, sameInstance(accounts));
     }
 
     @Test
     public void fetchSingleAccountSuccess() {
-        Account accountMock = mock(Account.class);
         Set<Roles> roles = new HashSet<>();
         roles.add(Roles.ADMIN);
         when(accountMock.isActive()).thenReturn(true);
@@ -59,7 +66,7 @@ public class UserManagementControllerTest {
         Account resultSuccess = controller.getSingleAccount();
         List<Account> result = controller.getAccountList();
 
-        assertThat(resultSuccess, is(accountMock));
+        assertThat(resultSuccess, sameInstance(accountMock));
         assertThat(result.size(), is(1));
         assertTrue(result.contains(accountMock));
         assertTrue(controller.isActive());
@@ -80,5 +87,18 @@ public class UserManagementControllerTest {
         assertNull(resultFail);
         assertNull(result);
         verify(facesContext).addMessage(eq("usersListForm:login"), any(FacesMessage.class));
+    }
+
+    @Test
+    public void updateAccount() {
+        Set<Roles> rolesList = new HashSet<>();
+        rolesList.add(Roles.ADMIN);
+        controller.setActive(true);
+        controller.setRoles(rolesList);
+        controller.setSingleAccount(accountMock);
+        controller.updateAccount();
+
+        verify(asMock).changeAccountStatus(accountMock, true);
+        verify(asMock).setNewRolesToAccount(accountMock, rolesList);
     }
 }

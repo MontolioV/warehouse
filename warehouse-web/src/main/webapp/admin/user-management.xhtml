@@ -14,6 +14,41 @@
 <h:body>
     <compc:access/>
     <h:panelGrid columns="1">
+        <h:form rendered="#{not empty userManagementController.singleAccount}">
+            <o:importConstants type="com.myapp.security.Roles"/>
+            <h:panelGrid columns="1">
+                <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Is active"/>
+                    <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
+                </h:panelGrid>
+                <h:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
+                    <f:selectItems value="#{Roles}"/>
+                </h:selectManyCheckbox>
+                <h:commandButton value="Save" action="#{userManagementController.updateAccount()}">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+            </h:panelGrid>
+        </h:form>
+        <c:if test="#{not empty userManagementController.singleAccount}">
+            <h:form>
+                <o:importConstants type="com.myapp.security.Roles"/>
+                <h:panelGrid columns="1">
+                    <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Is active"/>
+                        <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
+                    </h:panelGrid>
+                    <h:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
+                        <f:selectItems value="#{Roles}"/>
+                    </h:selectManyCheckbox>
+                    <h:commandButton value="Save" action="#{userManagementController.updateAccount()}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </h:form>
+        </c:if>
+
         <h:form  id="usersListForm">
             <h:panelGrid columns="2">
                 <h:panelGrid columns="1">
@@ -25,7 +60,7 @@
 
                     <h:panelGrid columns="2">
                         <h:commandButton value="Find user" action="#{userManagementController.fetchSingleAccount()}">
-                            <f:ajax execute="@form" render="@form"/>
+                            <f:ajax execute="@form" render="@all"/>
                         </h:commandButton>
 
                         <h:commandButton value="Show all users" action="#{userManagementController.fetchAccounts()}">
@@ -33,19 +68,6 @@
                         </h:commandButton>
                     </h:panelGrid>
                 </h:panelGrid>
-                <c:if test="#{not empty userManagementController.singleAccount}">
-                    <o:importConstants type="com.myapp.security.Roles"/>
-                    <h:panelGrid columns="1">
-                        <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="Is active"/>
-                            <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
-                        </h:panelGrid>
-                        <h:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
-                            <f:selectItems value="#{Roles}"/>
-                        </h:selectManyCheckbox>
-                    </h:panelGrid>
-                </c:if>
             </h:panelGrid>
 
             <h:dataTable value="#{userManagementController.accountList}" var="account">

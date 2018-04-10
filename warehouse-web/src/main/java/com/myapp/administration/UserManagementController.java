@@ -9,9 +9,7 @@ import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>Created by MontolioV on 06.04.18.
@@ -26,7 +24,7 @@ public class UserManagementController {
     private Account singleAccount;
     private String login;
     private boolean active;
-    private List<Roles> roles;
+    private Set<Roles> roles;
 
     public void fetchAccounts() {
         accountList = accountStore.getAllAccounts();
@@ -39,10 +37,15 @@ public class UserManagementController {
             accountList = new ArrayList<>();
             accountList.add(singleAccount);
             active = singleAccount.isActive();
-            roles = new ArrayList<>(singleAccount.getRoles());
+            roles = singleAccount.getRoles();
         } else {
             facesContext.addMessage("usersListForm:login", new FacesMessage("User doesn't exist!"));
         }
+    }
+
+    public void updateAccount() {
+        accountStore.changeAccountStatus(singleAccount, active);
+        accountStore.setNewRolesToAccount(singleAccount, new HashSet<>(roles));
     }
 
     public List<Account> getAccountList() {
@@ -93,11 +96,11 @@ public class UserManagementController {
         this.active = active;
     }
 
-    public List<Roles> getRoles() {
+    public Set<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Roles> roles) {
+    public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
 }

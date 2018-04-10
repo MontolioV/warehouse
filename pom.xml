@@ -165,6 +165,7 @@
                     <version>1.2.1.Final</version>
                     <configuration>
                         <force>true</force>
+                        <runtime-name>${project.parent.artifactId}.${project.packaging}</runtime-name>
                     </configuration>
                     <executions>
                         <execution>

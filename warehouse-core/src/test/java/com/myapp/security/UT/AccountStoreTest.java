@@ -14,10 +14,12 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.myapp.security.Roles.*;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -219,5 +221,13 @@ public class AccountStoreTest implements CommonChecks {
 
         assertThat(account.getRoles().size(), is(0));
         verify(emMock).merge(accountNew);
+    }
+
+    @Test
+    public void setNewRolesToAccount() {
+        Set<Roles> roles = new HashSet<>();
+        accountStore.setNewRolesToAccount(accountExisting, roles);
+        verify(emMock).merge(accountExisting);
+        assertThat(accountExisting.getRoles(), sameInstance(roles));
     }
 }

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.myapp.security.Roles.Const.*;
 
@@ -109,11 +110,17 @@ public class AccountStore {
     }
 
     @RolesAllowed(ADMIN)
-    public Account removeRoleFromAccount(@NotNull Account account, Roles role) {
+    public Account removeRoleFromAccount(@NotNull Account account, @NotNull Roles role) {
         if (!account.getRoles().contains(role)) {
             return account;
         }
         account.getRoles().remove(role);
+        return em.merge(account);
+    }
+
+    @RolesAllowed(ADMIN)
+    public Account setNewRolesToAccount(@NotNull Account account, @NotNull Set<Roles> roles) {
+        account.setRoles(roles);
         return em.merge(account);
     }
 

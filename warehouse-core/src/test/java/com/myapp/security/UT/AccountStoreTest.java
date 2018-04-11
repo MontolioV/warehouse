@@ -85,6 +85,7 @@ public class AccountStoreTest implements CommonChecks {
     public void createAccount() throws LoginExistsException, UnsecurePasswordException {
         accountStore.createAccount(accountNew);
         verify(emMock).persist(accountNew);
+        verify(emMock).detach(accountNew);
 
         assertThat(accountNew.getId(), is(1L));
         assertThat(accountNew.getLogin(), is("test"));
@@ -117,6 +118,7 @@ public class AccountStoreTest implements CommonChecks {
             }
         }
         verify(emMock, never()).persist(accountNew);
+        verify(emMock, never()).detach(accountNew);
     }
 
     @Test
@@ -128,6 +130,7 @@ public class AccountStoreTest implements CommonChecks {
         assertTrue(accountExists.isPresent());
         assertThat(accountExists.get(), is(accountExisting));
         verify(emMock, times(2)).createNamedQuery(Account.GET_BY_LOGIN, Account.class);
+        verify(emMock).detach(accountExisting);
     }
 
     @Test
@@ -139,6 +142,7 @@ public class AccountStoreTest implements CommonChecks {
         assertTrue(accountPassRight.isPresent());
         assertFalse(accountPassWrong.isPresent());
         assertThat(accountPassRight.get(), is(accountExisting));
+        verify(emMock, times(2)).detach(accountExisting);
     }
 
     @Test
@@ -148,15 +152,18 @@ public class AccountStoreTest implements CommonChecks {
 
         assertTrue(accountTokenValid.isPresent());
         assertFalse(accountTokenInvalid.isPresent());
+        verify(emMock).detach(accountExisting);
     }
 
     @Test
     public void getAllAccounts() {
         TypedQuery<Account> customQueryMock = mock(TypedQuery.class);
         ArrayList<Account> arrayList = new ArrayList<>();
+        arrayList.add(accountExisting);
         when(emMock.createNamedQuery(Account.GET_ALL, Account.class)).thenReturn(customQueryMock);
         when(customQueryMock.getResultList()).thenReturn(arrayList);
         assertThat(accountStore.getAllAccounts(), is(arrayList));
+        verify(emMock).detach(accountExisting);
     }
 
     @Test

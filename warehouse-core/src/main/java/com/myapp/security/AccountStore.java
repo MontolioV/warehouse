@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.myapp.security.Roles.Const.*;
+import static com.myapp.security.Roles.Const.ADMIN;
+import static com.myapp.security.Roles.Const.MODERATOR;
 
 @Stateless
 public class AccountStore {
@@ -40,14 +41,17 @@ public class AccountStore {
         account.addRole(Roles.USER);
 
         em.persist(account);
+        em.detach(account);
         return account;
     }
 
     public Optional<Account> getAccountByLogin(@NotBlank String login) {
         try {
-            return Optional.of(em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
+            Account account = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
                     .setParameter("login", login)
-                    .getSingleResult());
+                    .getSingleResult();
+            em.detach(account);
+            return Optional.of(account);
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -64,9 +68,11 @@ public class AccountStore {
 
     public Optional<Account> getAccountByTokenHash(@NotBlank String tokenHash) {
         try {
-            return Optional.of(em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
+            Account account = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
                     .setParameter("hash", tokenHash)
-                    .getSingleResult());
+                    .getSingleResult();
+            em.detach(account);
+            return Optional.of(account);
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -74,17 +80,19 @@ public class AccountStore {
 
     @RolesAllowed(ADMIN)
     public List<Account> getAllAccounts() {
-        return em.createNamedQuery(Account.GET_ALL, Account.class).getResultList();
+        List<Account> resultList = em.createNamedQuery(Account.GET_ALL, Account.class).getResultList();
+        resultList.forEach(em::detach);
+        return resultList;
     }
 
-    @RolesAllowed(MODERATOR)
+    @RolesAllowed({MODERATOR, ADMIN})
     public Account changeAccountStatus(@NotNull Account account, boolean isActive) {
 
         account.setActive(isActive);
         return em.merge(account);
     }
 
-    @RolesAllowed(USER)
+    @RolesAllowed(ADMIN)
     public Account changeAccountPassword(@NotNull Account account, @NotBlank String newPassword) throws UnsecurePasswordException {
         if (!isPasswordSecure(newPassword)) {
             throw new UnsecurePasswordException();
@@ -94,7 +102,7 @@ public class AccountStore {
         return em.merge(account);
     }
 
-    @RolesAllowed(USER)
+    @RolesAllowed(ADMIN)
     public Account changeAccountEmail(@NotNull Account account, @NotBlank String newEmail) {
         account.setEmail(newEmail);
         return em.merge(account);

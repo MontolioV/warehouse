@@ -5,17 +5,20 @@ import com.myapp.security.AccountStore;
 import com.myapp.security.Roles;
 
 import javax.ejb.EJB;
-import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * <p>Created by MontolioV on 06.04.18.
  */
-@Model
-public class UserManagementController {
+@Named
+@ViewScoped
+public class UserManagementController implements Serializable {
     @Inject
     private FacesContext facesContext;
     @EJB
@@ -37,15 +40,20 @@ public class UserManagementController {
             accountList = new ArrayList<>();
             accountList.add(singleAccount);
             active = singleAccount.isActive();
-            roles = singleAccount.getRoles();
+            roles = new HashSet<>(singleAccount.getRoles());
         } else {
             facesContext.addMessage("usersListForm:login", new FacesMessage("User doesn't exist!"));
         }
     }
 
     public void updateAccount() {
-        accountStore.changeAccountStatus(singleAccount, active);
         accountStore.setNewRolesToAccount(singleAccount, new HashSet<>(roles));
+        accountStore.changeAccountStatus(singleAccount, active);
+    }
+
+    public void changeLogin(String login) {
+        this.login = login;
+        fetchSingleAccount();
     }
 
     public List<Account> getAccountList() {

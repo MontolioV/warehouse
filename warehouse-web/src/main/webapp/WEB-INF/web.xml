@@ -14,7 +14,7 @@
             <url-pattern>/private/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>TRUSTED_USER</role-name>
+            <role-name>USER</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>

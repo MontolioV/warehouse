@@ -1,0 +1,18 @@
+body {
+    background: linear-gradient(
+            to right,
+            palegreen,
+            #ceee58 15%,
+            #baffdc 15%,
+            #baffdc 85%,
+            #ceee58 85%,
+            palegreen
+    );
+}
+
+table {
+    border: 1px solid black;
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
+}

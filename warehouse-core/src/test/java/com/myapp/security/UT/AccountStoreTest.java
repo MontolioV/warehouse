@@ -106,6 +106,7 @@ public class AccountStoreTest implements CommonChecks {
     public void createAccount() throws LoginExistsException, UnsecurePasswordException {
         accountStore.createAccount(accountNew);
         verify(emMock).persist(accountNew);
+        verify(emMock).flush();
         verify(emMock).detach(accountNew);
 
         assertThat(accountNew.getId(), is(1L));

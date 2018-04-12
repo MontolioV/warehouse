@@ -19,10 +19,22 @@
             <h:message id="m_login" for="login"/>
 
             <h:outputLabel value="Password" for="password"/>
-            <h:inputSecret id="password" value="#{registrationController.account.passHash}" required="true">
-                <f:ajax event="blur" render="m_password"/>
+            <h:inputSecret id="password" value="#{registrationController.password}" required="true">
+                <f:ajax event="blur"
+                        execute="@this passwordConf"
+                        listener="#{registrationController.passwordConfirmation}"
+                        render="m_password"/>
             </h:inputSecret>
             <h:message id="m_password" for="password"/>
+
+            <h:outputLabel value="Confirm password" for="passwordConf"/>
+            <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
+                <f:ajax event="blur"
+                        execute="@this password"
+                        listener="#{registrationController.passwordConfirmation}"
+                        render="m_passwordConf"/>
+            </h:inputSecret>
+            <h:message id="m_passwordConf" for="passwordConf"/>
 
             <h:outputLabel value="Email" for="email"/>
             <h:inputText id="email" value="#{registrationController.account.email}" required="true">
@@ -31,7 +43,7 @@
             <h:message id="m_email" for="email"/>
 
             <h:commandButton value="Register" action="#{registrationController.register}">
-                <f:ajax execute="@form" render="@form"/>
+                <f:ajax execute="@form" render="@form" listener="#{registrationController.passwordConfirmation}"/>
             </h:commandButton>
         </h:panelGrid>
 

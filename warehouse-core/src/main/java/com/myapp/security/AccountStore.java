@@ -44,6 +44,7 @@ public class AccountStore {
         account.addRole(Roles.USER);
 
         em.persist(account);
+        em.flush();
         em.detach(account);
         return account;
     }

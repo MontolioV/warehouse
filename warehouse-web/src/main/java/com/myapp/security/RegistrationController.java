@@ -16,6 +16,8 @@ public class RegistrationController {
     @EJB
     private AccountStore accountStore;
     private Account account = new Account();
+    private String password;
+    private String passwordConfirm;
 
     public String register() {
         try {
@@ -28,6 +30,14 @@ public class RegistrationController {
             facesContext.addMessage("reg_form:password", new FacesMessage("Password is not secure!"));
         }
         return null;
+    }
+
+    public void passwordConfirmation() {
+        if (password.equals(passwordConfirm)) {
+            account.setPassHash(password);
+        } else {
+            facesContext.addMessage("reg_form:passwordConf", new FacesMessage("Password is not confirmed!"));
+        }
     }
 
     public AccountStore getAccountStore() {
@@ -44,5 +54,29 @@ public class RegistrationController {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public FacesContext getFacesContext() {
+        return facesContext;
+    }
+
+    public void setFacesContext(FacesContext facesContext) {
+        this.facesContext = facesContext;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 }

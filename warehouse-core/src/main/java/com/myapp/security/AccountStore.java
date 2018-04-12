@@ -1,7 +1,9 @@
 package com.myapp.security;
 
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -12,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.myapp.security.Roles.Const.ADMIN;
-import static com.myapp.security.Roles.Const.MODERATOR;
+import static com.myapp.security.Roles.Const.*;
 
 @Stateless
 public class AccountStore {
@@ -23,6 +24,8 @@ public class AccountStore {
     private EntityManager em;
     @EJB
     private Encryptor encryptor;
+    @Resource
+    private SessionContext sessionContext;
 
     public Account createAccount(@NotNull Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
@@ -47,14 +50,18 @@ public class AccountStore {
 
     public Optional<Account> getAccountByLogin(@NotBlank String login) {
         try {
-            Account account = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
-                    .setParameter("login", login)
-                    .getSingleResult();
+            Account account = getAccountByLoginNotSafe(login);
             em.detach(account);
             return Optional.of(account);
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    private Account getAccountByLoginNotSafe(String login) throws NoResultException {
+        return em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
+                .setParameter("login", login)
+                .getSingleResult();
     }
 
     public Optional<Account> getAccountByLoginAndPassword(@NotBlank String login, @NotBlank String password) {
@@ -78,6 +85,14 @@ public class AccountStore {
         }
     }
 
+    private Account findAccountByID(long id) throws NoResultException {
+        Account result = em.find(Account.class, id);
+        if (result != null) {
+            return result;
+        }
+        throw new NoResultException();
+    }
+
     @RolesAllowed(ADMIN)
     public List<Account> getAllAccounts() {
         List<Account> resultList = em.createNamedQuery(Account.GET_ALL, Account.class).getResultList();
@@ -86,50 +101,52 @@ public class AccountStore {
     }
 
     @RolesAllowed({MODERATOR, ADMIN})
-    public Account changeAccountStatus(@NotNull Account account, boolean isActive) {
-
-        account.setActive(isActive);
-        return em.merge(account);
+    public void changeAccountStatus(long accountID, boolean isActive) throws NoResultException{
+        findAccountByID(accountID).setActive(isActive);
     }
 
     @RolesAllowed(ADMIN)
-    public Account changeAccountPassword(@NotNull Account account, @NotBlank String newPassword) throws UnsecurePasswordException {
+    public void changeAccountPassword(long accountID, @NotBlank String newPassword) throws UnsecurePasswordException {
         if (!isPasswordSecure(newPassword)) {
             throw new UnsecurePasswordException();
         }
 
-        account.setPassHash(encryptor.generate(newPassword));
-        return em.merge(account);
+        findAccountByID(accountID).setPassHash(encryptor.generate(newPassword));
     }
 
-    @RolesAllowed(ADMIN)
-    public Account changeAccountEmail(@NotNull Account account, @NotBlank String newEmail) {
-        account.setEmail(newEmail);
-        return em.merge(account);
-    }
-
-    @RolesAllowed(ADMIN)
-    public Account addRoleToAccount(@NotNull Account account, @NotNull Roles role) {
-        if (account.getRoles().contains(role)) {
-            return account;
+    @RolesAllowed(USER)
+    public void changeSelfAccountPassword(@NotBlank String newPassword) throws UnsecurePasswordException {
+        if (!isPasswordSecure(newPassword)) {
+            throw new UnsecurePasswordException();
         }
-        account.getRoles().add(role);
-        return em.merge(account);
+
+        getAccountByLoginNotSafe(sessionContext.getCallerPrincipal().getName())
+                .setPassHash(encryptor.generate(newPassword));
     }
 
     @RolesAllowed(ADMIN)
-    public Account removeRoleFromAccount(@NotNull Account account, @NotNull Roles role) {
-        if (!account.getRoles().contains(role)) {
-            return account;
-        }
-        account.getRoles().remove(role);
-        return em.merge(account);
+    public void changeAccountEmail(long accountID, @NotBlank String newEmail) {
+        findAccountByID(accountID).setEmail(newEmail);
+    }
+
+    @RolesAllowed(USER)
+    public void changeSelfAccountEmail(@NotBlank String newEmail) {
+        getAccountByLoginNotSafe(sessionContext.getCallerPrincipal().getName()).setEmail(newEmail);
     }
 
     @RolesAllowed(ADMIN)
-    public Account setNewRolesToAccount(@NotNull Account account, @NotNull Set<Roles> roles) {
-        account.setRoles(roles);
-        return em.merge(account);
+    public void addRoleToAccount(long accountID, @NotNull Roles role) {
+        findAccountByID(accountID).getRoles().add(role);
+    }
+
+    @RolesAllowed(ADMIN)
+    public void removeRoleFromAccount(long accountID, @NotNull Roles role) {
+        findAccountByID(accountID).getRoles().remove(role);
+    }
+
+    @RolesAllowed(ADMIN)
+    public void setNewRolesToAccount(long accountID, @NotNull Set<Roles> roles) {
+        findAccountByID(accountID).setRoles(roles);
     }
 
     private boolean isPasswordSecure(String password) {
@@ -159,5 +176,13 @@ public class AccountStore {
 
     public void setEm(EntityManager em) {
         this.em = em;
+    }
+
+    public SessionContext getSessionContext() {
+        return sessionContext;
+    }
+
+    public void setSessionContext(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
     }
 }

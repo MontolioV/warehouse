@@ -47,8 +47,10 @@ public class UserManagementController implements Serializable {
     }
 
     public void updateAccount() {
-        accountStore.setNewRolesToAccount(singleAccount, new HashSet<>(roles));
-        accountStore.changeAccountStatus(singleAccount, active);
+        accountStore.setNewRolesToAccount(singleAccount.getId(), new HashSet<>(roles));
+        accountStore.changeAccountStatus(singleAccount.getId(), active);
+        login = singleAccount.getLogin();
+        fetchSingleAccount();
     }
 
     public void changeLogin(String login) {

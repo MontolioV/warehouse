@@ -36,11 +36,19 @@ public class UserManagementControllerTest {
     private AccountStore asMock;
     @Mock
     private FacesContext facesContext;
-    private Account accountMock;
+    private Account fetchedAccountMock;
 
     @Before
     public void setUp() throws Exception {
-        accountMock = mock(Account.class);
+        fetchedAccountMock = mock(Account.class);
+
+        Set<Roles> roles = new HashSet<>();
+        roles.add(Roles.ADMIN);
+        when(fetchedAccountMock.isActive()).thenReturn(true);
+        when(fetchedAccountMock.getRoles()).thenReturn(roles);
+        when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(fetchedAccountMock));
+
+        controller.setLogin(LOGIN_VALID);
     }
 
     @Test
@@ -55,24 +63,8 @@ public class UserManagementControllerTest {
 
     @Test
     public void fetchSingleAccountSuccess() {
-        Set<Roles> roles = new HashSet<>();
-        roles.add(Roles.ADMIN);
-        when(accountMock.isActive()).thenReturn(true);
-        when(accountMock.getRoles()).thenReturn(roles);
-        when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(accountMock));
-
-        controller.setLogin(LOGIN_VALID);
         controller.fetchSingleAccount();
-        Account resultSuccess = controller.getSingleAccount();
-        List<Account> result = controller.getAccountList();
-
-        assertThat(resultSuccess, sameInstance(accountMock));
-        assertThat(result.size(), is(1));
-        assertTrue(result.contains(accountMock));
-        assertTrue(controller.isActive());
-        assertTrue(controller.getRoles().contains(Roles.ADMIN));
-        assertThat(controller.getRoles().size(), is(1));
-        verify(facesContext, never()).addMessage(anyString(), any(FacesMessage.class));
+        fetchSingleAccountSuccessAsserts();
     }
 
     @Test
@@ -91,14 +83,32 @@ public class UserManagementControllerTest {
 
     @Test
     public void updateAccount() {
+        Account oldAccountMock = mock(Account.class);
+        when(oldAccountMock.getLogin()).thenReturn(LOGIN_VALID);
+
         Set<Roles> rolesList = new HashSet<>();
         rolesList.add(Roles.ADMIN);
         controller.setActive(true);
         controller.setRoles(rolesList);
-        controller.setSingleAccount(accountMock);
+        controller.setSingleAccount(oldAccountMock);
+        controller.setLogin("changed login");
         controller.updateAccount();
 
-        verify(asMock).changeAccountStatus(accountMock, true);
-        verify(asMock).setNewRolesToAccount(accountMock, rolesList);
+        verify(asMock).changeAccountStatus(oldAccountMock.getId(), true);
+        verify(asMock).setNewRolesToAccount(oldAccountMock.getId(), rolesList);
+        fetchSingleAccountSuccessAsserts();
+    }
+
+    private void fetchSingleAccountSuccessAsserts() {
+        Account resultSuccess = controller.getSingleAccount();
+        List<Account> result = controller.getAccountList();
+
+        assertThat(resultSuccess, sameInstance(fetchedAccountMock));
+        assertThat(result.size(), is(1));
+        assertTrue(result.contains(fetchedAccountMock));
+        assertTrue(controller.isActive());
+        assertTrue(controller.getRoles().contains(Roles.ADMIN));
+        assertThat(controller.getRoles().size(), is(1));
+        verify(facesContext, never()).addMessage(anyString(), any(FacesMessage.class));
     }
 }

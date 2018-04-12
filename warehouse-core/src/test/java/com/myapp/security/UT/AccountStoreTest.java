@@ -8,9 +8,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
@@ -23,7 +25,6 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,15 +39,26 @@ public class AccountStoreTest implements CommonChecks {
     @Mock
     private EntityManager emMock;
     @Mock
+    private SessionContext contextMock;
+    @Mock
+    private Principal principalMock;
+    @Mock
     private Account accountMock;
     private Account accountNew;
     private Account accountExisting;
+    private long accountExistingID = 0L;
+    private long accountNewID = 1L;
+    private long accountMockID = 2L;
+    private long accountNonExistingID = 3L;
     private String[] badPasswords = {"Shrt12", "NoNumerals", "nocapitals238",};
 
     @Before
     public void setUp() throws Exception {
-        accountNew = new Account(1L, "test", PASSWORD_VALID, "test", new ArrayList<>(), new HashSet<>());
-        accountExisting = new Account(0L, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new HashSet<>());
+        accountNew = new Account(accountNewID, "test", PASSWORD_VALID, "test", new ArrayList<>(), new HashSet<>());
+        accountExisting = new Account(accountExistingID, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new HashSet<>());
+
+        when(contextMock.getCallerPrincipal()).thenReturn(principalMock);
+        when(principalMock.getName()).thenReturn(LOGIN_VALID);
 
         when(encryptorMock.generate(PASSWORD_VALID)).thenReturn(PASS_HASH_VALID);
         when(encryptorMock.generate(PASSWORD_INVALID)).thenReturn(PASS_HASH_INVALID);
@@ -79,6 +91,15 @@ public class AccountStoreTest implements CommonChecks {
         when(getByTokenHashMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(existingLoginQueryMock);
         when(existingLoginQueryMock.getResultList()).thenReturn(accountsNotEmpty);
         when(existingLoginQueryMock.getSingleResult()).thenReturn(accountExisting);
+
+        TypedQuery<Account> mockAccountLoginQueryMock = mock(TypedQuery.class);
+        when(getByLoginQueryMock.setParameter("login", LOGIN_VALID)).thenReturn(mockAccountLoginQueryMock);
+        when(mockAccountLoginQueryMock.getSingleResult()).thenReturn(accountMock);
+
+        when(emMock.find(Account.class, accountExistingID)).thenReturn(accountExisting);
+        when(emMock.find(Account.class, accountNewID)).thenReturn(accountNew);
+        when(emMock.find(Account.class, accountMockID)).thenReturn(accountMock);
+        when(emMock.find(Account.class, accountNonExistingID)).thenReturn(null);
     }
 
     @Test
@@ -167,74 +188,123 @@ public class AccountStoreTest implements CommonChecks {
     }
 
     @Test
-    public void changeAccountStatus() {
-        accountStore.changeAccountStatus(accountMock, true);
+    public void changeExistingAccountStatus() {
+        accountStore.changeAccountStatus(accountMockID, true);
+        verify(emMock).find(Account.class, accountMockID);
         verify(accountMock).setActive(true);
-        verify(emMock).merge(accountMock);
+    }
+
+    @Test(expected = NoResultException.class)
+    public void changeNonExistingAccountStatus() {
+        accountStore.changeAccountStatus(accountNonExistingID, true);
     }
 
     @Test
-    public void changeAccountPassword() throws UnsecurePasswordException {
-        accountStore.changeAccountPassword(accountMock, PASSWORD_VALID);
+    public void changeExistingAccountPassword() throws UnsecurePasswordException {
+        accountStore.changeAccountPassword(accountMockID, PASSWORD_VALID);
+        verify(encryptorMock).generate(PASSWORD_VALID);
+        verify(emMock).find(Account.class, accountMockID);
+        verify(accountMock).setPassHash(PASS_HASH_VALID);
+    }
+
+    @Test(expected = NoResultException.class)
+    public void changeNonExistingAccountPassword() throws UnsecurePasswordException {
+        accountStore.changeAccountPassword(accountNonExistingID, PASSWORD_VALID);
+    }
+
+    @Test
+    public void changeSelfAccountPassword() throws UnsecurePasswordException {
+        accountStore.changeSelfAccountPassword(PASSWORD_VALID);
         verify(encryptorMock).generate(PASSWORD_VALID);
         verify(accountMock).setPassHash(PASS_HASH_VALID);
-        verify(emMock).merge(accountMock);
     }
 
     @Test
     public void changeAccountPasswordFail() {
         for (String password : badPasswords) {
             try {
-                accountStore.changeAccountPassword(accountMock, password);
+                accountStore.changeAccountPassword(accountMockID, password);
+            } catch (UnsecurePasswordException e) {
+                //as expected
+            }
+            try {
+                accountStore.changeSelfAccountPassword(password);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
             verify(encryptorMock, never()).generate(password);
             verify(accountMock, never()).setPassHash(PASS_HASH_INVALID);
-            verify(emMock, never()).merge(accountMock);
+            verify(emMock, never()).find(Account.class, accountMockID);
         }
     }
 
     @Test
-    public void changeAccountEmail() {
-        accountStore.changeAccountEmail(accountMock, anyString());
-        verify(accountMock).setEmail(anyString());
-        verify(emMock).merge(accountMock);
+    public void changeExistingAccountEmail() {
+        accountStore.changeAccountEmail(accountMockID, "email");
+        verify(emMock).find(Account.class, accountMockID);
+        verify(accountMock).setEmail("email");
+    }
+
+    @Test(expected = NoResultException.class)
+    public void changeNonExistingAccountEmail() {
+        accountStore.changeAccountEmail(accountNonExistingID, "email");
     }
 
     @Test
-    public void addRoleToAccount() {
-        Account account = accountStore.addRoleToAccount(accountNew, MODERATOR);
-        assertThat(account.getRoles().size(), is(1));
-        assertTrue(account.getRoles().contains(MODERATOR));
-
-        account = accountStore.addRoleToAccount(accountNew, MODERATOR);
-        assertThat(account.getRoles().size(), is(1));
-
-        verify(emMock).merge(accountNew);
+    public void changeSelfAccountEmail() {
+        accountStore.changeSelfAccountEmail("email");
+        verify(accountMock).setEmail("email");
     }
 
     @Test
-    public void removeRoleFromAccount() {
-        accountNew.getRoles().add(ADMIN);
-        Account account = accountStore.removeRoleFromAccount(accountNew, ADMIN);
-        
-        assertThat(account.getRoles().size(), is(0));
-        assertFalse(account.getRoles().contains(ADMIN));
+    public void addRoleToExistingAccount() {
+        assertTrue(accountExisting.getRoles().isEmpty());
 
-        for (Roles role : Roles.values()) {
-            accountStore.removeRoleFromAccount(accountNew, role);
-        }
+        accountStore.addRoleToAccount(accountExistingID, MODERATOR);
+        assertThat(accountExisting.getRoles().size(), is(1));
+        assertTrue(accountExisting.getRoles().contains(MODERATOR));
 
-        assertThat(account.getRoles().size(), is(0));
-        verify(emMock).merge(accountNew);
+        accountStore.addRoleToAccount(accountExistingID, MODERATOR);
+        assertThat(accountExisting.getRoles().size(), is(1));
+        assertTrue(accountExisting.getRoles().contains(MODERATOR));
+
+        verify(emMock, times(2)).find(Account.class, accountExistingID);
+    }
+
+    @Test(expected = NoResultException.class)
+    public void addRoleToNonExistingAccount() {
+        accountStore.addRoleToAccount(accountNonExistingID, MODERATOR);
     }
 
     @Test
-    public void setNewRolesToAccount() {
+    public void removeRoleFromExistingAccount() {
+        assertTrue(accountExisting.getRoles().isEmpty());
+        accountExisting.getRoles().add(ADMIN);
+        accountExisting.getRoles().add(MODERATOR);
+
+        accountStore.removeRoleFromAccount(accountExistingID, ADMIN);
+
+        assertThat(accountExisting.getRoles().size(), is(1));
+        assertTrue(accountExisting.getRoles().contains(MODERATOR));
+        verify(emMock).find(Account.class, accountExistingID);
+    }
+
+    @Test(expected = NoResultException.class)
+    public void removeRoleFromNonExistingAccount() {
+        accountStore.removeRoleFromAccount(accountNonExistingID, MODERATOR);
+    }
+
+    @Test
+    public void setNewRolesToExistingAccount() {
         Set<Roles> roles = new HashSet<>();
-        accountStore.setNewRolesToAccount(accountExisting, roles);
-        verify(emMock).merge(accountExisting);
+        accountStore.setNewRolesToAccount(accountExistingID, roles);
+        verify(emMock).find(Account.class, accountExistingID);
         assertThat(accountExisting.getRoles(), sameInstance(roles));
+    }
+
+    @Test(expected = NoResultException.class)
+    public void setNewRolesToNonExistingAccount() {
+        Set<Roles> roles = new HashSet<>();
+        accountStore.setNewRolesToAccount(accountNonExistingID, roles);
     }
 }

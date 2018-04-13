@@ -56,7 +56,11 @@
             </h:form>
         </h:panelGroup>
 
-        <h:dataTable id="usersTable" value="#{userManagementController.accountList}" var="account">
+        <h:dataTable id="usersTable"
+                     styleClass="dataTable"
+                     headerClass="dataTableHeader"
+                     rowClasses="dataTableRowOdd,dataTableRowEven"
+                     value="#{userManagementController.accountList}" var="account">
             <h:column>
                 <f:facet name="header">id</f:facet>
                 #{account.id}
@@ -73,6 +77,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">active</f:facet>
+
                 #{account.active}
             </h:column>
             <h:column>

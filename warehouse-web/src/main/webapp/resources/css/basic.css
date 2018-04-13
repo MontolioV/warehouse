@@ -11,8 +11,30 @@ body {
 }
 
 table {
-    border: 1px solid black;
     width: 70%;
     margin-left: 15%;
     margin-right: 15%;
+}
+
+.dataTable {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.dataTableHeader {
+    background: #8be3fa;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+}
+.dataTableRowOdd {
+    background: #dafff9;
+}
+.dataTableRowEven {
+    background: #c7f6ed;
+}
+
+.authenticationBlock {
+    width: auto;
+    margin-left: auto;
+    margin-right: 20%;
+    margin-top: 4%;
 }

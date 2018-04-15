@@ -17,7 +17,9 @@
                 <h:button outcome="/registration.xhtml" value="Registration"/>
             </c:when>
             <c:otherwise>
-                <h:outputLabel value="#{request.userPrincipal.name}"/>
+                <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/private/personal-cabinet.jsf">
+                    #{request.userPrincipal.name}
+                </h:outputLink>
                 <a href="#{facesContext.externalContext.applicationContextPath}/logout">Logout</a>
             </c:otherwise>
         </c:choose>

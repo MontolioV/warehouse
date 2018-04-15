@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core">
+<h:head>
+    <title>Personal cabinet</title>
+    <h:outputStylesheet name="css/basic.css"/>
+</h:head>
+
+<h:body>
+    <compc:access/>
+    <h:panelGrid columns="1">
+        <h:outputLabel value="Account info"/>
+        <h:panelGrid id="accountInfo" columns="2">
+            <h:outputLabel value="Login" for="login"/>
+            <h:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
+
+            <h:outputLabel value="Email" for="email"/>
+            <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
+        </h:panelGrid>
+
+        <h:outputLabel value="Edit account"/>
+        <h:form>
+            <h:panelGrid columns="2">
+                <h:outputLabel value="New password" for="newPassword"/>
+                <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
+
+                <h:outputLabel value="New password confirm" for="confirm"/>
+                <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
+
+                <h:commandButton value="Change password" action="#{personalCabinetController.changePassword()}">
+                    <f:ajax execute="@form" render="@form accountInfo messages" />
+                </h:commandButton>
+            </h:panelGrid>
+        </h:form>
+        <h:form>
+            <h:panelGrid columns="2">
+                <h:outputLabel value="New email" for="newEmail"/>
+                <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+
+                <h:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}">
+                    <f:ajax execute="@form" render="@form accountInfo messages" />
+                </h:commandButton>
+            </h:panelGrid>
+        </h:form>
+
+        <h:messages id="messages" globalOnly="true" layout="table"/>
+    </h:panelGrid>
+</h:body>
+</html>

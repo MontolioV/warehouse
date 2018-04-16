@@ -1,4 +1,4 @@
-package com.myapp.security.IT;
+package com.myapp;
 
 import org.junit.Before;
 
@@ -7,8 +7,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 public class WithEmbeddedDB {
-    EntityManager em;
-    EntityTransaction transaction;
+    public EntityManager em;
+    public EntityTransaction transaction;
 
     @Before
     public void setUp() throws Exception {

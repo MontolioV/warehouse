@@ -1,5 +1,6 @@
 package com.myapp.security.IT;
 
+import com.myapp.WithEmbeddedDB;
 import com.myapp.security.Account;
 import com.myapp.security.Roles;
 import com.myapp.security.Token;
@@ -7,18 +8,18 @@ import com.myapp.security.TokenType;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static com.myapp.TestUtils.showConstraintViolations;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AccountToken_DB_IT extends WithEmbeddedDB{
+public class AccountToken_DB_IT extends WithEmbeddedDB {
     private Instant instant;
     private Token expectedToken;
     private Account expectedAccount;
@@ -27,7 +28,7 @@ public class AccountToken_DB_IT extends WithEmbeddedDB{
 
 
     @Test
-    public void success() {
+    public void persist() throws Exception {
         instant = Instant.now().plus(14, ChronoUnit.DAYS);
         expectedToken = new Token(0, "sajdaj", TokenType.REMEMBER_ME, new Date(), Date.from(instant));
         HashSet<Roles> roles = new HashSet<>();
@@ -48,17 +49,11 @@ public class AccountToken_DB_IT extends WithEmbeddedDB{
             em.persist(expectedAccount);
             em.persist(expiringToken);
         } catch (ConstraintViolationException e) {
-            Iterator<ConstraintViolation<?>> cvIterator = e.getConstraintViolations().iterator();
-            while (cvIterator.hasNext()) {
-                ConstraintViolation<?> nextViolation = cvIterator.next();
-                System.err.println(nextViolation);
-                System.err.println(nextViolation.getMessage());
-            }
-            throw e;
+            showConstraintViolations(e);
         }
         transaction.commit();
 
-        assertThat(expectedToken.getId(), not(equalTo(expiringToken.getId())));
+        assertThat(expectedToken.getId(), is(not(equalTo(expiringToken.getId()))));
 
         queryTests();
     }

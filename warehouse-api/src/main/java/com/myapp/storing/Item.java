@@ -1,4 +1,4 @@
-package com.myapp.stored;
+package com.myapp.storing;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,22 +16,30 @@ import java.util.Objects;
 @Entity
 @Access(value = AccessType.PROPERTY)
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dType")
 @NamedQueries({
         @NamedQuery(name = Item.GET_ALL, query = "select i from Item i"),
-        @NamedQuery(name = Item.GET_OLDEST, query = "select i from Item i order by i.creationDate desc"),
+        @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:class"),
+        @NamedQuery(name = Item.GET_LAST, query = "select i from Item i order by i.creationDate desc"),
+        @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:class order by i.creationDate desc"),
         @NamedQuery(name = Item.GET_BY_OWNER, query = "select i from Item i where i.owner=:owner"),
+        @NamedQuery(name = Item.GET_BY_OWNER_OF_CLASS, query = "select i from Item i where i.owner=:owner and type(i)=:class"),
 })
 @Table(indexes = {
         @Index(columnList = "name"),
         @Index(columnList = "owner"),
 })
 public class Item implements Serializable {
-    private static final String PREFIX = "com.myapp.stored.Item.";
+    private static final String PREFIX = "com.myapp.storing.Item.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
-    public static final String GET_OLDEST = PREFIX + "GET_OLDEST";
+    public static final String GET_ALL_OF_CLASS = PREFIX + "GET_ALL_OF_CLASS";
+    public static final String GET_LAST = PREFIX + "GET_LAST";
+    public static final String GET_LAST_OF_CLASS = PREFIX + "GET_LAST_OF_CLASS";
     public static final String GET_BY_OWNER = PREFIX + "GET_BY_OWNER";
+    public static final String GET_BY_OWNER_OF_CLASS = PREFIX + "GET_BY_OWNER_OF_CLASS";
 
     private long id;
+    private String dType;
     private String name;
     private String description;
     private String owner;
@@ -62,6 +70,15 @@ public class Item implements Serializable {
         this.id = id;
     }
 
+    @Column(name = "dType", insertable = false, updatable = false)
+    public String getdType() {
+        return dType;
+    }
+
+    public void setdType(String dType) {
+        this.dType = dType;
+    }
+
     @NotBlank
     @Size(max = 30)
     @Column(nullable = false, length = 30)
@@ -73,7 +90,6 @@ public class Item implements Serializable {
         this.name = name;
     }
 
-    @Column(length = 1000)
     public String getDescription() {
         return description;
     }

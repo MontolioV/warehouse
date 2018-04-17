@@ -1,11 +1,10 @@
-package com.myapp.stored.UT;
+package com.myapp.storing.UT;
 
-import com.myapp.stored.Item;
+import com.myapp.storing.Tag;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static com.myapp.TestUtils.serializationRoutine;
 import static org.hamcrest.CoreMatchers.is;
@@ -14,14 +13,13 @@ import static org.junit.Assert.assertThat;
 /**
  * <p>Created by MontolioV on 16.04.18.
  */
-public class ItemTest {
+public class TagTest {
 
     @Test
     public void serialization() throws IOException, ClassNotFoundException {
-        Item item = new Item(1, "test", "test", null, new Date(), true, new ArrayList<>());
+        Tag tag = new Tag(1, "test", new ArrayList<>());
 
-        Item restored = (Item) serializationRoutine(item);
-        assertThat(restored, is(item));
+        Tag restored = (Tag) serializationRoutine(tag);
+        assertThat(restored, is(tag));
     }
-
 }

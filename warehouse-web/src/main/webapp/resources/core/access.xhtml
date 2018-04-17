@@ -10,7 +10,7 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGrid styleClass="authenticationBlock" columns="2">
+    <h:panelGrid styleClass="#{cc.attrs.style}" columns="2">
         <c:choose>
             <c:when test="#{empty request.userPrincipal}">
                 <h:button outcome="/login.xhtml" value="Login"/>

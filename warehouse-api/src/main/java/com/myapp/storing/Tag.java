@@ -1,9 +1,10 @@
-package com.myapp.stored;
+package com.myapp.storing;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,24 +16,25 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = Tag.GET_ALL, query = "select t from Tag t"),
         @NamedQuery(name = Tag.GET_BY_NAME, query = "select t from Tag t where t.name=:name"),
+        @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:name,'%')"),
 })
 @Table(indexes = {
         @Index(columnList = "name", unique = true),
 })
 public class Tag implements Serializable {
-    private static final String PREFIX = "com.myapp.stored.Tag.";
+    private static final String PREFIX = "com.myapp.storing.Tag.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_NAME = PREFIX + "GET_BY_NAME";
+    public static final String GET_LIKE_NAME = PREFIX + "GET_LIKE_NAME";
 
     private long id;
     private String name;
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
     public Tag() {
     }
 
     public Tag(long id, String name, List<Item> items) {
-
         this.id = id;
         this.name = name;
         this.items = items;

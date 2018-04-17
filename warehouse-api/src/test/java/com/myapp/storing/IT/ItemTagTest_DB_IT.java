@@ -1,8 +1,9 @@
-package com.myapp.stored.IT;
+package com.myapp.storing.IT;
 
 import com.myapp.WithEmbeddedDB;
-import com.myapp.stored.Item;
-import com.myapp.stored.Tag;
+import com.myapp.storing.Item;
+import com.myapp.storing.Tag;
+import com.myapp.storing.TextItem;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolationException;
@@ -30,9 +31,11 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
     private Item item1;
     private Item item2;
     private Item item3;
+    private Item textItem;
 
     @Test
     public void persist() throws Exception {
+        Date minuteAgoDate = Date.from(Instant.now().minus(1, ChronoUnit.MINUTES));
         Date yesterdayDate = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
         Date weekAgoDate = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
 
@@ -40,7 +43,8 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         tag2 = new Tag(0, TEST_2, new ArrayList<>());
         item1 = new Item(0, TEST_1, TEST_1, TEST_1, weekAgoDate, true, new ArrayList<>());
         item2 = new Item(0, TEST_2, TEST_2, TEST_2, yesterdayDate, true, new ArrayList<>());
-        item3 = new Item(0, TEST_3, TEST_3, TEST_3, new Date(), true, new ArrayList<>());
+        item3 = new Item(0, TEST_3, TEST_3, TEST_3, minuteAgoDate, true, new ArrayList<>());
+        textItem = new TextItem(0, TEST_3, TEST_3, TEST_3, new Date(), true, new ArrayList<>(), TEST_3);
 
         tag1.getItems().add(item1);
         tag2.getItems().add(item1);
@@ -51,6 +55,7 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
 
         transaction.begin();
         try {
+            em.persist(textItem);
             em.persist(tag1);
             em.persist(tag2);
             em.persist(item1);
@@ -68,17 +73,48 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
 
     private void queryTests() {
         List<Item> itemResultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
+        assertThat(itemResultList.size(), is(4));
+        assertTrue(itemResultList.contains(item1));
+        assertTrue(itemResultList.contains(item2));
+        assertTrue(itemResultList.contains(item3));
+        assertTrue(itemResultList.contains(textItem));
+
+        itemResultList = em.createNamedQuery(Item.GET_ALL_OF_CLASS, Item.class)
+                .setParameter("class", Item.class)
+                .getResultList();
         assertThat(itemResultList.size(), is(3));
         assertTrue(itemResultList.contains(item1));
         assertTrue(itemResultList.contains(item2));
         assertTrue(itemResultList.contains(item3));
+        em.refresh(itemResultList.get(0));
+        assertThat(itemResultList.get(0).getdType(), is(Item.class.getSimpleName()));
 
-        Item itemSingleResult = em.createNamedQuery(Item.GET_BY_OWNER, Item.class)
-                .setParameter("owner", TEST_1)
+        TextItem aClass = em.createNamedQuery(Item.GET_ALL_OF_CLASS, TextItem.class)
+                .setParameter("class", TextItem.class)
                 .getSingleResult();
-        assertThat(itemSingleResult, is(item1));
+        assertThat(aClass.getText(), is(TEST_3));
+        em.refresh(aClass);
+        assertThat(aClass.getdType(), is(TextItem.class.getSimpleName()));
 
-        itemSingleResult = em.createNamedQuery(Item.GET_OLDEST, Item.class)
+        itemResultList = em.createNamedQuery(Item.GET_BY_OWNER, Item.class)
+                .setParameter("owner", TEST_3)
+                .getResultList();
+        assertThat(itemResultList.size(), is(2));
+
+        Item itemSingleResult = em.createNamedQuery(Item.GET_BY_OWNER_OF_CLASS, Item.class)
+                .setParameter("owner", TEST_3)
+                .setParameter("class", Item.class)
+                .getSingleResult();
+        assertThat(itemSingleResult, is(item3));
+
+        itemSingleResult = em.createNamedQuery(Item.GET_LAST, Item.class)
+                .setFirstResult(0)
+                .setMaxResults(1)
+                .getSingleResult();
+        assertThat(itemSingleResult, is(textItem));
+
+        itemSingleResult = em.createNamedQuery(Item.GET_LAST_OF_CLASS, Item.class)
+                .setParameter("class", Item.class)
                 .setFirstResult(0)
                 .setMaxResults(1)
                 .getSingleResult();
@@ -93,10 +129,12 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         assertThat(tagResultList.size(), is(2));
         assertTrue(tagResultList.contains(tag1));
         assertTrue(tagResultList.contains(tag2));
-        int sumOfTaggedItems = tagResultList.stream().mapToInt(value -> {
-            System.out.println(value.getItems().size());
-            return value.getItems().size();
-        }).sum();
+        int sumOfTaggedItems = tagResultList.stream().mapToInt(value -> value.getItems().size()).sum();
         assertThat(sumOfTaggedItems, is(3));
+
+        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter("name", "TEST").getResultList();
+        assertThat(tagResultList.size(), is(2));
+        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter("name", "TEST_1").getResultList();
+        assertThat(tagResultList.size(), is(1));
     }
 }

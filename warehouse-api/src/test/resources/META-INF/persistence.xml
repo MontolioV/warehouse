@@ -7,8 +7,9 @@
     <persistence-unit name="it-pu" transaction-type="RESOURCE_LOCAL">
         <class>com.myapp.security.Account</class>
         <class>com.myapp.security.Token</class>
-        <class>com.myapp.stored.Item</class>
-        <class>com.myapp.stored.Tag</class>
+        <class>com.myapp.storing.Item</class>
+        <class>com.myapp.storing.TextItem</class>
+        <class>com.myapp.storing.Tag</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:testDB;create=true"/>

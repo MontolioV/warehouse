@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite">
+
+<composite:interface>
+    <composite:attribute name="item" required="true"/>
+    <composite:attribute name="tagsString" required="true"/>
+</composite:interface>
+
+<composite:implementation>
+    <h:outputLabel value="Name" for="name"/>
+    <h:inputText id="name" value="#{cc.attrs.item.name}" required="true"/>
+    <h:message id="m_name" for="name"/>
+
+    <h:outputLabel value="Description" for="description"/>
+    <h:inputTextarea id="description" value="#{cc.attrs.item.description}"/>
+    <h:message id="m_description" for="description"/>
+
+    <h:outputLabel value="Tag per string" for="tagsString"/>
+    <h:inputText id="tagsString" value="#{cc.attrs.tagsString}"/>
+    <h:message id="m_tagsString" for="tagsString"/>
+
+    <h:outputLabel value="Shared" for="shared"/>
+    <h:selectBooleanCheckbox id="shared" value="#{cc.attrs.item.shared}"/>
+    <h:message id="m_shared" for="shared"/>
+</composite:implementation>
+</html>

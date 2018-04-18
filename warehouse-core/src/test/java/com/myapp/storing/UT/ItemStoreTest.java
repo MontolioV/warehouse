@@ -32,8 +32,8 @@ public class ItemStoreTest {
     private List<Item> items;
 
     @Test
-    public void getTenResentItems() {
-        when(emMock.createNamedQuery(Item.GET_LAST, Item.class)).thenReturn(queryMock);
+    public void getTenRecentItems() {
+        when(emMock.createNamedQuery(Item.GET_LAST_SHARED, Item.class)).thenReturn(queryMock);
         when(queryMock.setFirstResult(anyInt())).thenReturn(queryMock);
         when(queryMock.setMaxResults(anyInt())).thenReturn(queryMock);
         when(queryMock.getResultList()).thenReturn(items);

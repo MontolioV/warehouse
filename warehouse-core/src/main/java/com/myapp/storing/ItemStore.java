@@ -14,7 +14,7 @@ public class ItemStore {
     private EntityManager em;
 
     public List<Item> getTenLastItems() {
-        return em.createNamedQuery(Item.GET_LAST, Item.class).setMaxResults(10).getResultList();
+        return em.createNamedQuery(Item.GET_LAST_SHARED, Item.class).setMaxResults(10).getResultList();
     }
 
     public void saveItems(Item... items) {

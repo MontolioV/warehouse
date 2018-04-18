@@ -3,6 +3,7 @@ package com.myapp.storing.UT;
 import com.myapp.storing.Item;
 import com.myapp.storing.Tag;
 import com.myapp.storing.TagStore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -30,41 +33,47 @@ public class TagStoreTest {
     @Mock
     private TypedQuery<Tag> queryMock;
     private String tagString = "tagString";
+    private Item item1;
+    private Item item2;
+
+    @Before
+    public void setUp() throws Exception {
+        item1 = new Item();
+        item2 = new Item();
+        item1.setId(1);
+        item2.setId(2);
+        when(emMock.find(Item.class, item1.getId())).thenReturn(item1);
+        when(emMock.find(Item.class, item2.getId())).thenReturn(item2);
+        when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
+        when(queryMock.setParameter("name", tagString)).thenReturn(queryMock);
+    }
 
     @Test
     public void saveTagExisting() {
         ArrayList<Tag> tags = new ArrayList<>();
         Tag existingTag = new Tag();
         tags.add(existingTag);
-        when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
-        when(queryMock.setParameter("name", tagString)).thenReturn(queryMock);
         when(queryMock.getResultList()).thenReturn(tags);
-
-        Item item1 = new Item();
-        Item item2 = new Item();
 
         tagStore.saveTag(tagString, item1, item2);
 
         verify(emMock, never()).persist(any(Tag.class));
-        assertTrue(existingTag.getItems().contains(item1));
-        assertTrue(existingTag.getItems().contains(item2));
+        existingTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
     }
 
     @Test
     public void saveTagNew() {
         ArrayList<Tag> tags = new ArrayList<>();
-        when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
-        when(queryMock.setParameter("name", tagString)).thenReturn(queryMock);
         when(queryMock.getResultList()).thenReturn(tags);
-
-        Item item1 = new Item();
-        Item item2 = new Item();
 
         tagStore.saveTag(tagString, item1, item2);
 
         ArgumentCaptor<Tag> tagArgumentCaptor = ArgumentCaptor.forClass(Tag.class);
         verify(emMock).persist(tagArgumentCaptor.capture());
-        assertTrue(tagArgumentCaptor.getValue().getItems().contains(item1));
-        assertTrue(tagArgumentCaptor.getValue().getItems().contains(item2));
+        Tag capturedTag = tagArgumentCaptor.getValue();
+        assertThat(capturedTag.getName(), is(tagString));
+        assertTrue(item1.getTags().contains(capturedTag));
+        assertTrue(item2.getTags().contains(capturedTag));
+        capturedTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
     }
 }

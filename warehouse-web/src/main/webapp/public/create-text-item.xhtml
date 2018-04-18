@@ -18,11 +18,13 @@
         <h:form>
             <compc:item-input item="#{createItemController.textItem}" tagsString="#{createItemController.tagsString}"/>
 
-            <h:outputLabel value="Text" for="text"/>
-            <h:inputTextarea id="text" value="#{createItemController.textItem.text}"/>
-            <h:message id="m_text" for="text"/>
-            
-            <h:commandButton value="Create" action="#{createItemController.createTextItem()}">
+            <h:panelGrid columns="3">
+                <h:outputLabel value="Text" for="text"/>
+                <h:inputTextarea id="text" value="#{createItemController.textItem.text}"/>
+                <h:message id="m_text" for="text"/>
+            </h:panelGrid>
+
+            <h:commandButton value="Create" action="#{createItemController.createTextItem}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
         </h:form>

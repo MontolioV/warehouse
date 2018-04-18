@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.myapp.TestUtils.showConstraintViolations;
@@ -39,12 +40,12 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         Date yesterdayDate = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
         Date weekAgoDate = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
 
-        tag1 = new Tag(0, TEST_1, new ArrayList<>());
-        tag2 = new Tag(0, TEST_2, new ArrayList<>());
+        tag1 = new Tag(0, TEST_1, new HashSet<>());
+        tag2 = new Tag(0, TEST_2, new HashSet<>());
         item1 = new Item(0, TEST_1, TEST_1, TEST_1, weekAgoDate, true, new ArrayList<>());
         item2 = new Item(0, TEST_2, TEST_2, TEST_2, yesterdayDate, true, new ArrayList<>());
         item3 = new Item(0, TEST_3, TEST_3, TEST_3, minuteAgoDate, true, new ArrayList<>());
-        textItem = new TextItem(0, TEST_3, TEST_3, TEST_3, new Date(), true, new ArrayList<>(), TEST_3);
+        textItem = new TextItem(0, TEST_3, TEST_3, TEST_3, new Date(), false, new ArrayList<>(), TEST_3);
 
         tag1.getItems().add(item1);
         tag2.getItems().add(item1);
@@ -56,11 +57,11 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         transaction.begin();
         try {
             em.persist(textItem);
-            em.persist(tag1);
-            em.persist(tag2);
             em.persist(item1);
             em.persist(item2);
             em.persist(item3);
+            em.persist(tag1);
+            em.persist(tag2);
         } catch (ConstraintViolationException e) {
             showConstraintViolations(e);
         }
@@ -76,6 +77,13 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         assertThat(itemResultList.size(), is(4));
         assertTrue(itemResultList.contains(item1));
         assertTrue(itemResultList.contains(item2));
+        assertTrue(itemResultList.contains(item3));
+        assertTrue(itemResultList.contains(textItem));
+
+        itemResultList = em.createNamedQuery(Item.GET_ALL_BY_OWNER, Item.class)
+                .setParameter("owner", TEST_3)
+                .getResultList();
+        assertThat(itemResultList.size(), is(2));
         assertTrue(itemResultList.contains(item3));
         assertTrue(itemResultList.contains(textItem));
 
@@ -107,11 +115,11 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
                 .getSingleResult();
         assertThat(itemSingleResult, is(item3));
 
-        itemSingleResult = em.createNamedQuery(Item.GET_LAST, Item.class)
+        itemSingleResult = em.createNamedQuery(Item.GET_LAST_SHARED, Item.class)
                 .setFirstResult(0)
                 .setMaxResults(1)
                 .getSingleResult();
-        assertThat(itemSingleResult, is(textItem));
+        assertThat(itemSingleResult, is(item3));
 
         itemSingleResult = em.createNamedQuery(Item.GET_LAST_OF_CLASS, Item.class)
                 .setParameter("class", Item.class)

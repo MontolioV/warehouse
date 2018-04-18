@@ -4,9 +4,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * <p>Created by MontolioV on 16.04.18.
@@ -29,12 +29,12 @@ public class Tag implements Serializable {
 
     private long id;
     private String name;
-    private List<Item> items = new ArrayList<>();
+    private Set<Item> items = new HashSet<>();
 
     public Tag() {
     }
 
-    public Tag(long id, String name, List<Item> items) {
+    public Tag(long id, String name, Set<Item> items) {
         this.id = id;
         this.name = name;
         this.items = items;
@@ -62,11 +62,11 @@ public class Tag implements Serializable {
     }
 
     @ManyToMany(mappedBy = "tags")
-    public List<Item> getItems() {
+    public Set<Item> getItems() {
         return items;
     }
 
-    public void setItems(List<Item> items) {
+    public void setItems(Set<Item> items) {
         this.items = items;
     }
 
@@ -76,13 +76,17 @@ public class Tag implements Serializable {
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
         return id == tag.id &&
-                Objects.equals(name, tag.name) &&
-                Objects.equals(items, tag.items);
+                Objects.equals(name, tag.name);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, items);
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

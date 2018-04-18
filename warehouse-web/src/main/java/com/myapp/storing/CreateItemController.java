@@ -1,10 +1,14 @@
 package com.myapp.storing;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * <p>Created by MontolioV on 17.04.18.
@@ -17,16 +21,28 @@ public class CreateItemController {
     private ItemStore itemStore;
     @EJB
     private TagStore tagStore;
-    private Item item;
-    private TextItem textItem;
+    private Principal principal;
+    private Item item = new Item();
+    private TextItem textItem = new TextItem();
     private String tagsString;
 
-    public String createTextItem() {
+    @PostConstruct
+    public void init() {
+        principal = facesContext.getExternalContext().getUserPrincipal();
+    }
+
+    public void createTextItem() throws IOException {
+        if (principal != null) {
+            textItem.setOwner(principal.getName());
+        }
+        textItem.setCreationDate(new Date());
+
         itemStore.saveItems(textItem);
         for (String tag : parseTags()) {
             tagStore.saveTag(tag, textItem);
         }
-        return "index?faces-redirect=true";
+
+        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
     }
 
     private String[] parseTags() {
@@ -35,12 +51,20 @@ public class CreateItemController {
                 .toArray(String[]::new);
     }
 
-    public FacesContext getFacesContext() {
-        return facesContext;
+    public Principal getPrincipal() {
+        return principal;
     }
 
-    public void setFacesContext(FacesContext facesContext) {
-        this.facesContext = facesContext;
+    public void setPrincipal(Principal principal) {
+        this.principal = principal;
+    }
+
+    public TagStore getTagStore() {
+        return tagStore;
+    }
+
+    public void setTagStore(TagStore tagStore) {
+        this.tagStore = tagStore;
     }
 
     public ItemStore getItemStore() {

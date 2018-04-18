@@ -19,8 +19,9 @@ import java.util.Objects;
 @DiscriminatorColumn(name = "dType")
 @NamedQueries({
         @NamedQuery(name = Item.GET_ALL, query = "select i from Item i"),
+        @NamedQuery(name = Item.GET_ALL_BY_OWNER, query = "select i from Item i where i.owner=:owner"),
         @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:class"),
-        @NamedQuery(name = Item.GET_LAST, query = "select i from Item i order by i.creationDate desc"),
+        @NamedQuery(name = Item.GET_LAST_SHARED, query = "select i from Item i where i.shared=true order by i.creationDate desc"),
         @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:class order by i.creationDate desc"),
         @NamedQuery(name = Item.GET_BY_OWNER, query = "select i from Item i where i.owner=:owner"),
         @NamedQuery(name = Item.GET_BY_OWNER_OF_CLASS, query = "select i from Item i where i.owner=:owner and type(i)=:class"),
@@ -32,8 +33,9 @@ import java.util.Objects;
 public class Item implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Item.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
+    public static final String GET_ALL_BY_OWNER = PREFIX + "GET_ALL_BY_OWNER";
     public static final String GET_ALL_OF_CLASS = PREFIX + "GET_ALL_OF_CLASS";
-    public static final String GET_LAST = PREFIX + "GET_LAST";
+    public static final String GET_LAST_SHARED = PREFIX + "GET_LAST_SHARED";
     public static final String GET_LAST_OF_CLASS = PREFIX + "GET_LAST_OF_CLASS";
     public static final String GET_BY_OWNER = PREFIX + "GET_BY_OWNER";
     public static final String GET_BY_OWNER_OF_CLASS = PREFIX + "GET_BY_OWNER_OF_CLASS";
@@ -44,7 +46,7 @@ public class Item implements Serializable {
     private String description;
     private String owner;
     private Date creationDate;
-    private boolean shared = false;
+    private boolean shared = true;
     private List<Tag> tags = new ArrayList<>();
 
     public Item() {
@@ -125,7 +127,7 @@ public class Item implements Serializable {
         this.shared = shared;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     public List<Tag> getTags() {
         return tags;
     }

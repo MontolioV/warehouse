@@ -19,6 +19,7 @@ public class TagStore {
                 .getResultList();
         if (resultList.isEmpty()) {
             Tag tag = new Tag();
+            tag.setName(tagName);
             bind(tag, items);
             em.persist(tag);
         } else {
@@ -28,6 +29,7 @@ public class TagStore {
 
     private void bind(Tag tag, Item... items) {
         for (Item item : items) {
+            em.find(Item.class, item.getId()).getTags().add(tag);
             tag.getItems().add(item);
         }
     }

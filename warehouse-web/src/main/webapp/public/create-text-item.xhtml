@@ -24,7 +24,7 @@
                 <h:message id="m_text" for="text"/>
             </h:panelGrid>
 
-            <h:commandButton value="Create" action="#{createItemController.createTextItem}">
+            <h:commandButton value="Create" action="#{createItemController.createTextItem()}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
         </h:form>

@@ -5,14 +5,17 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
 >
 <h:head>
-    <title>Moderator</title>
+    <title>Delete items</title>
     <h:outputStylesheet name="css/basic.css"/>
 </h:head>
 
 <h:body>
-    <h:panelGrid>
-        <h:outputLabel value="You are Moderator!"/>
-        <h:outputLink value="delete-items.jsf">Delete items</h:outputLink>
-    </h:panelGrid>
+    <h:form>
+        <h:panelGrid>
+            <h:outputLabel value="Enter item id to delete"/>
+            <h:inputText value="#{deleteItemController.id}"/>
+            <h:commandButton value="Delete" action="#{deleteItemController.deleteByID()}"/>
+        </h:panelGrid>
+    </h:form>
 </h:body>
 </html>

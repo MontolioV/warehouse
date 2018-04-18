@@ -29,6 +29,8 @@ public class ItemStoreTest {
     private EntityManager emMock;
     @Mock
     private TypedQuery<Item> queryMock;
+    @Mock
+    private Item itemMock;
     private List<Item> items;
 
     @Test
@@ -46,5 +48,13 @@ public class ItemStoreTest {
     public void saveItems() {
         itemStore.saveItems(new Item(), new Item());
         verify(emMock, times(2)).persist(any(Item.class));
+    }
+
+    @Test
+    public void deleteAnyItem() {
+        when(emMock.find(eq(Item.class), anyLong())).thenReturn(itemMock);
+
+        itemStore.deleteAnyItem(1);
+        verify(emMock).remove(itemMock);
     }
 }

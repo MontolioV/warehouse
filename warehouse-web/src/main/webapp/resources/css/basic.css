@@ -11,30 +11,52 @@ body {
 }
 
 table {
+    /*border: 1px solid black;*/
     width: 70%;
     margin-left: 15%;
     margin-right: 15%;
 }
 
 .dataTable {
-    border: 1px solid black;
-    border-collapse: collapse;
+    border: 1px solid #005fff;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+}
+.dataTable th:first-child {
+    border-radius: 10px 0 0 0;
+}
+.dataTable th:last-child {
+    border-radius: 0 10px 0 0;
+    border-right: none;
+}
+.dataTable tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 10px;
+}
+.dataTable tbody tr:last-child td:last-child {
+    border-radius: 0 0 10px 0;
 }
 .dataTableHeader {
-    background: #8be3fa;
+    background: linear-gradient(to bottom, #b8ebfa 70%, #8be3fa);
     font-weight: bold;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #005fff;
+    border-right: 1px solid #005fff;
 }
-.dataTableRowOdd {
+.dataTableRowOdd {}
+.dataTableRowEven {}
+.dataTableRowOdd td {
     background: #dafff9;
 }
-.dataTableRowEven {
+.dataTableRowEven td {
     background: #c7f6ed;
 }
 
+.topBar {
+    margin: 4% 20% 1% 20%;
+    width: 60%;
+}
 .authenticationBlock {
     width: auto;
     margin-left: auto;
-    margin-right: 20%;
-    margin-top: 4%;
+    margin-right: unset;
 }

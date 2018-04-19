@@ -11,12 +11,12 @@
 </h:head>
 
 <h:body>
-    <compc:access style="authenticationBlock"/>
+    <compc:topBar/>
 
     <h:panelGrid columns="1">
         <h:outputText value="Create text item"/>
         <h:form>
-            <compc:item-input item="#{createItemController.textItem}" tagsString="#{createItemController.tagsString}"/>
+            <compc:itemInput item="#{createItemController.textItem}" tagsString="#{createItemController.tagsString}"/>
 
             <h:panelGrid columns="3">
                 <h:outputLabel value="Text" for="text"/>

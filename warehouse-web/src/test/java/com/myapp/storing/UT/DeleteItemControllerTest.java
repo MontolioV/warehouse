@@ -8,6 +8,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.verify;
 
@@ -20,6 +25,8 @@ public class DeleteItemControllerTest {
     private DeleteItemController controller;
     @Mock
     private ItemStore isMock;
+    @Mock
+    private FacesContext fcMock;
 
     @Test
     public void deleteByID() {
@@ -27,5 +34,12 @@ public class DeleteItemControllerTest {
 
         controller.deleteByID();
         verify(isMock).deleteAnyItem(anyLong());
+    }
+
+    @Test
+    public void deleteAll() {
+        controller.deleteAll();
+        verify(isMock).deleteAllItems();
+        verify(fcMock).addMessage(eq(null), any(FacesMessage.class));
     }
 }

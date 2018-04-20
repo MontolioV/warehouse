@@ -1,8 +1,9 @@
 package com.myapp.storing;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
+import javax.faces.context.ExternalContext;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -10,17 +11,30 @@ import java.util.List;
  */
 @Model
 public class FetchItemsController {
+    @Inject
+    private ExternalContext externalContext;
     @EJB
     private ItemStore itemStore;
     private List<Item> items;
-
-    @PostConstruct
-    public void init() {
-        fetchRecentItems();
-    }
+    private Long id;
+    private Item item;
 
     public void fetchRecentItems() {
-        items = itemStore.getTenLastItems();
+        items = itemStore.getTenLastSharedItems();
+    }
+
+    public String fetchById() {
+        item = itemStore.getItemById(id, externalContext.getUserPrincipal().getName());
+        if (item == null) {
+            return "missing-item-error";
+        } else {
+            return null;
+        }
+    }
+
+    public String retrieveTextFromTextItem() {
+        TextItem textItem = (TextItem) item;
+        return textItem.getText();
     }
 
     public ItemStore getItemStore() {
@@ -37,5 +51,29 @@ public class FetchItemsController {
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public ExternalContext getExternalContext() {
+        return externalContext;
+    }
+
+    public void setExternalContext(ExternalContext externalContext) {
+        this.externalContext = externalContext;
     }
 }

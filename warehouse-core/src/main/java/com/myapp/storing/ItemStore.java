@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import static com.myapp.security.Roles.Const.ADMIN;
 import static com.myapp.security.Roles.Const.MODERATOR;
 
 /**
@@ -20,8 +21,17 @@ public class ItemStore {
     @Resource
     private SessionContext sessionContext;
 
-    public List<Item> getTenLastItems() {
+    public List<Item> getTenLastSharedItems() {
         return em.createNamedQuery(Item.GET_LAST_SHARED, Item.class).setMaxResults(10).getResultList();
+    }
+
+    public Item getItemById(long id, String userName) {
+        Item item = em.find(Item.class, id);
+        if (item != null && (item.isShared() || item.getOwner().equals(userName))) {
+            return item;
+        } else {
+            return null;
+        }
     }
 
     public void saveItems(Item... items) {
@@ -33,6 +43,13 @@ public class ItemStore {
     @RolesAllowed(MODERATOR)
     public void deleteAnyItem(long id) {
         deleteItem(id);
+    }
+
+    @RolesAllowed(ADMIN)
+    public int deleteAllItems() {
+        List<Item> resultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
+        resultList.forEach(em::remove);
+        return resultList.size();
     }
 
     private void deleteItem(long id) {

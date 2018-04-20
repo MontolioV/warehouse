@@ -3,6 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
 >
 <h:head>
     <title>Admin</title>
@@ -10,9 +12,24 @@
 </h:head>
 
 <h:body>
+    <compc:topBar/>
     <h:panelGrid>
         <h:outputLabel value="You are Admin!"/>
-        <h:outputLink value="user-management.jsf">User management</h:outputLink>
+        <h:panelGrid columns="2">
+            <h:panelGrid>
+                <h:outputLabel value="Services:"/>
+                <h:outputLink value="user-management.jsf">User management</h:outputLink>
+            </h:panelGrid>
+            <h:panelGrid>
+                <h:outputLabel value="Actions:"/>
+                <h:form>
+                    <h:commandLink value="Delete all items!" action="#{deleteItemController.deleteAll()}">
+                        <f:ajax render="messages"/>
+                    </h:commandLink>
+                </h:form>
+                <h:messages id="messages"/>
+            </h:panelGrid>
+        </h:panelGrid>
     </h:panelGrid>
 </h:body>
 </html>

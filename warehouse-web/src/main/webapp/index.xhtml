@@ -9,6 +9,9 @@
 <h:head>
     <title>Warehouse</title>
     <h:outputStylesheet name="css/basic.css"/>
+    <f:metadata>
+        <f:viewAction action="#{fetchItemsController.fetchRecentItems}"/>
+    </f:metadata>
 </h:head>
 
 <h:body>

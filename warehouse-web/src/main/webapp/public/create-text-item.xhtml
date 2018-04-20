@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:compc="http://xmlns.jcp.org/jsf/composite/core">
 <h:head>
     <title>Create text item</title>
@@ -18,9 +19,8 @@
         <h:form>
             <compc:itemInput item="#{createItemController.textItem}" tagsString="#{createItemController.tagsString}"/>
 
-            <h:panelGrid columns="3">
-                <h:outputLabel value="Text" for="text"/>
-                <h:inputTextarea id="text" value="#{createItemController.textItem.text}"/>
+            <h:panelGrid columns="2">
+                <p:textEditor id="text" value="#{createItemController.textItem.text}" height="300" styleClass="textEditor"/>
                 <h:message id="m_text" for="text"/>
             </h:panelGrid>
 

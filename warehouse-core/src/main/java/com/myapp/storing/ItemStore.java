@@ -61,11 +61,27 @@ public class ItemStore {
         }
     }
 
+    public List<Item> customSelectQuery(String nameContains,
+                                      List<String> owners,
+                                      List<Tag> tags,
+                                      boolean tagConjunction)
+    {
+
+    }
+
     public EntityManager getEm() {
         return em;
     }
 
     public void setEm(EntityManager em) {
         this.em = em;
+    }
+
+    public SessionContext getSessionContext() {
+        return sessionContext;
+    }
+
+    public void setSessionContext(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
     }
 }

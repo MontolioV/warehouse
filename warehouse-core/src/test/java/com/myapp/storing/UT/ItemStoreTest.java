@@ -11,6 +11,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,5 +114,17 @@ public class ItemStoreTest {
         verify(emMock).remove(item1);
         verify(emMock).remove(item2);
         verify(emMock).remove(item3);
+    }
+
+    @Test
+    public void customSelectQuery() {
+        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
+        CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
+        Root<Item> rootMock = mock(Root.class);
+
+        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
+        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
+        when(cqMock.from(Item.class)).thenReturn(rootMock);
+
     }
 }

@@ -9,16 +9,27 @@
 <h:head>
     <title>Warehouse</title>
     <h:outputStylesheet name="css/basic.css"/>
-    <f:metadata>
-        <f:viewAction action="#{fetchItemsController.fetchRecentItems}"/>
-    </f:metadata>
 </h:head>
 
 <h:body>
     <compc:topBar/>
     <h:panelGrid columns="1">
-        <h:link outcome="/public/create-text-item.xhtml" value="create text item"/>
-        <h:outputLabel value="10 recent shares:"/>
+        <h:outputLabel value="Filters"/>
+        <h:form id="filterForm">
+            <h:outputLabel value="Name"/>
+            <h:inputText value="#{fetchItemsController.itemName}"/>
+
+
+
+            <h:outputLabel value="Owner"/>
+            <h:inputText id="owner" value="#{fetchItemsController.itemOwner}"
+                         disabled="#{fetchItemsController.onlyMyItems}"/>
+
+            <h:outputLabel value="Only my items"/>
+            <h:selectBooleanCheckbox value="#{fetchItemsController.onlyMyItems}">
+                <f:ajax render="owner" />
+            </h:selectBooleanCheckbox>
+        </h:form>
     </h:panelGrid>
 
     <h:dataTable id="lastSharedItemsTable"

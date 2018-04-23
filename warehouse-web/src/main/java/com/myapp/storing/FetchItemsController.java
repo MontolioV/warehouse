@@ -19,6 +19,9 @@ public class FetchItemsController {
     private List<Item> items;
     private Long id;
     private Item item;
+    private String itemName;
+    private String itemOwner;
+    private Boolean onlyMyItems = true;
 
     public void fetchRecentItems() {
         items = itemStore.getTenLastSharedItems();
@@ -82,5 +85,29 @@ public class FetchItemsController {
 
     public void setExternalContext(ExternalContext externalContext) {
         this.externalContext = externalContext;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemOwner() {
+        return itemOwner;
+    }
+
+    public void setItemOwner(String itemOwner) {
+        this.itemOwner = itemOwner;
+    }
+
+    public Boolean getOnlyMyItems() {
+        return onlyMyItems;
+    }
+
+    public void setOnlyMyItems(Boolean onlyMyItems) {
+        this.onlyMyItems = onlyMyItems;
     }
 }

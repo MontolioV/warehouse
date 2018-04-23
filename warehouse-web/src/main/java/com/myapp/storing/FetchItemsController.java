@@ -4,6 +4,7 @@ import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -24,7 +25,13 @@ public class FetchItemsController {
     }
 
     public String fetchById() {
-        item = itemStore.getItemById(id, externalContext.getUserPrincipal().getName());
+        Principal userPrincipal = externalContext.getUserPrincipal();
+        String username = null;
+        if (userPrincipal != null) {
+            username = userPrincipal.getName();
+        }
+
+        item = itemStore.getItemById(id, username);
         if (item == null) {
             return "missing-item-error";
         } else {

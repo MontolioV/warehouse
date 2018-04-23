@@ -53,4 +53,15 @@ public class FetchItemsControllerTest {
         controller.fetchById();
         assertThat(controller.getItem(), sameInstance(item));
     }
+
+    @Test
+    public void fetchByIdAnonymous() {
+        Item item = new Item();
+        controller.setId(0L);
+        when(ecMock.getUserPrincipal()).thenReturn(null);
+        when(isMock.getItemById(0L, null)).thenReturn(item);
+
+        controller.fetchById();
+        assertThat(controller.getItem(), sameInstance(item));
+    }
 }

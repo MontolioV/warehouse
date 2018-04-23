@@ -17,8 +17,7 @@ import java.util.*;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -47,6 +46,7 @@ public class UserManagementControllerTest {
         when(fetchedAccountMock.isActive()).thenReturn(true);
         when(fetchedAccountMock.getRoles()).thenReturn(roles);
         when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(fetchedAccountMock));
+        when(fetchedAccountMock.getLogin()).thenReturn(LOGIN_VALID);
 
         controller.setLogin(LOGIN_VALID);
     }
@@ -65,6 +65,14 @@ public class UserManagementControllerTest {
     public void fetchSingleAccountSuccess() {
         controller.fetchSingleAccount();
         fetchSingleAccountSuccessAsserts();
+    }
+
+    @Test
+    public void fetchSingleAccountAdmin() {
+        when(fetchedAccountMock.getLogin()).thenReturn("admin");
+
+        controller.fetchSingleAccount();
+        assertThat(controller.getSingleAccount(), nullValue());
     }
 
     @Test

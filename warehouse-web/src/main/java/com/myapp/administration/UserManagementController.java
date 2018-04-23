@@ -35,7 +35,7 @@ public class UserManagementController implements Serializable {
 
     public void fetchSingleAccount() {
         Optional<Account> optional = accountStore.getAccountByLogin(login);
-        if (optional.isPresent()) {
+        if (optional.isPresent() && !optional.get().getLogin().equals("admin")) {
             singleAccount = optional.get();
             accountList = new ArrayList<>();
             accountList.add(singleAccount);

@@ -1,20 +1,54 @@
-body {
-    background: linear-gradient(
-            to right,
-            palegreen,
-            #ebee5c 15%,
-            #d5fff3 15%,
-            #d5fff3 85%,
-            #ebee5c 85%,
-            palegreen
-    );
+@media only screen and (max-width: 1000px){
+    body {
+        background: linear-gradient(
+                to right,
+                palegreen,
+                #ebee5c 5%,
+                #d5fff3 5%,
+                #d5fff3 95%,
+                #ebee5c 95%,
+                palegreen
+        );
+    }
+
+    table {
+        /*border: 1px solid black;*/
+        width: 88%;
+        margin-left: 6%;
+        margin-right: 6%;
+    }
 }
 
-table {
-    /*border: 1px solid black;*/
-    width: 70%;
-    margin-left: 15%;
-    margin-right: 15%;
+@media only screen and (min-width: 1000px){
+
+    body {
+        background: linear-gradient(
+                to right,
+                palegreen,
+                #ebee5c 15%,
+                #d5fff3 15%,
+                #d5fff3 85%,
+                #ebee5c 85%,
+                palegreen
+        );
+    }
+
+    table {
+        /*border: 1px solid black;*/
+        width: 70%;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+}
+
+.topBar {
+    margin: 4% 20% 1% 20%;
+    width: 60%;
+}
+.authenticationBlock {
+    width: auto;
+    margin-left: auto;
+    margin-right: unset;
 }
 
 .dataTable {
@@ -51,16 +85,12 @@ table {
     background: #c7f6ed;
 }
 
-.topBar {
-    margin: 4% 20% 1% 20%;
-    width: 60%;
-}
-.authenticationBlock {
-    width: auto;
-    margin-left: auto;
-    margin-right: unset;
-}
-
 .textEditor {
-    background: #f0f0f0;
+    background: #ffffff;
+}
+.textLabel {
+    display: block;
+    background: #ffffff;
+    border: 1px solid gray;
+    padding: 10px;
 }

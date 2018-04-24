@@ -1,5 +1,7 @@
 package com.myapp.storing;
 
+import com.myapp.utils.QueryParams;
+
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
@@ -7,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Map;
 
 import static com.myapp.security.Roles.Const.ADMIN;
 import static com.myapp.security.Roles.Const.MODERATOR;
@@ -61,12 +64,9 @@ public class ItemStore {
         }
     }
 
-    public List<Item> customSelectQuery(String nameContains,
-                                      List<String> owners,
-                                      List<Tag> tags,
-                                      boolean tagConjunction)
-    {
+    public List<Item> customSelectQuery(Map<QueryParams, String[]> queryParamsMap) {
 
+        return null;
     }
 
     public EntityManager getEm() {

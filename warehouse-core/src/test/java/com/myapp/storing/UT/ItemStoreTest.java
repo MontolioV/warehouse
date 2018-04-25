@@ -137,12 +137,12 @@ public class ItemStoreTest {
 //        when(emMock.createQuery(cqMock)).thenReturn(tqMock);
 //        when(tqMock.getResultList()).thenReturn(items);
 //
-//        Map<QueryParams, String[]> queryParamsMap = new HashMap<>();
-//        QueryParams names = QueryParams.NAMES.setLike(true);
+//        Map<QueryTarget, String[]> queryParamsMap = new HashMap<>();
+//        QueryTarget names = QueryTarget.ITEM_NAME.setLike(true);
 //        queryParamsMap.put(names, new String[]{"Foo", "Bar"});
-//        QueryParams tags = QueryParams.TAGS.setConjunction(true);
+//        QueryTarget tags = QueryTarget.TAG_NAME.setConjunction(true);
 //        queryParamsMap.put(tags, new String[]{"one", "two"});
-//        queryParamsMap.put(QueryParams.OWNERS, new String[]{"owner"});
+//        queryParamsMap.put(QueryTarget.ITEM_OWNER, new String[]{"owner"});
 //
 //        List<Item> result = itemStore.customSelectQuery(queryParamsMap);
 //        assertThat(result, sameInstance(items));

@@ -1,6 +1,6 @@
 package com.myapp.storing;
 
-import com.myapp.utils.QueryParams;
+import com.myapp.utils.QueryTarget;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -64,7 +64,7 @@ public class ItemStore {
         }
     }
 
-    public List<Item> customSelectQuery(Map<QueryParams, String[]> queryParamsMap) {
+    public List<Item> customSelectQuery(Map<QueryTarget, String[]> queryParamsMap) {
 
         return null;
     }

@@ -8,9 +8,14 @@ import com.myapp.utils.LikeQueryBuilder;
 import com.myapp.utils.QueryTarget;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.SingularAttribute;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,27 +27,21 @@ import static org.mockito.Mockito.when;
 /**
  * <p>Created by MontolioV on 25.04.18.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class LikeQueryBuilderTest {
+    @InjectMocks
     private LikeQueryBuilder likeQueryBuilder;
+    @Mock
     private EntityManager emMock;
     private CriteriaBuilder cbMock;
     private CriteriaQuery<Item> cqMock;
     private Root<Item> riMock;
     private ListJoin<Item, Tag> joinMock;
-//    private Predicate andPredicateMock;
-//    private Predicate orPredicateMock;
-//    private Predicate inPredicateMock;
     private String value1 = "value1";
     private String value2 = "value2";
-//    private ArrayList<Predicate> predicates;
 
     @Before
     public void setUp() throws Exception {
-        emMock = mock(EntityManager.class);
-//        andPredicateMock = mock(Predicate.class);
-//        orPredicateMock = mock(Predicate.class);
-//        inPredicateMock = mock(Predicate.class);
-//
         cbMock = mock(CriteriaBuilder.class);
         cqMock = (CriteriaQuery<Item>) mock(CriteriaQuery.class);
         riMock = (Root<Item>) mock(Root.class);
@@ -54,10 +53,7 @@ public class LikeQueryBuilderTest {
         when(cqMock.from(Item.class)).thenReturn(riMock);
         when(cqMock.select(riMock)).thenReturn(cqMock);
 
-        likeQueryBuilder = new LikeQueryBuilder(emMock);
-//        predicates = new ArrayList<>();
-//        predicates.add(inPredicateMock);
-//        predicates.add(inPredicateMock);
+        likeQueryBuilder.init();
     }
 
     @Test
@@ -65,7 +61,9 @@ public class LikeQueryBuilderTest {
         Path<String> pathItemNameMock = (Path<String>) mock(Path.class);
         Path<String> pathItemOwnerMock = (Path<String>) mock(Path.class);
         Path<String> pathTagNameMock = (Path<String>) mock(Path.class);
-
+        Item_.name = mock(SingularAttribute.class);
+        Item_.owner = mock(SingularAttribute.class);
+        Tag_.name = mock(SingularAttribute.class);
 
         when(riMock.get(Item_.name)).thenReturn(pathItemNameMock);
         when(riMock.get(Item_.owner)).thenReturn(pathItemOwnerMock);

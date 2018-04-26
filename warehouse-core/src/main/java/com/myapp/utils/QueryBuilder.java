@@ -4,7 +4,10 @@ import com.myapp.storing.Item;
 import com.myapp.storing.Item_;
 import com.myapp.storing.Tag;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,10 @@ import java.util.List;
  * This query builder can
  * <p>Created by MontolioV on 24.04.18.
  */
+@Stateless
 public class QueryBuilder<T> {
+    @PersistenceContext(unitName = "warehouse-api-pu")
+    private EntityManager em;
     private CriteriaBuilder criteriaBuilder;
     private CriteriaQuery<Item> criteriaQuery;
     private Root<Item> itemRoot;
@@ -22,7 +28,8 @@ public class QueryBuilder<T> {
     private Path<T> fieldPath = null;
     private List<Predicate> predicateList = new ArrayList<>();
 
-    public QueryBuilder(EntityManager em) {
+    @PostConstruct
+    public void init() {
         criteriaBuilder = em.getCriteriaBuilder();
         criteriaQuery = criteriaBuilder.createQuery(Item.class);
         itemRoot = criteriaQuery.from(Item.class);
@@ -53,53 +60,13 @@ public class QueryBuilder<T> {
         wherePredicates.addAll(predicates);
     }
 
-//    public void addNamesToWhereClause(QueryTarget namesParam, String... names) {
-//        List<Predicate> predicateList = new ArrayList<>();
-//        for (String name : names) {
-//            if (namesParam.isLike()) {
-//                predicateList.add(criteriaBuilder.like(itemRoot.get(Item_.name), name));
-//            } else {
-//                predicateList.add(itemRoot.get(Item_.name).in(name));
-//            }
-//        }
-//        addPredicateToWherePredicates(predicateList, namesParam.isConjunction());
-//    }
-//
-//    public void addOwnersToWhereClause(QueryTarget ownersParam, String... owners) {
-//        List<Predicate> predicateList = new ArrayList<>();
-//        for (String owner : owners) {
-//            if (ownersParam.isLike()) {
-//                predicateList.add(criteriaBuilder.like(itemRoot.get(Item_.owner), owner));
-//            } else {
-//                predicateList.add(itemRoot.get(Item_.owner).in(owner));
-//            }
-//        }
-//        addPredicateToWherePredicates(predicateList, ownersParam.isConjunction());
-//    }
-//
-//    public void addTagsToWhereClause(QueryTarget tagsParam, String... tags) {
-//        List<Predicate> predicateList = new ArrayList<>();
-//        for (String tag : tags) {
-//            if (tagsParam.isLike()) {
-//                predicateList.add(criteriaBuilder.like(tagJoin.get(Tag_.name), tag));
-//            } else {
-//                predicateList.add(tagJoin.get(Tag_.name).in(tag));
-//            }
-//        }
-//        addPredicateToWherePredicates(predicateList, tagsParam.isConjunction());
-//    }
-//
-//    private void addPredicateToWherePredicates(List<Predicate> predicateList, boolean conjunction) {
-//        Predicate[] array = predicateList.toArray(new Predicate[0]);
-//        if (conjunction) {
-//            wherePredicates.add(criteriaBuilder.and(array));
-//        } else {
-//            wherePredicates.add(criteriaBuilder.or(array));
-//        }
-//    }
-
     public CriteriaQuery<Item> constructQuery() {
+        if (wherePredicates.isEmpty()) {
+            return null;
+        }
+
         Predicate[] predicates = wherePredicates.toArray(new Predicate[0]);
+        wherePredicates = new ArrayList<>();
         return criteriaQuery.where(predicates);
     }
 

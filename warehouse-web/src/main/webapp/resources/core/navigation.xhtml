@@ -11,8 +11,9 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGrid columns="4">
+    <h:panelGrid columns="5">
         <h:outputLink value="#{facesContext.externalContext.applicationContextPath}">Home</h:outputLink>
+        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/items-search.xhtml">Search</h:outputLink>
         <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/private"
                       rendered="#{roleChecherController.checkIsUser()}">Private</h:outputLink>
         <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/moderation"

@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class ItemStoreTest {
         itemMock = mock(Item.class);
         items = new ArrayList<>();
         when(emMock.find(eq(Item.class), anyLong())).thenReturn(itemMock);
+        when(queryMock.getResultList()).thenReturn(items);
     }
 
     @Test
@@ -49,7 +51,6 @@ public class ItemStoreTest {
         when(emMock.createNamedQuery(Item.GET_LAST_SHARED, Item.class)).thenReturn(queryMock);
         when(queryMock.setFirstResult(anyInt())).thenReturn(queryMock);
         when(queryMock.setMaxResults(anyInt())).thenReturn(queryMock);
-        when(queryMock.getResultList()).thenReturn(items);
 
         List<Item> tenLastItems = itemStore.getTenLastSharedItems();
         assertThat(tenLastItems, sameInstance(items));
@@ -104,7 +105,6 @@ public class ItemStoreTest {
         items.add(item2);
         items.add(item3);
         when(emMock.createNamedQuery(Item.GET_ALL, Item.class)).thenReturn(queryMock);
-        when(queryMock.getResultList()).thenReturn(items);
 
         itemStore.deleteAllItems();
         verify(emMock, times(3)).remove(any(Item.class));
@@ -114,41 +114,11 @@ public class ItemStoreTest {
     }
 
     @Test
-    public void customSelectQuery() {
-//        List<Item> items = new ArrayList<>();
-//
-//        Predicate predicateMock = mock(Predicate.class);
-//        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
-//        CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
-//        Root<Item> rootMock = mock(Root.class);
-//        Expression expressionMock = mock(Expression.class);
-//        TypedQuery<Item> tqMock = mock(TypedQuery.class);
-//
-//        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-//        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
-//        when(cqMock.from(Item.class)).thenReturn(rootMock);
-//        when(cqMock.select(rootMock)).thenReturn(cqMock);
-//        when(cbMock.and(any(Predicate[].class))).thenReturn(predicateMock);
-//        when(cbMock.or(any(Predicate[].class))).thenReturn(predicateMock);
-//        when(cbMock.like(any(Expression.class),any(String.class))).thenReturn(predicateMock);
-//        when(cqMock.where(any(Predicate[].class))).thenReturn(cqMock);
-//        when(rootMock.get(any(SingularAttribute.class))).thenReturn(expressionMock);
-//        when(rootMock.in(any(Object[].class))).thenReturn(predicateMock);
-//        when(emMock.createQuery(cqMock)).thenReturn(tqMock);
-//        when(tqMock.getResultList()).thenReturn(items);
-//
-//        Map<QueryTarget, String[]> queryParamsMap = new HashMap<>();
-//        QueryTarget names = QueryTarget.ITEM_NAME.setLike(true);
-//        queryParamsMap.put(names, new String[]{"Foo", "Bar"});
-//        QueryTarget tags = QueryTarget.TAG_NAME.setConjunction(true);
-//        queryParamsMap.put(tags, new String[]{"one", "two"});
-//        queryParamsMap.put(QueryTarget.ITEM_OWNER, new String[]{"owner"});
-//
-//        List<Item> result = itemStore.customSelectQuery(queryParamsMap);
-//        assertThat(result, sameInstance(items));
-//        verify(cbMock).like(expressionMock, "Foo");
-//        verify(cbMock).like(expressionMock, "Bar");
-//        verify(cbMock).or(predicateMock, predicateMock);
-//        verify(rootMock).in()
+    public void executeCustomSelectQuery() {
+        CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
+        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
+
+        List<Item> result = itemStore.executeCustomSelectQuery(cqMock);
+        assertThat(result, sameInstance(items));
     }
 }

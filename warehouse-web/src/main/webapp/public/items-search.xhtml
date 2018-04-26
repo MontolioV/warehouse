@@ -5,6 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
 >
 <h:head>
     <title>Warehouse</title>
@@ -16,23 +17,26 @@
     <h:panelGrid columns="1">
         <h:outputLabel value="Filters"/>
         <h:form id="filterForm">
-            <h:outputLabel value="Name"/>
-            <h:inputText value="#{fetchItemsController.itemName}"/>
+            <h:panelGrid columns="3">
+                <h:outputLabel value="Name filter" for="names"/>
+                <p:chips id="names" value="#{fetchItemsController.itemNames}"/>
+                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="names" value="#{fetchItemsController.itemNamesConjunction}"/>
 
+                <h:outputLabel value="Owner filter" for="owners"/>
+                <p:chips id="owners" value="#{fetchItemsController.itemOwners}"/>
+                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="owners" value="#{fetchItemsController.itemOwnersConjunction}"/>
 
+                <h:outputLabel value="Tag filter" for="tags"/>
+                <p:chips id="tags" value="#{fetchItemsController.tags}"/>
+                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
 
-            <h:outputLabel value="Owner"/>
-            <h:inputText id="owner" value="#{fetchItemsController.itemOwner}"
-                         disabled="#{fetchItemsController.onlyMyItems}"/>
-
-            <h:outputLabel value="Only my items"/>
-            <h:selectBooleanCheckbox value="#{fetchItemsController.onlyMyItems}">
-                <f:ajax render="owner" />
-            </h:selectBooleanCheckbox>
+                <p:commandButton value="Find" actionListener="#{fetchItemsController.filteredFetch()}"
+                                 process="@form" update="itemsTable"/>
+            </h:panelGrid>
         </h:form>
     </h:panelGrid>
 
-    <h:dataTable id="lastSharedItemsTable"
+    <h:dataTable id="itemsTable"
                  styleClass="dataTable"
                  headerClass="dataTableHeader"
                  rowClasses="dataTableRowOdd,dataTableRowEven"
@@ -70,6 +74,9 @@
             #{item.tags}
         </h:column>
     </h:dataTable>
+
+    <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
+        '%' matches zero or more of any characters. '\%' and '\_' to match an actual percent and underscore character."  />
 </h:body>
 
 </html>

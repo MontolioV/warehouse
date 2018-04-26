@@ -6,24 +6,32 @@ import com.myapp.storing.Tag;
 import com.myapp.utils.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 
 /**
  * <p>Created by MontolioV on 24.04.18.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class QueryBuilderTest {
+    @InjectMocks
     private QueryBuilder<Integer> queryBuilder;
+    @Mock
     private EntityManager emMock;
     private CriteriaBuilder cbMock;
     private CriteriaQuery<Item> cqMock;
@@ -38,7 +46,6 @@ public class QueryBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        emMock = mock(EntityManager.class);
         cbMock = mock(CriteriaBuilder.class);
         cqMock = (CriteriaQuery<Item>) mock(CriteriaQuery.class);
         riMock = (Root<Item>) mock(Root.class);
@@ -52,12 +59,13 @@ public class QueryBuilderTest {
         when(riMock.join(Item_.tags)).thenReturn(joinMock);
         when(cqMock.from(Item.class)).thenReturn(riMock);
         when(cqMock.select(riMock)).thenReturn(cqMock);
+        when(cqMock.where(any(Predicate.class), any(Predicate.class))).thenReturn(cqMock);
 
         predicates = new ArrayList<>();
         predicates.add(inPredicateMock);
         predicates.add(inPredicateMock);
 
-        queryBuilder = new QueryBuilder<Integer>(emMock);
+        queryBuilder.init();
     }
 
     @Test
@@ -68,49 +76,6 @@ public class QueryBuilderTest {
         assertThat(queryBuilder.getTagJoin(), is(joinMock));
         assertTrue(queryBuilder.getWherePredicates().isEmpty());
     }
-
-//    @Test
-//    public void selectPredicateTarget() {
-//        Path pathItemNameMock = mock(Path.class);
-//        Path pathItemOwnerMock = mock(Path.class);
-//        Path pathTagNameMock = mock(Path.class);
-//
-//        when(riMock.get(Item_.name)).thenReturn(pathItemNameMock);
-//        when(riMock.get(Item_.owner)).thenReturn(pathItemOwnerMock);
-//        when(joinMock.get(Tag_.name)).thenReturn(pathTagNameMock);
-//
-//        for (QueryTarget queryTarget : QueryTarget.values()) {
-//            queryBuilder.selectPredicateTarget(queryTarget);
-//
-//            Path<Integer> fieldPath = queryBuilder.getFieldPath();
-//            switch (queryTarget) {
-//
-//                case ITEM_NAME:
-//                    assertThat(fieldPath, is(pathItemNameMock));
-//                    break;
-//                case ITEM_OWNER:
-//                    assertThat(fieldPath, is(pathItemOwnerMock));
-//                    break;
-//                case TAG_NAME:
-//                    assertThat(fieldPath, is(pathTagNameMock));
-//                    break;
-//                default:
-//                    fail("Missing QueryTarget check for " + queryTarget.name());
-//            }
-//        }
-//    }
-
-//    @Test
-//    public void constructPredicatesLike() {
-//        Predicate likePredicateMock = mock(Predicate.class);
-//        when(cbMock.like((Expression<String>) any(Expression.class), any(String.class))).thenReturn(likePredicateMock);
-//
-//        queryBuilder.constructStrictPredicates(true, value1, value2);
-//
-//        assertThat(queryBuilder.getPredicateList().size(), is(2));
-//        assertThat(queryBuilder.getPredicateList().get(0), is(likePredicateMock));
-//        assertThat(queryBuilder.getPredicateList().get(1), is(likePredicateMock));
-//    }
 
     @Test
     public void constructPredicatesStrict() {
@@ -169,11 +134,18 @@ public class QueryBuilderTest {
     public void constructQuery() {
         Predicate predicate = mock(Predicate.class);
         List<Predicate> wherePredicates = new ArrayList<>();
+        queryBuilder.setWherePredicates(wherePredicates);
+
+        CriteriaQuery<Item> itemCriteriaQuery = queryBuilder.constructQuery();
+        assertThat(itemCriteriaQuery, nullValue());
+
         wherePredicates.add(predicate);
         wherePredicates.add(predicate);
         queryBuilder.setWherePredicates(wherePredicates);
 
-        queryBuilder.constructQuery();
+        itemCriteriaQuery= queryBuilder.constructQuery();
+        assertThat(itemCriteriaQuery, notNullValue());
+        assertTrue(queryBuilder.getWherePredicates().isEmpty());
         verify(cqMock).where(predicate, predicate);
     }
 }

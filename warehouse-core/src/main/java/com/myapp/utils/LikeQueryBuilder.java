@@ -3,16 +3,13 @@ package com.myapp.utils;
 import com.myapp.storing.Item_;
 import com.myapp.storing.Tag_;
 
-import javax.persistence.EntityManager;
+import javax.ejb.Stateless;
 
 /**
  * <p>Created by MontolioV on 25.04.18.
  */
+@Stateless
 public class LikeQueryBuilder extends QueryBuilder<String> {
-
-    public LikeQueryBuilder(EntityManager em) {
-        super(em);
-    }
 
     @Override
     public void selectPredicateTarget(QueryTarget queryTarget) {

@@ -56,7 +56,7 @@ public class QueryBuilderTest {
 
         when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
         when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
-        when(riMock.join(Item_.tags)).thenReturn(joinMock);
+        when(riMock.join(Item_.tags, JoinType.LEFT)).thenReturn(joinMock);
         when(cqMock.from(Item.class)).thenReturn(riMock);
         when(cqMock.select(riMock)).thenReturn(cqMock);
         when(cqMock.where(any(Predicate.class), any(Predicate.class))).thenReturn(cqMock);
@@ -147,5 +147,6 @@ public class QueryBuilderTest {
         assertThat(itemCriteriaQuery, notNullValue());
         assertTrue(queryBuilder.getWherePredicates().isEmpty());
         verify(cqMock).where(predicate, predicate);
+        verify(itemCriteriaQuery).distinct(true);
     }
 }

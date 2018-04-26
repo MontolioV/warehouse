@@ -10,6 +10,7 @@
             <property name="eclipselink.target-database" value="Auto"/>
             <property name="javax.persistence.schema-generation.database.action" value="create"/>
             <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
+            <!--<property name = "hibernate.show_sql" value = "true" />-->
         </properties>
     </persistence-unit>
 </persistence>

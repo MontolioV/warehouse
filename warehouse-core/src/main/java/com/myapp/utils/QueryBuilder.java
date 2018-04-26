@@ -33,7 +33,7 @@ public class QueryBuilder<T> {
         criteriaBuilder = em.getCriteriaBuilder();
         criteriaQuery = criteriaBuilder.createQuery(Item.class);
         itemRoot = criteriaQuery.from(Item.class);
-        tagJoin = itemRoot.join(Item_.tags);
+        tagJoin = itemRoot.join(Item_.tags, JoinType.LEFT);
     }
 
     public void selectPredicateTarget(QueryTarget queryTarget) {
@@ -67,7 +67,9 @@ public class QueryBuilder<T> {
 
         Predicate[] predicates = wherePredicates.toArray(new Predicate[0]);
         wherePredicates = new ArrayList<>();
-        return criteriaQuery.where(predicates);
+        criteriaQuery.where(predicates);
+        criteriaQuery.distinct(true);
+        return criteriaQuery;
     }
 
     public CriteriaBuilder getCriteriaBuilder() {

@@ -3,6 +3,7 @@ package com.myapp.storing;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 /**
@@ -32,6 +33,10 @@ public class TagStore {
             em.find(Item.class, item.getId()).getTags().add(tag);
             tag.getItems().add(item);
         }
+    }
+
+    public List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery) {
+        return em.createQuery(criteriaQuery).getResultList();
     }
 
     public EntityManager getEm() {

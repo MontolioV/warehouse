@@ -1,6 +1,5 @@
 package com.myapp.storing;
 
-import com.myapp.utils.LikeQueryBuilder;
 import com.myapp.utils.QueryTarget;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Created by MontolioV on 18.04.18.
@@ -23,15 +23,15 @@ public class FetchItemsController {
     @EJB
     private ItemStore itemStore;
     @EJB
-    private LikeQueryBuilder likeQueryBuilder;
+    private TagStore tagStore;
+    @EJB
+    private ItemTagLikeQueryBuilder likeQueryBuilder;
     private List<Item> items;
     private Long id;
     private Item item;
     private List<String> itemNames;
     private List<String> itemOwners;
     private List<String> tags;
-    private boolean itemNamesConjunction = false;
-    private boolean itemOwnersConjunction = false;
     private boolean tagsConjunction = true;
 
     @PostConstruct
@@ -39,7 +39,7 @@ public class FetchItemsController {
         String name = externalContext.getUserPrincipal().getName();
         if (name != null) {
             itemOwners = new ArrayList<>();
-            itemOwners.add(name);
+            itemOwners.add("\"" + name + "\"");
         }
     }
 
@@ -70,26 +70,42 @@ public class FetchItemsController {
     public void filteredFetch() {
         if (itemNames != null && !itemNames.isEmpty()) {
             likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_NAME);
-            likeQuerySequence(itemNames, itemNamesConjunction);
+            likeQuerySequence(itemNames);
         }
         if (itemOwners != null && !itemOwners.isEmpty()) {
             likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_OWNER);
-            likeQuerySequence(itemOwners, itemOwnersConjunction);
+            likeQuerySequence(itemOwners);
         }
         if (tags != null && !tags.isEmpty()) {
-            likeQueryBuilder.selectPredicateTarget(QueryTarget.TAG_NAME);
-            likeQuerySequence(tags, tagsConjunction);
+            likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_JOIN_TAG_NAME);
+            likeQuerySequence(tags);
         }
 
-        CriteriaQuery<Item> itemCriteriaQuery = likeQueryBuilder.constructQuery();
+        CriteriaQuery<Item> itemCriteriaQuery = likeQueryBuilder.constructItemQuery();
         if (itemCriteriaQuery != null) {
             items = itemStore.executeCustomSelectQuery(itemCriteriaQuery);
+
+            if (tagsConjunction && tags != null && !tags.isEmpty()) {
+                ensureTagConjunction();
+            }
         }
     }
 
-    private void likeQuerySequence(List<String> strings, boolean conjunction) {
+    private void likeQuerySequence(List<String> strings) {
         likeQueryBuilder.constructLikePredicates(strings.toArray(new String[0]));
-        likeQueryBuilder.generateWherePredicates(conjunction);
+        likeQueryBuilder.generateWherePredicates(false);
+    }
+
+    private void ensureTagConjunction() {
+        likeQueryBuilder.selectPredicateTarget(QueryTarget.TAG_NAME);
+        likeQueryBuilder.constructLikePredicates(tags.toArray(new String[0]));
+        likeQueryBuilder.generateWherePredicates(false);
+        List<Tag> tags = tagStore.executeCustomSelectQuery(likeQueryBuilder.constructTagQuery());
+
+        items = items.stream()
+                .filter(item1 -> item1.getTags().size() == tags.size())
+                .filter(item1 -> item1.getTags().containsAll(tags))
+                .collect(Collectors.toList());
     }
 
     public ItemStore getItemStore() {
@@ -132,11 +148,11 @@ public class FetchItemsController {
         this.externalContext = externalContext;
     }
 
-    public LikeQueryBuilder getLikeQueryBuilder() {
+    public ItemTagLikeQueryBuilder getLikeQueryBuilder() {
         return likeQueryBuilder;
     }
 
-    public void setLikeQueryBuilder(LikeQueryBuilder likeQueryBuilder) {
+    public void setLikeQueryBuilder(ItemTagLikeQueryBuilder likeQueryBuilder) {
         this.likeQueryBuilder = likeQueryBuilder;
     }
 
@@ -162,22 +178,6 @@ public class FetchItemsController {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
-    }
-
-    public boolean isItemNamesConjunction() {
-        return itemNamesConjunction;
-    }
-
-    public void setItemNamesConjunction(boolean itemNamesConjunction) {
-        this.itemNamesConjunction = itemNamesConjunction;
-    }
-
-    public boolean isItemOwnersConjunction() {
-        return itemOwnersConjunction;
-    }
-
-    public void setItemOwnersConjunction(boolean itemOwnersConjunction) {
-        this.itemOwnersConjunction = itemOwnersConjunction;
     }
 
     public boolean isTagsConjunction() {

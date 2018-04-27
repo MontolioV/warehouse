@@ -70,6 +70,11 @@ public class Tag implements Serializable {
         this.items = items;
     }
 
+    /**
+     * Tags are equal by name only
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

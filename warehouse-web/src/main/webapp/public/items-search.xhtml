@@ -17,18 +17,17 @@
     <h:panelGrid columns="1">
         <h:outputLabel value="Filters"/>
         <h:form id="filterForm">
-            <h:panelGrid columns="3">
+            <h:panelGrid columns="2">
                 <h:outputLabel value="Name filter" for="names"/>
                 <p:chips id="names" value="#{fetchItemsController.itemNames}"/>
-                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="names" value="#{fetchItemsController.itemNamesConjunction}"/>
 
                 <h:outputLabel value="Owner filter" for="owners"/>
                 <p:chips id="owners" value="#{fetchItemsController.itemOwners}"/>
-                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="owners" value="#{fetchItemsController.itemOwnersConjunction}"/>
 
                 <h:outputLabel value="Tag filter" for="tags"/>
                 <p:chips id="tags" value="#{fetchItemsController.tags}"/>
-                <p:selectBooleanButton onLabel="AND" offLabel="OR" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
+                <div/>
+                <p:selectBooleanButton onLabel="Item has all listed tags" offLabel="Item has any listed tag" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
 
                 <p:commandButton value="Find" actionListener="#{fetchItemsController.filteredFetch()}"
                                  process="@form" update="itemsTable"/>
@@ -76,7 +75,7 @@
     </h:dataTable>
 
     <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
-        '%' matches zero or more of any characters. '\%' and '\_' to match an actual percent and underscore character."  />
+        '%' matches zero or more of any characters. '\\%' and '\\_' to match an actual percent and underscore character."  />
 </h:body>
 
 </html>

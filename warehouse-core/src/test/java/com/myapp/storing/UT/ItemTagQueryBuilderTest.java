@@ -1,9 +1,9 @@
-package com.myapp.utils.UT;
+package com.myapp.storing.UT;
 
 import com.myapp.storing.Item;
+import com.myapp.storing.ItemTagQueryBuilder;
 import com.myapp.storing.Item_;
 import com.myapp.storing.Tag;
-import com.myapp.utils.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,15 +28,17 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 24.04.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class QueryBuilderTest {
+public class ItemTagQueryBuilderTest {
     @InjectMocks
-    private QueryBuilder<Integer> queryBuilder;
+    private ItemTagQueryBuilder<Integer> queryBuilder;
     @Mock
     private EntityManager emMock;
-    private CriteriaBuilder cbMock;
-    private CriteriaQuery<Item> cqMock;
-    private Root<Item> riMock;
-    private ListJoin<Item, Tag> joinMock;
+    protected CriteriaBuilder cbMock;
+    protected CriteriaQuery<Item> icqMock;
+    protected CriteriaQuery<Tag> tcqMock;
+    protected Root<Item> riMock;
+    protected Root<Tag> rtMock;
+    protected ListJoin<Item, Tag> joinMock;
     private Predicate andPredicateMock;
     private Predicate orPredicateMock;
     private Predicate inPredicateMock;
@@ -47,19 +49,25 @@ public class QueryBuilderTest {
     @Before
     public void setUp() throws Exception {
         cbMock = mock(CriteriaBuilder.class);
-        cqMock = (CriteriaQuery<Item>) mock(CriteriaQuery.class);
+        icqMock = (CriteriaQuery<Item>) mock(CriteriaQuery.class);
+        tcqMock = (CriteriaQuery<Tag>) mock(CriteriaQuery.class);
         riMock = (Root<Item>) mock(Root.class);
+        rtMock = (Root<Tag>) mock(Root.class);
         joinMock = (ListJoin<Item, Tag>) mock(ListJoin.class);
         andPredicateMock = mock(Predicate.class);
         orPredicateMock = mock(Predicate.class);
         inPredicateMock = mock(Predicate.class);
 
         when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
-        when(riMock.join(Item_.tags, JoinType.LEFT)).thenReturn(joinMock);
-        when(cqMock.from(Item.class)).thenReturn(riMock);
-        when(cqMock.select(riMock)).thenReturn(cqMock);
-        when(cqMock.where(any(Predicate.class), any(Predicate.class))).thenReturn(cqMock);
+        when(cbMock.createQuery(Item.class)).thenReturn(icqMock);
+        when(cbMock.createQuery(Tag.class)).thenReturn(tcqMock);
+        when(riMock.join(Item_.tags, JoinType.RIGHT)).thenReturn(joinMock);
+        when(icqMock.from(Item.class)).thenReturn(riMock);
+        when(tcqMock.from(Tag.class)).thenReturn(rtMock);
+        when(icqMock.select(riMock)).thenReturn(icqMock);
+        when(icqMock.where(any(Predicate.class), any(Predicate.class))).thenReturn(icqMock);
+        when(tcqMock.select(rtMock)).thenReturn(tcqMock);
+        when(tcqMock.where(any(Predicate.class), any(Predicate.class))).thenReturn(tcqMock);
 
         predicates = new ArrayList<>();
         predicates.add(inPredicateMock);
@@ -71,7 +79,8 @@ public class QueryBuilderTest {
     @Test
     public void construction() {
         assertThat(queryBuilder.getCriteriaBuilder(), is(cbMock));
-        assertThat(queryBuilder.getCriteriaQuery(), is(cqMock));
+        assertThat(queryBuilder.getItemCriteriaQuery(), is(icqMock));
+        assertThat(queryBuilder.getTagCriteriaQuery(), is(tcqMock));
         assertThat(queryBuilder.getItemRoot(),is(riMock));
         assertThat(queryBuilder.getTagJoin(), is(joinMock));
         assertTrue(queryBuilder.getWherePredicates().isEmpty());
@@ -131,22 +140,42 @@ public class QueryBuilderTest {
     }
 
     @Test
-    public void constructQuery() {
+    public void constructItemQuery() {
         Predicate predicate = mock(Predicate.class);
         List<Predicate> wherePredicates = new ArrayList<>();
         queryBuilder.setWherePredicates(wherePredicates);
 
-        CriteriaQuery<Item> itemCriteriaQuery = queryBuilder.constructQuery();
+        CriteriaQuery<Item> itemCriteriaQuery = queryBuilder.constructItemQuery();
         assertThat(itemCriteriaQuery, nullValue());
 
         wherePredicates.add(predicate);
         wherePredicates.add(predicate);
         queryBuilder.setWherePredicates(wherePredicates);
 
-        itemCriteriaQuery= queryBuilder.constructQuery();
+        itemCriteriaQuery= queryBuilder.constructItemQuery();
         assertThat(itemCriteriaQuery, notNullValue());
         assertTrue(queryBuilder.getWherePredicates().isEmpty());
-        verify(cqMock).where(predicate, predicate);
+        verify(icqMock).where(predicate, predicate);
         verify(itemCriteriaQuery).distinct(true);
+    }
+
+    @Test
+    public void constructTagQuery() {
+        Predicate predicate = mock(Predicate.class);
+        List<Predicate> wherePredicates = new ArrayList<>();
+        queryBuilder.setWherePredicates(wherePredicates);
+
+        CriteriaQuery<Tag> tagCriteriaQuery = queryBuilder.constructTagQuery();
+        assertThat(tagCriteriaQuery, nullValue());
+
+        wherePredicates.add(predicate);
+        wherePredicates.add(predicate);
+        queryBuilder.setWherePredicates(wherePredicates);
+
+        tagCriteriaQuery= queryBuilder.constructTagQuery();
+        assertThat(tagCriteriaQuery, notNullValue());
+        assertTrue(queryBuilder.getWherePredicates().isEmpty());
+        verify(tcqMock).where(predicate, predicate);
+        verify(tagCriteriaQuery).distinct(true);
     }
 }

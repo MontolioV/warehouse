@@ -1,9 +1,6 @@
 package com.myapp.storing.UT;
 
-import com.myapp.storing.FetchItemsController;
-import com.myapp.storing.Item;
-import com.myapp.storing.ItemStore;
-import com.myapp.utils.LikeQueryBuilder;
+import com.myapp.storing.*;
 import com.myapp.utils.QueryTarget;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -39,20 +37,24 @@ public class FetchItemsControllerTest {
     @Mock
     private ItemStore isMock;
     @Mock
-    private LikeQueryBuilder qbMock;
+    private TagStore tsMock;
+    @Mock
+    private ItemTagLikeQueryBuilder qbMock;
     @Mock
     private ExternalContext ecMock;
     @Mock
     private Principal principalMock;
     @Mock
-    private CriteriaQuery<Item> cqMock;
+    private CriteriaQuery<Item> icqMock;
+    private CriteriaQuery<Tag> tcqMock;
     private List<String> strings1 = Arrays.asList("1", "2");
     private List<String> strings2 = Arrays.asList("3", "4");
     private List<String> strings3 = Arrays.asList("5", "6");
 
     @Before
     public void setUp() throws Exception {
-        when(qbMock.constructQuery()).thenReturn(cqMock);
+        when(qbMock.constructItemQuery()).thenReturn(icqMock);
+        when(qbMock.constructTagQuery()).thenReturn(tcqMock);
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
     }
@@ -60,7 +62,7 @@ public class FetchItemsControllerTest {
     @Test
     public void init() {
         controller.init();
-        assertTrue(controller.getItemOwners().contains(LOGIN_VALID));
+        assertTrue(controller.getItemOwners().contains("\"" + LOGIN_VALID + "\""));
     }
 
     @Test
@@ -96,13 +98,13 @@ public class FetchItemsControllerTest {
 
     @Test
     public void filteredFetchEmpty() {
-        when(qbMock.constructQuery()).thenReturn(null);
+        when(qbMock.constructItemQuery()).thenReturn(null);
 
         controller.filteredFetch();
         verify(qbMock, never()).selectPredicateTarget(any());
         verify(qbMock, never()).constructLikePredicates(anyVararg());
         verify(qbMock, never()).generateWherePredicates(anyBoolean());
-        verify(qbMock).constructQuery();
+        verify(qbMock).constructItemQuery();
         verify(isMock, never()).executeCustomSelectQuery(any());
     }
 
@@ -114,9 +116,9 @@ public class FetchItemsControllerTest {
         InOrder inOrder = inOrder(qbMock, isMock);
         inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_NAME);
         inOrder.verify(qbMock).constructLikePredicates(strings1.get(0), strings1.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isItemOwnersConjunction());
-        inOrder.verify(qbMock).constructQuery();
-        inOrder.verify(isMock).executeCustomSelectQuery(cqMock);
+        inOrder.verify(qbMock).generateWherePredicates(false);
+        inOrder.verify(qbMock).constructItemQuery();
+        inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -128,24 +130,80 @@ public class FetchItemsControllerTest {
         InOrder inOrder = inOrder(qbMock, isMock);
         inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_OWNER);
         inOrder.verify(qbMock).constructLikePredicates(strings2.get(0), strings2.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isItemOwnersConjunction());
-        inOrder.verify(qbMock).constructQuery();
-        inOrder.verify(isMock).executeCustomSelectQuery(cqMock);
+        inOrder.verify(qbMock).generateWherePredicates(false);
+        inOrder.verify(qbMock).constructItemQuery();
+        inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void filteredFetchTags() {
+    public void filteredFetchTagsConjunctionFalse() {
+        controller.setTagsConjunction(false);
         controller.setTags(strings3);
         controller.filteredFetch();
 
         InOrder inOrder = inOrder(qbMock, isMock);
+        inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_JOIN_TAG_NAME);
+        inOrder.verify(qbMock).constructLikePredicates(strings3.get(0), strings3.get(1));
+        inOrder.verify(qbMock).generateWherePredicates(false);
+        inOrder.verify(qbMock).constructItemQuery();
+        inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
+        inOrder.verifyNoMoreInteractions();
+        verify(tsMock, never()).executeCustomSelectQuery(any());
+    }
+
+    @Test
+    public void filteredFetchTagsConjunctionTrueNoTags() {
+        controller.setTagsConjunction(true);
+        controller.setTags(null);
+        controller.filteredFetch();
+
+        verify(tsMock, never()).executeCustomSelectQuery(any());
+    }
+
+    @Test
+    public void filteredFetchTagsConjunctionTrue() {
+        List<Item> itemsGet = new ArrayList<>();
+        List<Tag> tagsGet = new ArrayList<>();
+        List<Tag> tagsItem1 = new ArrayList<>();
+        List<Tag> tagsItem2 = new ArrayList<>();
+        Item itemMock1 = mock(Item.class);
+        Item itemMock2 = mock(Item.class);
+        Tag tag1 = mock(Tag.class);
+        Tag tag2 = mock(Tag.class);
+        itemsGet.add(itemMock1);
+        itemsGet.add(itemMock2);
+        tagsGet.add(tag2);
+        tagsGet.add(tag2);
+        tagsItem1.add(tag1);
+        tagsItem1.add(tag2);
+        tagsItem2.add(tag2);
+        when(isMock.executeCustomSelectQuery(icqMock)).thenReturn(itemsGet);
+        when(tsMock.executeCustomSelectQuery(tcqMock)).thenReturn(tagsGet);
+        when(itemMock1.getTags()).thenReturn(tagsItem1);
+        when(itemMock2.getTags()).thenReturn(tagsItem2);
+
+        controller.setTagsConjunction(true);
+        controller.setTags(strings3);
+        controller.filteredFetch();
+
+        InOrder inOrder = inOrder(qbMock, isMock);
+        inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_JOIN_TAG_NAME);
+        inOrder.verify(qbMock).constructLikePredicates(strings3.get(0), strings3.get(1));
+        inOrder.verify(qbMock).generateWherePredicates(false);
+        inOrder.verify(qbMock).constructItemQuery();
+        inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
+
+        inOrder = inOrder(qbMock, tsMock);
         inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.TAG_NAME);
         inOrder.verify(qbMock).constructLikePredicates(strings3.get(0), strings3.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isTagsConjunction());
-        inOrder.verify(qbMock).constructQuery();
-        inOrder.verify(isMock).executeCustomSelectQuery(cqMock);
+        inOrder.verify(qbMock).generateWherePredicates(false);
+        inOrder.verify(qbMock).constructTagQuery();
+        inOrder.verify(tsMock).executeCustomSelectQuery(tcqMock);
         inOrder.verifyNoMoreInteractions();
+
+        assertThat(controller.getItems().size(), is(1));
+        assertTrue(controller.getItems().contains(itemMock1));
     }
 
     @Test
@@ -153,24 +211,25 @@ public class FetchItemsControllerTest {
         controller.setItemNames(strings1);
         controller.setItemOwners(strings2);
         controller.setTags(strings3);
+        controller.setTagsConjunction(false);
         controller.filteredFetch();
 
         InOrder inOrder = inOrder(qbMock, isMock);
 
         inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_NAME);
         inOrder.verify(qbMock).constructLikePredicates(strings1.get(0), strings1.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isItemNamesConjunction());
+        inOrder.verify(qbMock).generateWherePredicates(false);
 
         inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_OWNER);
         inOrder.verify(qbMock).constructLikePredicates(strings2.get(0), strings2.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isItemOwnersConjunction());
+        inOrder.verify(qbMock).generateWherePredicates(false);
 
-        inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.TAG_NAME);
+        inOrder.verify(qbMock).selectPredicateTarget(QueryTarget.ITEM_JOIN_TAG_NAME);
         inOrder.verify(qbMock).constructLikePredicates(strings3.get(0), strings3.get(1));
-        inOrder.verify(qbMock).generateWherePredicates(controller.isTagsConjunction());
+        inOrder.verify(qbMock).generateWherePredicates(false);
 
-        inOrder.verify(qbMock).constructQuery();
-        inOrder.verify(isMock).executeCustomSelectQuery(cqMock);
+        inOrder.verify(qbMock).constructItemQuery();
+        inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
         inOrder.verifyNoMoreInteractions();
     }
 }

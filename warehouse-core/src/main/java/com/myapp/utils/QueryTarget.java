@@ -7,5 +7,6 @@ package com.myapp.utils;
 public enum QueryTarget {
     ITEM_NAME,
     ITEM_OWNER,
+    ITEM_JOIN_TAG_NAME,
     TAG_NAME,
 }

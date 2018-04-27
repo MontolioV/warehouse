@@ -3,6 +3,7 @@ package com.myapp.storing.UT;
 import com.myapp.storing.Item;
 import com.myapp.storing.Tag;
 import com.myapp.storing.TagStore;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +14,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -76,4 +79,19 @@ public class TagStoreTest {
         assertTrue(item2.getTags().contains(capturedTag));
         capturedTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
     }
+
+    @Test
+    public void executeCustomSelectQuery() {
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag());
+        tags.add(new Tag());
+        CriteriaQuery<Tag> cqMock = mock(CriteriaQuery.class);
+        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
+        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
+        when(queryMock.getResultList()).thenReturn(tags);
+
+        List<Tag> result = tagStore.executeCustomSelectQuery(cqMock);
+        MatcherAssert.assertThat(result, sameInstance(tags));
+    }
+
 }

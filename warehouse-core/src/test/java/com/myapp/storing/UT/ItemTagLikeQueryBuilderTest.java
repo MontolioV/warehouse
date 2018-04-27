@@ -1,58 +1,41 @@
-package com.myapp.utils.UT;
+package com.myapp.storing.UT;
 
-import com.myapp.storing.Item;
+import com.myapp.storing.ItemTagLikeQueryBuilder;
 import com.myapp.storing.Item_;
-import com.myapp.storing.Tag;
 import com.myapp.storing.Tag_;
-import com.myapp.utils.LikeQueryBuilder;
 import com.myapp.utils.QueryTarget;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.metamodel.SingularAttribute;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  * <p>Created by MontolioV on 25.04.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LikeQueryBuilderTest {
+public class ItemTagLikeQueryBuilderTest extends ItemTagQueryBuilderTest{
     @InjectMocks
-    private LikeQueryBuilder likeQueryBuilder;
-    @Mock
-    private EntityManager emMock;
-    private CriteriaBuilder cbMock;
-    private CriteriaQuery<Item> cqMock;
-    private Root<Item> riMock;
-    private ListJoin<Item, Tag> joinMock;
+    private ItemTagLikeQueryBuilder likeQueryBuilder;
     private String value1 = "value1";
-    private String value2 = "value2";
+    private String value2 = "\"value2\"";
 
     @Before
+    @Override
     public void setUp() throws Exception {
-        cbMock = mock(CriteriaBuilder.class);
-        cqMock = (CriteriaQuery<Item>) mock(CriteriaQuery.class);
-        riMock = (Root<Item>) mock(Root.class);
-        joinMock = (ListJoin<Item, Tag>) mock(ListJoin.class);
-
-        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
-        when(riMock.join(Item_.tags, JoinType.LEFT)).thenReturn(joinMock);
-        when(cqMock.from(Item.class)).thenReturn(riMock);
-        when(cqMock.select(riMock)).thenReturn(cqMock);
-
+        super.setUp();
         likeQueryBuilder.init();
     }
 
@@ -60,6 +43,7 @@ public class LikeQueryBuilderTest {
     public void selectPredicateTarget() {
         Path<String> pathItemNameMock = (Path<String>) mock(Path.class);
         Path<String> pathItemOwnerMock = (Path<String>) mock(Path.class);
+        Path<String> pathJoinTagNameMock = (Path<String>) mock(Path.class);
         Path<String> pathTagNameMock = (Path<String>) mock(Path.class);
         Item_.name = mock(SingularAttribute.class);
         Item_.owner = mock(SingularAttribute.class);
@@ -67,7 +51,8 @@ public class LikeQueryBuilderTest {
 
         when(riMock.get(Item_.name)).thenReturn(pathItemNameMock);
         when(riMock.get(Item_.owner)).thenReturn(pathItemOwnerMock);
-        when(joinMock.get(Tag_.name)).thenReturn(pathTagNameMock);
+        when(joinMock.get(Tag_.name)).thenReturn(pathJoinTagNameMock);
+        when(rtMock.get(Tag_.name)).thenReturn(pathTagNameMock);
 
         for (QueryTarget queryTarget : QueryTarget.values()) {
             likeQueryBuilder.selectPredicateTarget(queryTarget);
@@ -80,6 +65,9 @@ public class LikeQueryBuilderTest {
                     break;
                 case ITEM_OWNER:
                     assertThat(fieldPath, is(pathItemOwnerMock));
+                    break;
+                case ITEM_JOIN_TAG_NAME:
+                    assertThat(fieldPath, is(pathJoinTagNameMock));
                     break;
                 case TAG_NAME:
                     assertThat(fieldPath, is(pathTagNameMock));
@@ -100,6 +88,9 @@ public class LikeQueryBuilderTest {
         assertThat(likeQueryBuilder.getPredicateList().size(), is(2));
         assertThat(likeQueryBuilder.getPredicateList().get(0), is(likePredicateMock));
         assertThat(likeQueryBuilder.getPredicateList().get(1), is(likePredicateMock));
+        verify(cbMock).like(any(Expression.class), eq("%value1%"));
+        verify(cbMock).like(any(Expression.class), eq("value2"));
+
     }
 
 }

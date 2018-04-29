@@ -63,6 +63,10 @@ public class FormAuthenticationController {
         }
 
         Account account = accountStore.getAccountByLogin(login).get();
+
+        httpServletRequest.logout();
+        httpServletRequest.login(account.getLogin(), account.getPassHash());
+
         if (rememberMe) {
             Cookie rmCookie = HttpUtils.findCookie(httpServletRequest, JREMEMBERMEID);
             if (rmCookie != null) {
@@ -76,9 +80,6 @@ public class FormAuthenticationController {
             String cookieValue = rememberMeIdentityStore.generateLoginToken(new CallerPrincipal(account.getLogin()), groups);
             externalContext.addResponseCookie(JREMEMBERMEID, cookieValue, cookieProperties);
         }
-
-        httpServletRequest.logout();
-        httpServletRequest.login(account.getLogin(), account.getPassHash());
         return "/index?faces-redirect=true";
     }
 

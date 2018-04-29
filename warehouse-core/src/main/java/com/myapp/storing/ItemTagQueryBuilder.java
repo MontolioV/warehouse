@@ -35,7 +35,7 @@ public class ItemTagQueryBuilder<T> {
         tagCriteriaQuery = criteriaBuilder.createQuery(Tag.class);
         itemRoot = itemCriteriaQuery.from(Item.class);
         tagRoot = tagCriteriaQuery.from(Tag.class);
-        tagJoin = itemRoot.join(Item_.tags, JoinType.RIGHT);
+        tagJoin = itemRoot.join(Item_.tags, JoinType.LEFT);
     }
 
     public void selectPredicateTarget(QueryTarget queryTarget) {

@@ -50,6 +50,7 @@ public class Tag implements Serializable {
         this.id = id;
     }
 
+    // TODO: 30.04.2018 Tag names are not unique in DB 
     @NotBlank
     @Size(max = 30)
     @Column(unique = true, nullable = false, length = 30)

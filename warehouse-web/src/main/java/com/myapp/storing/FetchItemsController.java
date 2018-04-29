@@ -26,9 +26,11 @@ public class FetchItemsController {
     private TagStore tagStore;
     @EJB
     private ItemTagLikeQueryBuilder likeQueryBuilder;
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
     private Long id;
     private Item item;
+    private TextItem textItem;
+    private FileItem fileItem;
     private List<String> itemNames;
     private List<String> itemOwners;
     private List<String> tags;
@@ -36,10 +38,9 @@ public class FetchItemsController {
 
     @PostConstruct
     public void init() {
-        String name = externalContext.getUserPrincipal().getName();
-        if (name != null) {
+        if (externalContext.getUserPrincipal() != null) {
             itemOwners = new ArrayList<>();
-            itemOwners.add("\"" + name + "\"");
+            itemOwners.add("\"" + externalContext.getUserPrincipal().getName() + "\"");
         }
     }
 
@@ -62,9 +63,16 @@ public class FetchItemsController {
         }
     }
 
-    public String retrieveTextFromTextItem() {
-        TextItem textItem = (TextItem) item;
-        return textItem.getText();
+    public void castItem() {
+        if (item == null) {
+            return;
+        }
+
+        if (item.getdType().equals(TextItem.class.getSimpleName())) {
+            textItem = (TextItem) item;
+        }else if (item.getdType().equals(FileItem.class.getSimpleName())) {
+            fileItem = (FileItem) item;
+        }
     }
 
     public void filteredFetch() {
@@ -102,10 +110,18 @@ public class FetchItemsController {
         likeQueryBuilder.generateWherePredicates(false);
         List<Tag> tags = tagStore.executeCustomSelectQuery(likeQueryBuilder.constructTagQuery());
 
+        // TODO: 30.04.2018 Primefaces chips don't pass "1" after pressed enter
         items = items.stream()
-                .filter(item1 -> item1.getTags().size() == tags.size())
+                .filter(item1 -> item1.getTags().size() >= tags.size())
                 .filter(item1 -> item1.getTags().containsAll(tags))
                 .collect(Collectors.toList());
+    }
+
+    public boolean fileIsImage() {
+        if (fileItem != null && fileItem.getContentType().startsWith("image")) {
+            return true;
+        }
+        return false;
     }
 
     public ItemStore getItemStore() {
@@ -186,5 +202,29 @@ public class FetchItemsController {
 
     public void setTagsConjunction(boolean tagsConjunction) {
         this.tagsConjunction = tagsConjunction;
+    }
+
+    public TagStore getTagStore() {
+        return tagStore;
+    }
+
+    public void setTagStore(TagStore tagStore) {
+        this.tagStore = tagStore;
+    }
+
+    public TextItem getTextItem() {
+        return textItem;
+    }
+
+    public void setTextItem(TextItem textItem) {
+        this.textItem = textItem;
+    }
+
+    public FileItem getFileItem() {
+        return fileItem;
+    }
+
+    public void setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
     }
 }

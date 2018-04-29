@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -231,5 +230,33 @@ public class FetchItemsControllerTest {
         inOrder.verify(qbMock).constructItemQuery();
         inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
         inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void castItem() {
+        controller.setTextItem(null);
+        controller.setFileItem(null);
+        Item item1 = new TextItem();
+        item1.setdType(TextItem.class.getSimpleName());
+        controller.setItem(item1);
+        controller.castItem();
+        assertThat(controller.getTextItem(), sameInstance(item1));
+        assertThat(controller.getFileItem(), nullValue());
+
+        controller.setTextItem(null);
+        controller.setFileItem(null);
+        Item item2 = new FileItem();
+        item2.setdType(FileItem.class.getSimpleName());
+        controller.setItem(item2);
+        controller.castItem();
+        assertThat(controller.getTextItem(), nullValue());
+        assertThat(controller.getFileItem(), sameInstance(item2));
+
+        controller.setTextItem(null);
+        controller.setFileItem(null);
+        controller.setItem(null);
+        controller.castItem();
+        assertThat(controller.getTextItem(), nullValue());
+        assertThat(controller.getFileItem(), nullValue());
     }
 }

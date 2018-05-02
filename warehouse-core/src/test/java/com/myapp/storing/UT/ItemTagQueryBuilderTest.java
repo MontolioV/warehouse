@@ -61,7 +61,7 @@ public class ItemTagQueryBuilderTest {
         when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
         when(cbMock.createQuery(Item.class)).thenReturn(icqMock);
         when(cbMock.createQuery(Tag.class)).thenReturn(tcqMock);
-        when(riMock.join(Item_.tags, JoinType.RIGHT)).thenReturn(joinMock);
+        when(riMock.join(Item_.tags, JoinType.LEFT)).thenReturn(joinMock);
         when(icqMock.from(Item.class)).thenReturn(riMock);
         when(tcqMock.from(Tag.class)).thenReturn(rtMock);
         when(icqMock.select(riMock)).thenReturn(icqMock);

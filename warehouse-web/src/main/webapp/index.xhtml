@@ -18,47 +18,11 @@
     <compc:topBar/>
     <h:panelGrid columns="1">
         <h:link outcome="/public/create-text-item.xhtml" value="create text item"/>
+        <h:link outcome="/public/create-file-item.xhtml" value="create file item"/>
         <h:outputLabel value="10 recent shares:"/>
     </h:panelGrid>
 
-    <h:dataTable id="lastSharedItemsTable"
-                 styleClass="dataTable"
-                 headerClass="dataTableHeader"
-                 rowClasses="dataTableRowOdd,dataTableRowEven"
-                 value="#{fetchItemsController.items}" var="item">
-        <h:column>
-            <f:facet name="header">id</f:facet>
-            #{item.id}
-        </h:column>
-        <h:column>
-            <f:facet name="header">dType</f:facet>
-            #{item.dType}
-        </h:column>
-        <h:column>
-            <f:facet name="header">name</f:facet>
-            <h:link value="#{item.name}" outcome="public/show-text-item.jsf?id=#{item.id}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">description</f:facet>
-            #{item.description}
-        </h:column>
-        <h:column>
-            <f:facet name="header">owner</f:facet>
-            #{item.owner}
-        </h:column>
-        <h:column>
-            <f:facet name="header">creationDate</f:facet>
-            #{item.creationDate}
-        </h:column>
-        <h:column>
-            <f:facet name="header">shared</f:facet>
-            #{item.shared}
-        </h:column>
-        <h:column>
-            <f:facet name="header">tags</f:facet>
-            #{item.tags}
-        </h:column>
-    </h:dataTable>
+    <compc:itemsTable items="#{fetchItemsController.items}"/>
 </h:body>
 
 </html>

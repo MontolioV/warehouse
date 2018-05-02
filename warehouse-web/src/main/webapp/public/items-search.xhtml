@@ -4,7 +4,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
 >
 <h:head>
@@ -30,49 +29,12 @@
                 <p:selectBooleanButton onLabel="Item has all listed tags" offLabel="Item has any listed tag" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
 
                 <p:commandButton value="Find" actionListener="#{fetchItemsController.filteredFetch()}"
-                                 process="@form" update="itemsTable"/>
+                                 process="@form" update="itemsTable:itemsTable"/>
             </h:panelGrid>
         </h:form>
     </h:panelGrid>
 
-    <h:dataTable id="itemsTable"
-                 styleClass="dataTable"
-                 headerClass="dataTableHeader"
-                 rowClasses="dataTableRowOdd,dataTableRowEven"
-                 value="#{fetchItemsController.items}" var="item">
-        <h:column>
-            <f:facet name="header">id</f:facet>
-            #{item.id}
-        </h:column>
-        <h:column>
-            <f:facet name="header">dType</f:facet>
-            #{item.dType}
-        </h:column>
-        <h:column>
-            <f:facet name="header">name</f:facet>
-            <h:link value="#{item.name}" outcome="public/show-text-item.jsf?id=#{item.id}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">description</f:facet>
-            #{item.description}
-        </h:column>
-        <h:column>
-            <f:facet name="header">owner</f:facet>
-            #{item.owner}
-        </h:column>
-        <h:column>
-            <f:facet name="header">creationDate</f:facet>
-            #{item.creationDate}
-        </h:column>
-        <h:column>
-            <f:facet name="header">shared</f:facet>
-            #{item.shared}
-        </h:column>
-        <h:column>
-            <f:facet name="header">tags</f:facet>
-            #{item.tags}
-        </h:column>
-    </h:dataTable>
+    <compc:itemsTable id="itemsTable" items="#{fetchItemsController.items}"/>
 
     <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
         '%' matches zero or more of any characters. '\\%' and '\\_' to match an actual percent and underscore character."  />

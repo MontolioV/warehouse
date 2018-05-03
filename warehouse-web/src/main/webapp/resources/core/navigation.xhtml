@@ -11,15 +11,10 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGrid columns="5">
-        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}">Home</h:outputLink>
-        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/items-search.xhtml">Search</h:outputLink>
-        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/private"
-                      rendered="#{roleChecherController.checkIsUser()}">Private</h:outputLink>
-        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/moderation"
-                      rendered="#{roleChecherController.checkIsModerator()}">Moderation</h:outputLink>
-        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/admin"
-                      rendered="#{roleChecherController.checkIsAdmin()}">Admin</h:outputLink>
-    </h:panelGrid>
+    <h:button value="Home" styleClass="topBarButton" outcome="/index"/>
+    <h:button value="Search" styleClass="topBarButton" outcome="/public/items-search"/>
+    <h:button value="Private" styleClass="topBarButton" outcome="/private/index" rendered="#{roleChecherController.checkIsUser()}"/>
+    <h:button value="Moderation" styleClass="topBarButton" outcome="/moderation/index" rendered="#{roleChecherController.checkIsModerator()}"/>
+    <h:button value="Admin" styleClass="topBarButton" outcome="/admin/index" rendered="#{roleChecherController.checkIsAdmin()}"/>
 </composite:implementation>
 </html>

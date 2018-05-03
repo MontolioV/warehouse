@@ -10,19 +10,17 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGrid styleClass="#{cc.attrs.style}" columns="2">
-        <c:choose>
-            <c:when test="#{empty request.userPrincipal}">
-                <h:button outcome="/login.xhtml" value="Login"/>
-                <h:button outcome="/registration.xhtml" value="Registration"/>
-            </c:when>
-            <c:otherwise>
-                <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/private/personal-cabinet.jsf">
-                    #{request.userPrincipal.name}
-                </h:outputLink>
-                <a href="#{facesContext.externalContext.applicationContextPath}/logout">Logout</a>
-            </c:otherwise>
-        </c:choose>
-    </h:panelGrid>
+    <c:choose>
+        <c:when test="#{empty request.userPrincipal}">
+            <h:button value="Login" styleClass="topBarButton" outcome="/login"/>
+            <h:button value="Registration" styleClass="topBarButton" outcome="/registration"/>
+        </c:when>
+        <c:otherwise>
+            <h:button value="#{request.userPrincipal.name}" styleClass="topBarButton" outcome="/private/personal-cabinet"/>
+            <h:form>
+                <h:commandButton value="Logout" styleClass="topBarButton" action="#{redirectController.logoutRedirect}"/>
+            </h:form>
+        </c:otherwise>
+    </c:choose>
 </composite:implementation>
 </html>

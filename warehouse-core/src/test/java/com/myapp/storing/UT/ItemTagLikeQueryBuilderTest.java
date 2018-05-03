@@ -30,7 +30,7 @@ public class ItemTagLikeQueryBuilderTest extends ItemTagQueryBuilderTest{
     @InjectMocks
     private ItemTagLikeQueryBuilder likeQueryBuilder;
     private String value1 = "value1";
-    private String value2 = "\"value2\"";
+    private String value2 = "'value2'";
 
     @Before
     @Override

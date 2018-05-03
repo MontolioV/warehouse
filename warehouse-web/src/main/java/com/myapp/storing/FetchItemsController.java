@@ -40,7 +40,7 @@ public class FetchItemsController {
     public void init() {
         if (externalContext.getUserPrincipal() != null) {
             itemOwners = new ArrayList<>();
-            itemOwners.add("\"" + externalContext.getUserPrincipal().getName() + "\"");
+            itemOwners.add("'" + externalContext.getUserPrincipal().getName() + "'");
         }
     }
 
@@ -110,7 +110,6 @@ public class FetchItemsController {
         likeQueryBuilder.generateWherePredicates(false);
         List<Tag> tags = tagStore.executeCustomSelectQuery(likeQueryBuilder.constructTagQuery());
 
-        // TODO: 30.04.2018 Primefaces chips don't pass "1" after pressed enter
         items = items.stream()
                 .filter(item1 -> item1.getTags().size() >= tags.size())
                 .filter(item1 -> item1.getTags().containsAll(tags))

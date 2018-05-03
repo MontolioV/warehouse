@@ -35,7 +35,7 @@ public class ItemTagLikeQueryBuilder extends ItemTagQueryBuilder<String> {
     }
 
     private String adjustString(String s) {
-        if (s.startsWith("\"") && s.endsWith("\"")) {
+        if (s.startsWith("'") && s.endsWith("'")) {
             return s.substring(1, s.length() - 1);
         } else {
             return "%" + s + "%";

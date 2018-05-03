@@ -61,7 +61,7 @@ public class FetchItemsControllerTest {
     @Test
     public void init() {
         controller.init();
-        assertTrue(controller.getItemOwners().contains("\"" + LOGIN_VALID + "\""));
+        assertTrue(controller.getItemOwners().contains("'" + LOGIN_VALID + "'"));
     }
 
     @Test

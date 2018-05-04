@@ -12,14 +12,12 @@
 <composite:implementation>
     <c:choose>
         <c:when test="#{empty request.userPrincipal}">
-            <h:button value="Login" styleClass="topBarButton" outcome="/login"/>
+            <h:button value="Login" styleClass="topBarButton authenticationFirst" outcome="/login"/>
             <h:button value="Registration" styleClass="topBarButton" outcome="/registration"/>
         </c:when>
         <c:otherwise>
-            <h:button value="#{request.userPrincipal.name}" styleClass="topBarButton" outcome="/private/personal-cabinet"/>
-            <h:form>
-                <h:commandButton value="Logout" styleClass="topBarButton" action="#{redirectController.logoutRedirect}"/>
-            </h:form>
+            <h:button value="#{request.userPrincipal.name}" styleClass="topBarButton authenticationFirst" outcome="/private/personal-cabinet"/>
+            <h:commandButton value="Logout" styleClass="topBarButton" action="#{redirectController.logoutRedirect}"/>
         </c:otherwise>
     </c:choose>
 </composite:implementation>

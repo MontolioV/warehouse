@@ -15,7 +15,6 @@ public class RedirectController {
 
     public void logoutRedirect() throws IOException {
         String url = externalContext.getApplicationContextPath() + "/logout";
-        System.out.println(url);
         externalContext.redirect(url);
     }
 

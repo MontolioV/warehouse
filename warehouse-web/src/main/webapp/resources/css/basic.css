@@ -129,3 +129,6 @@ html, body {
     padding: 10px;
 }
 
+.imagePreview {
+    max-width: 50%;
+}

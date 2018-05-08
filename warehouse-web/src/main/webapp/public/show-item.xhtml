@@ -42,11 +42,16 @@
         </c:if>
 
         <c:if test="#{not empty fetchItemsController.fileItem}">
-            <h:outputText value="Content"/>
+            <h:form>
+                <h:button value="Download" outcome="download.jsf?id=#{param['id']}"/>
+            </h:form>
+
+            <h:outputText value="Preview"/>
             <c:choose>
                 <c:when test="#{fetchItemsController.fileIsImage()}">
                     <o:graphicImage dataURI="true" lastModified="#{fetchItemsController.fileItem.creationDate}"
-                            value="#{fetchImageController.getImageFromFileItem(fetchItemsController.fileItem.id,facesContext.externalContext.userPrincipal.name)}"/>
+                            value="#{fetchImageController.getImageFromFileItem(fetchItemsController.fileItem.id,facesContext.externalContext.userPrincipal.name)}"
+                            styleClass="imagePreview"/>
                 </c:when>
                 <c:otherwise>
                     <h:graphicImage name="img/no_preview.jpg"/>

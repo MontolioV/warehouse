@@ -1,6 +1,8 @@
 package com.myapp.storing;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,7 +18,8 @@ public class FileItem extends Item {
     private String nativeName;
     private String contentType;
     private long size;
-    private byte[] binaryData;
+    private String hash;
+//    private byte[] binaryData;
 
     @NotBlank
     public String getNativeName() {
@@ -46,14 +49,23 @@ public class FileItem extends Item {
         this.size = size;
     }
 
-    @Lob()
-    @Basic(fetch = FetchType.LAZY)
-    @Column(length = MAX_SIZE_BYTE)
-    public byte[] getBinaryData() {
-        return binaryData;
+    @NotBlank
+    public String getHash() {
+        return hash;
     }
 
-    public void setBinaryData(byte[] content) {
-        this.binaryData = content;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
+
+    //    @Lob()
+//    @Basic(fetch = FetchType.LAZY)
+//    @Column(length = MAX_SIZE_BYTE)
+//    public byte[] getBinaryData() {
+//        return binaryData;
+//    }
+//
+//    public void setBinaryData(byte[] content) {
+//        this.binaryData = content;
+//    }
 }

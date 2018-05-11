@@ -4,9 +4,11 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.servlet.http.Part;
 import java.util.List;
 
 import static com.myapp.security.Roles.Const.ADMIN;
@@ -21,6 +23,8 @@ public class ItemStore {
     private EntityManager em;
     @Resource
     private SessionContext sessionContext;
+    @Inject
+    private StorageConfig storageConfig;
 
     public List<Item> getTenLastSharedItems() {
         return em.createNamedQuery(Item.GET_LAST_SHARED, Item.class).setMaxResults(10).getResultList();
@@ -39,6 +43,10 @@ public class ItemStore {
         for (Item item : items) {
             em.persist(item);
         }
+    }
+
+    public void saveFile(Part uploadFile) {
+
     }
 
     @RolesAllowed(MODERATOR)

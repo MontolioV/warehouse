@@ -15,6 +15,7 @@ public class Hasher {
     }
 
     public String makeHash(InputStream is) throws IOException {
+        long fileSize = 0L;
         byte[] buffer = new byte[(int) Math.pow(2, 20)];
         int read = is.read(buffer);
         while (read != -1) {
@@ -23,6 +24,7 @@ public class Hasher {
             } else {
                 messageDigest.update(buffer);
             }
+            fileSize += read;
             read = is.read(buffer);
         }
         byte[] digest = this.messageDigest.digest();
@@ -31,6 +33,7 @@ public class Hasher {
         for (byte b : digest) {
             sb.append(String.format("%02X", b));
         }
+        sb.append("_").append(fileSize);
         return sb.toString();
     }
 }

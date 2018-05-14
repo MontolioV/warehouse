@@ -19,7 +19,6 @@ public class FileItem extends Item {
     private String contentType;
     private long size;
     private String hash;
-//    private byte[] binaryData;
 
     @NotBlank
     public String getNativeName() {
@@ -57,15 +56,4 @@ public class FileItem extends Item {
     public void setHash(String hash) {
         this.hash = hash;
     }
-
-    //    @Lob()
-//    @Basic(fetch = FetchType.LAZY)
-//    @Column(length = MAX_SIZE_BYTE)
-//    public byte[] getBinaryData() {
-//        return binaryData;
-//    }
-//
-//    public void setBinaryData(byte[] content) {
-//        this.binaryData = content;
-//    }
 }

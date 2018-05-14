@@ -8,7 +8,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,11 +54,6 @@ public class CreateItemController {
         fileItem.setContentType(tmpFile.getContentType());
         fileItem.setNativeName(tmpFile.getSubmittedFileName());
         fileItem.setSize(tmpFile.getSize());
-        try (InputStream inputStream = tmpFile.getInputStream()) {
-            byte[] bytes = new byte[(int) tmpFile.getSize()];
-            inputStream.read(bytes);
-            fileItem.setBinaryData(bytes);
-        }
 
         createItem(fileItem);
         facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());

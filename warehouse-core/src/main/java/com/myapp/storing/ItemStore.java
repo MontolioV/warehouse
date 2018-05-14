@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,8 +22,6 @@ public class ItemStore {
     private EntityManager em;
     @Resource
     private SessionContext sessionContext;
-    @Inject
-    private StorageConfig storageConfig;
 
     public List<Item> getTenLastSharedItems() {
         return em.createNamedQuery(Item.GET_LAST_SHARED, Item.class).setMaxResults(10).getResultList();
@@ -45,7 +42,7 @@ public class ItemStore {
         }
     }
 
-    public void saveFile(Part uploadFile) {
+    public void saveFileItem(Part part, FileItem fileItem) {
 
     }
 

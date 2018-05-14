@@ -32,6 +32,7 @@ public class HasherTest {
 
         verify(mdMock).update(any(byte[].class));
         verify(mdMock).update(any(byte[].class), eq(0), eq(1));
-        assertThat(hash, is("7F80"));
+        int length = (int) (Math.pow(2, 20) + 1);
+        assertThat(hash, is("7F80_" + length));
     }
 }

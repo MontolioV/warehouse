@@ -7,7 +7,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.servlet.http.Part;
 import java.util.List;
 
 import static com.myapp.security.Roles.Const.ADMIN;
@@ -40,10 +39,6 @@ public class ItemStore {
         for (Item item : items) {
             em.persist(item);
         }
-    }
-
-    public void saveFileItem(Part part, FileItem fileItem) {
-
     }
 
     @RolesAllowed(MODERATOR)

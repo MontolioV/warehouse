@@ -13,8 +13,6 @@ html, body {
                 #ebee5c 95%,
                 palegreen
         );
-
-        line-height: 2;
     }
 
     table {
@@ -130,5 +128,6 @@ html, body {
 }
 
 .imagePreview {
-    max-width: 50%;
+    max-width: 200px;
+    max-height: 200px;
 }

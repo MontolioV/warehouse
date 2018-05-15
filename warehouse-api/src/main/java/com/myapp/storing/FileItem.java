@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Access(value = AccessType.PROPERTY)
 public class FileItem extends Item {
-    public static final int MAX_SIZE_BYTE = 100_000_000;
+    public static final int MAX_SIZE_BYTE = (int) 1_000_000_000;
 
     private String nativeName;
     private String contentType;

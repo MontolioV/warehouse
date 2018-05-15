@@ -32,8 +32,10 @@ public class FileStore {
         Path resolvedPath = storageConfig.getStorageRoot().resolve(hash);
         if (!Files.exists(resolvedPath)) {
             Files.copy(part.getInputStream(), resolvedPath, StandardCopyOption.REPLACE_EXISTING);
-            File previewFile = storageConfig.getPreviewRoot().resolve(hash + ".jpg").toFile();
-            imagePreviewMaker.makePreview(part.getInputStream(), previewFile);
+            if (part.getContentType().startsWith("image")) {
+                File previewFile = storageConfig.getPreviewRoot().resolve(hash + ".jpg").toFile();
+                imagePreviewMaker.makePreview(part.getInputStream(), previewFile);
+            }
         }
         return hash;
     }

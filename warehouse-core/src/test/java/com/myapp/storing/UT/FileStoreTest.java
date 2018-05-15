@@ -77,12 +77,21 @@ public class FileStoreTest {
     @Test
     public void persistFileNew() throws IOException {
         when(Files.exists(pathMock)).thenReturn(false);
+        when(partMock.getContentType()).thenReturn("image");
         String s = fileStore.persistFile(partMock);
 
         assertThat(s, is(hash));
         verifyStatic(Files.class);
         Files.copy(isMock, pathMock, StandardCopyOption.REPLACE_EXISTING);
         verify(ipmMock).makePreview(isMock, fileMock);
+    }
+
+    @Test
+    public void persistFileNotImage() throws IOException {
+        when(Files.exists(pathMock)).thenReturn(false);
+        when(partMock.getContentType()).thenReturn("text");
+        fileStore.persistFile(partMock);
+        verify(ipmMock, never()).makePreview(isMock, fileMock);
     }
 
     @Test

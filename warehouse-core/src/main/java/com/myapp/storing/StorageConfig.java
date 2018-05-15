@@ -11,17 +11,37 @@ import java.nio.file.Paths;
  */
 @ApplicationScoped
 public class StorageConfig {
+    private Path root;
     private Path storageRoot;
+    private Path previewRoot;
 
-    public StorageConfig() throws FileNotFoundException {
-        String s = System.getProperty("warehouse.storage");
-        storageRoot = Paths.get(s);
+    public StorageConfig() throws FileNotFoundException, StoragePropertyNotFoundException {
+        String rootStr = System.getProperty("warehouse.storage");
+        if (rootStr == null) {
+            throw new StoragePropertyNotFoundException();
+        }
+
+        root = Paths.get(rootStr);
+        if (!root.toFile().exists()) {
+            throw new FileNotFoundException(root.toString());
+        }
+
+        storageRoot = root.resolve("files");
         if (!storageRoot.toFile().exists()) {
-            throw new FileNotFoundException(storageRoot.toString());
+            storageRoot.toFile().mkdir();
+        }
+
+        previewRoot = root.resolve("preview");
+        if (!previewRoot.toFile().exists()) {
+            previewRoot.toFile().mkdir();
         }
     }
 
     public Path getStorageRoot() {
         return storageRoot;
+    }
+
+    public Path getPreviewRoot() {
+        return previewRoot;
     }
 }

@@ -3,6 +3,7 @@ package com.myapp.storing.UT;
 import com.myapp.storing.FileStore;
 import com.myapp.storing.StorageConfig;
 import com.myapp.utils.Hasher;
+import com.myapp.utils.ImagePreviewMaker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,11 +42,17 @@ public class FileStoreTest {
     @Mock
     private Hasher hasherMock;
     @Mock
+    private ImagePreviewMaker ipmMock;
+    @Mock
     private Part partMock;
     @Mock
-    private Path rootMock;
+    private Path stRootMock;
+    @Mock
+    private Path prRootMock;
     @Mock
     private Path pathMock;
+    @Mock
+    private File fileMock;
     @Mock
     private InputStream isMock;
     @Mock
@@ -59,8 +67,11 @@ public class FileStoreTest {
         mockStatic(Files.class);
         when(partMock.getInputStream()).thenReturn(isMock);
         when(hasherMock.makeHash(isMock)).thenReturn(hash);
-        when(scMock.getStorageRoot()).thenReturn(rootMock);
-        when(rootMock.resolve(hash)).thenReturn(pathMock);
+        when(scMock.getStorageRoot()).thenReturn(stRootMock);
+        when(scMock.getPreviewRoot()).thenReturn(prRootMock);
+        when(stRootMock.resolve(hash)).thenReturn(pathMock);
+        when(prRootMock.resolve(hash + ".jpg")).thenReturn(pathMock);
+        when(pathMock.toFile()).thenReturn(fileMock);
     }
 
     @Test
@@ -70,7 +81,8 @@ public class FileStoreTest {
 
         assertThat(s, is(hash));
         verifyStatic(Files.class);
-        Files.copy(isMock, pathMock, StandardCopyOption.COPY_ATTRIBUTES);
+        Files.copy(isMock, pathMock, StandardCopyOption.REPLACE_EXISTING);
+        verify(ipmMock).makePreview(isMock, fileMock);
     }
 
     @Test
@@ -81,6 +93,7 @@ public class FileStoreTest {
         assertThat(s, is(hash));
         verifyStatic(Files.class, never());
         Files.copy(eq(isMock), eq(pathMock), any(CopyOption.class));
+        verify(ipmMock, never()).makePreview(any(), any());
     }
 
     @Test
@@ -95,5 +108,12 @@ public class FileStoreTest {
     public void findFileByHashFail() throws IOException {
         when(Files.copy(pathMock, osMock)).thenThrow(new IOException());
         fileStore.uploadFile(hash, osMock);
+    }
+
+    @Test
+    public void getPreview() {
+        when(prRootMock.resolve(hash + ".jpg")).thenReturn(pathMock);
+        Path preview = fileStore.getPreview(hash);
+        assertThat(preview, is(pathMock));
     }
 }

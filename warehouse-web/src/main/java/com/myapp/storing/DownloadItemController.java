@@ -17,6 +17,8 @@ public class DownloadItemController {
     private FacesContext facesContext;
     @EJB
     private ItemStore itemStore;
+    @EJB
+    private FileStore fileStore;
     private long id;
 
     public void downloadAndSaveItem() throws IOException {
@@ -29,7 +31,7 @@ public class DownloadItemController {
         ec.setResponseContentLength((int) item.getSize());
         ec.addResponseHeader("Content-Disposition", "attachment; filename=\"" + item.getNativeName() + "\"");
         try (OutputStream os = ec.getResponseOutputStream()) {
-            os.write(item.getBinaryData());
+            fileStore.uploadFile(item.getHash(), os);
         }
 
         facesContext.responseComplete();

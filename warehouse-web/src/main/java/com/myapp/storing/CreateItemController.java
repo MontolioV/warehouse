@@ -22,6 +22,8 @@ public class CreateItemController {
     @EJB
     private ItemStore itemStore;
     @EJB
+    private FileStore fileStore;
+    @EJB
     private TagStore tagStore;
     private Principal principal;
     private Item item = new Item();
@@ -36,6 +38,7 @@ public class CreateItemController {
         principal = facesContext.getExternalContext().getUserPrincipal();
     }
 
+    // TODO: 15.05.18 change redirects
     public void createTextItem() throws IOException {
         createItem(textItem);
         facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
@@ -48,6 +51,15 @@ public class CreateItemController {
 
         if (tmpFile.getSize() > FileItem.MAX_SIZE_BYTE) {
             facesContext.addMessage("fileInput", new FacesMessage("File is too large!"));
+            return;
+        }
+
+        try {
+            String hash = fileStore.persistFile(tmpFile);
+            fileItem.setHash(hash);
+        } catch (IOException e) {
+            e.printStackTrace();
+            facesContext.addMessage("fileInput", new FacesMessage("File download fail. Try again."));
             return;
         }
 

@@ -1,6 +1,5 @@
 package com.myapp.storing.UT;
 
-import com.myapp.storing.FileItem;
 import com.myapp.storing.Item;
 import com.myapp.storing.ItemStore;
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.servlet.http.Part;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,15 +120,5 @@ public class ItemStoreTest {
 
         List<Item> result = itemStore.executeCustomSelectQuery(cqMock);
         assertThat(result, sameInstance(items));
-    }
-
-    @Test
-    public void saveFileItem() {
-        FileItem fiMock = mock(FileItem.class);
-        Part partMock = mock(Part.class);
-
-        itemStore.saveFileItem(partMock, fiMock);
-
-
     }
 }

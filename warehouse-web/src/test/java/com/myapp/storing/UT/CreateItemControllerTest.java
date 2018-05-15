@@ -13,12 +13,11 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
+import static com.myapp.utils.TestSecurityConstants.PASS_HASH_VALID;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -36,6 +35,8 @@ public class CreateItemControllerTest {
     @Mock
     private ItemStore isMock;
     @Mock
+    private FileStore fsMock;
+    @Mock
     private TagStore tsMock;
     @Mock
     private FacesContext fcMock;
@@ -43,10 +44,15 @@ public class CreateItemControllerTest {
     private ExternalContext ecMock;
     @Mock
     private Principal principalMock;
+    @Mock
+    private Part partMock;
     private String tagsString;
     private String tag1 = "tag1";
     private String tag2 = "tag2";
     private String tag3 = "tag3";
+    private String fName = "fName";
+    private String cType = "cType";
+    private long fSize = 10L;
 
     @Before
     public void setUp() throws Exception {
@@ -54,6 +60,9 @@ public class CreateItemControllerTest {
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
+        when(partMock.getContentType()).thenReturn(cType);
+        when(partMock.getSubmittedFileName()).thenReturn(fName);
+        when(partMock.getSize()).thenReturn(fSize);
     }
 
     @Test
@@ -79,15 +88,7 @@ public class CreateItemControllerTest {
 
     @Test
     public void createFileItem() throws IOException {
-        String fName = "fName";
-        String cType = "cType";
-        long fSize = 10L;
-        InputStream streamMock = mock(InputStream.class);
-        Part partMock = mock(Part.class);
-        when(partMock.getContentType()).thenReturn(cType);
-        when(partMock.getSubmittedFileName()).thenReturn(fName);
-        when(partMock.getSize()).thenReturn(fSize);
-        when(partMock.getInputStream()).thenReturn(streamMock);
+        when(fsMock.persistFile(partMock)).thenReturn(PASS_HASH_VALID);
 
         controller.setTmpFile(partMock);
         FileItem fileItem = new FileItem();
@@ -96,12 +97,10 @@ public class CreateItemControllerTest {
 
         controller.createFileItem();
 
-        assertThat(fileItem.getBinaryData(), notNullValue());
         assertThat(fileItem.getContentType(), is(cType));
         assertThat(fileItem.getNativeName(), is(fName));
         assertThat(fileItem.getSize(), is(fSize));
-        assertThat(((long) fileItem.getBinaryData().length), is(fSize));
-        verify(streamMock).read(fileItem.getBinaryData());
+        assertThat(fileItem.getHash(), is(PASS_HASH_VALID));
 
         verify(isMock).saveItems(fileItem);
         verify(tsMock).saveTag(tag1, fileItem);
@@ -118,8 +117,6 @@ public class CreateItemControllerTest {
 
     @Test
     public void createFileItemTooLarge() throws IOException {
-        Part partMock = mock(Part.class);
-
         when(partMock.getSize()).thenReturn((long) FileItem.MAX_SIZE_BYTE + 1);
         controller.setTmpFile(partMock);
         controller.createFileItem();
@@ -131,8 +128,24 @@ public class CreateItemControllerTest {
 
     @Test
     public void createFileItemNoFile() throws IOException {
+        controller.setTmpFile(null);
         controller.createFileItem();
 
+        verify(isMock, never()).saveItems(any());
+        verify(tsMock, never()).saveTag(any(), any());
+    }
+
+    @Test
+    public void createFileItemIOException() throws IOException {
+        when(fsMock.persistFile(partMock)).thenThrow(new IOException());
+
+        controller.setTmpFile(partMock);
+        FileItem fileItem = new FileItem();
+        controller.setFileItem(fileItem);
+        controller.setTagsString(tagsString);
+        controller.createFileItem();
+
+        verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
         verify(isMock, never()).saveItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }

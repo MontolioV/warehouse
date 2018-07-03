@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
@@ -7,16 +9,21 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>warehouse-core</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>warehouse-security</artifactId>
 
-    <name>warehouse-core</name>
+    <name>warehouse-security</name>
 
     <dependencies>
         <dependency>
             <groupId>com.myapp</groupId>
             <artifactId>warehouse-api</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.soteria/javax.security.enterprise -->
+        <dependency>
+            <groupId>org.glassfish.soteria</groupId>
+            <artifactId>javax.security.enterprise</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 

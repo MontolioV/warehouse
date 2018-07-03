@@ -1,6 +1,7 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.*;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +78,7 @@ public class RememberMeIdentityStoreDBTest implements CommonChecks {
         String resultValid = rememberMeIS.generateLoginToken(callerPrincipalValid, null);
         String resultInvalid = rememberMeIS.generateLoginToken(callerPrincipalInvalid, null);
 
-        assertThat(resultValid, is(TOKEN_HASH_VALID));
+        assertThat(resultValid, CoreMatchers.is(TOKEN_HASH_VALID));
         assertNull(resultInvalid);
         verify(tsMock).createToken(any(Account.class), any(TokenType.class), any(Date.class));
     }

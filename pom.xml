@@ -9,6 +9,7 @@
         <module>warehouse-api</module>
         <module>warehouse-core</module>
         <module>warehouse-web</module>
+        <module>warehouse-security</module>
     </modules>
     <packaging>pom</packaging>
 

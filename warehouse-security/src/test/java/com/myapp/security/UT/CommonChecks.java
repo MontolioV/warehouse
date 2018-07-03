@@ -1,11 +1,12 @@
 package com.myapp.security.UT;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
+
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static com.myapp.utils.TestSecurityConstants.ROLES_STR_SET;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * <p>Created by MontolioV on 13.03.18.
@@ -13,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public interface CommonChecks {
 
     default void checkAuthenticationValidResult(CredentialValidationResult result) {
-        assertThat(result.getCallerPrincipal().getName(), is(LOGIN_VALID));
-        assertThat(result.getCallerGroups(), is(ROLES_STR_SET));
+        MatcherAssert.assertThat(result.getCallerPrincipal().getName(), CoreMatchers.is(LOGIN_VALID));
+        MatcherAssert.assertThat(result.getCallerGroups(), CoreMatchers.is(ROLES_STR_SET));
     }
 }

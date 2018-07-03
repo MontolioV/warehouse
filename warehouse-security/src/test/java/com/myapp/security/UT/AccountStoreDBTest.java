@@ -1,6 +1,8 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.*;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,7 +113,7 @@ public class AccountStoreDBTest implements CommonChecks {
 
         assertThat(accountNew.getId(), is(1L));
         assertThat(accountNew.getLogin(), is("test"));
-        assertThat(accountNew.getPassHash(), is(PASS_HASH_VALID));
+        MatcherAssert.assertThat(accountNew.getPassHash(), CoreMatchers.is(PASS_HASH_VALID));
         assertThat(accountNew.getEmail(), is("test"));
         assertThat(accountNew.isActive(), is(false));
         assertThat(accountNew.getRoles().size(), is(1));

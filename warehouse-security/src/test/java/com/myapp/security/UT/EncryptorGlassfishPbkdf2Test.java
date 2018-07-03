@@ -12,7 +12,6 @@ import static com.myapp.utils.TestSecurityConstants.PASSWORD_VALID;
 import static com.myapp.utils.TestSecurityConstants.PASS_HASH_VALID;
 import static org.mockito.Mockito.verify;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class EncryptorGlassfishPbkdf2Test implements CommonChecks {
     @InjectMocks

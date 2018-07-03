@@ -24,6 +24,11 @@
             <artifactId>warehouse-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.myapp</groupId>
+            <artifactId>warehouse-security</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.omnifaces/omnifaces -->
         <dependency>
             <groupId>org.omnifaces</groupId>

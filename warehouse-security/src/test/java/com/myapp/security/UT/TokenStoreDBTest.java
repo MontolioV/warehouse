@@ -1,6 +1,7 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.*;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +61,7 @@ public class TokenStoreDBTest implements CommonChecks {
         verify(encryptorMock).generate(any(String.class));
         verify(accountMock).addToken(token);
         verify(emMock).merge(accountMock);
-        assertThat(token.getTokenHash(), is(TOKEN_HASH_VALID));
+        assertThat(token.getTokenHash(), CoreMatchers.is(TOKEN_HASH_VALID));
     }
 
     @Test

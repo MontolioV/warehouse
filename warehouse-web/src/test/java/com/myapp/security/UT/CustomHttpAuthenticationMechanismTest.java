@@ -1,7 +1,6 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.CustomHttpAuthenticationMechanism;
-import com.myapp.security.CustomIdentityStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +14,7 @@ import javax.security.enterprise.authentication.mechanism.http.AuthenticationPar
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
+import javax.security.enterprise.identitystore.IdentityStore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,7 +32,7 @@ public class CustomHttpAuthenticationMechanismTest {
     @InjectMocks
     private CustomHttpAuthenticationMechanism authenticationMechanism;
     @Mock
-    private CustomIdentityStore isMock;
+    private IdentityStore isMock;
     @Mock
     private HttpMessageContext contextMock;
     @Mock

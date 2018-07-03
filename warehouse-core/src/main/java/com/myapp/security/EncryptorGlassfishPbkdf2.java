@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Stateless
-public class Encryptor {
+public class EncryptorGlassfishPbkdf2 implements Encryptor {
     private Pbkdf2PasswordHashImpl hasher = new Pbkdf2PasswordHashImpl();
 
     @PostConstruct
@@ -19,10 +19,12 @@ public class Encryptor {
         hasher.initialize(parameters);
     }
 
+    @Override
     public String generate(String password) {
         return hasher.generate(password.toCharArray());
     }
 
+    @Override
     public boolean verify(String password, String hashedPassword) {
         return hasher.verify(password.toCharArray(), hashedPassword);
     }

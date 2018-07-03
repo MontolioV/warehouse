@@ -2,6 +2,7 @@ package com.myapp.security;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,12 +15,14 @@ import static com.myapp.security.Roles.Const.USER;
 import static java.util.UUID.randomUUID;
 
 @Stateless
-public class TokenStore {
+@Local(TokenStore.class)
+public class TokenStoreDB implements TokenStore{
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
     @EJB
     private Encryptor encryptor;
 
+    @Override
     public Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate) {
         String uuid = randomUUID().toString();
         String hash = encryptor.generate(uuid);
@@ -35,12 +38,14 @@ public class TokenStore {
         return newToken;
     }
 
+    @Override
     public Token findToken(String tokenHash) {
         return em.createNamedQuery(Token.GET_BY_HASH, Token.class)
                 .setParameter("hash", tokenHash)
                 .getSingleResult();
     }
 
+    @Override
     @RolesAllowed(USER)
     public void removeToken(String tokenHash) {
         em.createNamedQuery(Token.DELETE_BY_HASH)
@@ -48,13 +53,14 @@ public class TokenStore {
                 .executeUpdate();
     }
 
+    @Override
     public int removeExpiredTokens() {
         return em.createNamedQuery(Token.DELETE_EXPIRED_TO_DATE)
                 .setParameter("date", new Date())
                 .executeUpdate();
     }
 
-
+    @Override
     @RolesAllowed(USER)
     public void removeAllRememberMeTokens(@NotNull Account account) {
         List<Token> tokensToRemove = account.getTokens().stream()
@@ -66,21 +72,5 @@ public class TokenStore {
 
         account.getTokens().removeAll(tokensToRemove);
         em.merge(account);
-    }
-
-    public EntityManager getEm() {
-        return em;
-    }
-
-    public void setEm(EntityManager em) {
-        this.em = em;
-    }
-
-    public Encryptor getEncryptor() {
-        return encryptor;
-    }
-
-    public void setEncryptor(Encryptor encryptor) {
-        this.encryptor = encryptor;
     }
 }

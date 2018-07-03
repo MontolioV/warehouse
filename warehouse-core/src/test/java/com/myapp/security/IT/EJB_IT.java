@@ -1,7 +1,7 @@
 package com.myapp.security.IT;
 
 import com.myapp.security.Account;
-import com.myapp.security.AccountStore;
+import com.myapp.security.AccountStoreDB;
 import com.myapp.security.LoginExistsException;
 import com.myapp.security.UnsecurePasswordException;
 import org.junit.AfterClass;
@@ -41,21 +41,21 @@ public class EJB_IT {
     public void ejbValidation() throws NamingException, LoginExistsException, UnsecurePasswordException {
         Context context = ejbContainer.getContext();
 
-        assertNotNull(context.lookup("java:global/classes/AccountStore"));
+        assertNotNull(context.lookup("java:global/classes/AccountStoreDB"));
         assertNotNull(context.lookup("java:global/classes/Encryptor"));
         assertNotNull(context.lookup("java:global/classes/TokenScheduler"));
         assertNotNull(context.lookup("java:global/classes/TokenStore"));
 
-        AccountStore accountStore = (AccountStore) context.lookup("java:global/classes/AccountStore");
-        assertNotNull(accountStore.getEm());
+        AccountStoreDB accountStoreDB = (AccountStoreDB) context.lookup("java:global/classes/AccountStoreDB");
+//        assertNotNull(accountStoreDB.getEm());
 
         Account account = new Account();
         account.setLogin("asdasd");
         account.setPassHash("asdasd");
         account.setEmail("sadasd@asdfjn.com");
 
-        accountStore.createAccount(account);
-        Account account1 = accountStore.getAccountByLogin("asdasd").get();
+        accountStoreDB.createAccount(account);
+        Account account1 = accountStoreDB.getAccountByLogin("asdasd").get();
         System.out.println(
                         account1.getId() + "\n" +
                         account1.getPassHash() + "\n" +

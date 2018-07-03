@@ -24,9 +24,9 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 09.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TokenStoreTest implements CommonChecks {
+public class TokenStoreDBTest implements CommonChecks {
     @InjectMocks
-    private TokenStore tokenStore;
+    private TokenStoreDB tokenStoreDB;
     @Mock
     private EntityManager emMock;
     @Mock
@@ -55,7 +55,7 @@ public class TokenStoreTest implements CommonChecks {
     public void createToken() {
         when(encryptorMock.generate(any(String.class))).thenReturn(TOKEN_HASH_VALID);
 
-        Token token = tokenStore.createToken(accountMock, TokenType.REMEMBER_ME, new Date());
+        Token token = tokenStoreDB.createToken(accountMock, TokenType.REMEMBER_ME, new Date());
 
         verify(encryptorMock).generate(any(String.class));
         verify(accountMock).addToken(token);
@@ -77,7 +77,7 @@ public class TokenStoreTest implements CommonChecks {
         when(emMock.createNamedQuery(Token.DELETE_BY_HASH)).thenReturn(queryMock);
         when(queryMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(queryMock);
 
-        tokenStore.removeToken(TOKEN_HASH_VALID);
+        tokenStoreDB.removeToken(TOKEN_HASH_VALID);
         verify(queryMock).executeUpdate();
     }
 
@@ -88,13 +88,13 @@ public class TokenStoreTest implements CommonChecks {
         when(queryMock.setParameter(eq("date"), any())).thenReturn(queryMock);
         when(queryMock.executeUpdate()).thenReturn(123);
 
-        int deleted = tokenStore.removeExpiredTokens();
+        int deleted = tokenStoreDB.removeExpiredTokens();
         assertThat(deleted, is(123));
     }
 
     @Test
     public void removeRememberMeTokens() {
-        tokenStore.removeAllRememberMeTokens(accountMock);
+        tokenStoreDB.removeAllRememberMeTokens(accountMock);
         verify(emMock).merge(accountMock);
         assertThat(tokens.size(), is(1));
         assertThat(tokens.contains(rmToken), is(false));

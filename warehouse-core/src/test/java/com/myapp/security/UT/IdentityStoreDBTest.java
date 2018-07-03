@@ -2,7 +2,7 @@ package com.myapp.security.UT;
 
 import com.myapp.security.Account;
 import com.myapp.security.AccountStore;
-import com.myapp.security.CustomIdentityStore;
+import com.myapp.security.IdentityStoreDB;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +27,9 @@ import static org.mockito.Mockito.when;
  * <p>Created by MontolioV on 12.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CustomIdentityStoreTest implements CommonChecks {
+public class IdentityStoreDBTest implements CommonChecks {
     @InjectMocks
-    private CustomIdentityStore is;
+    private IdentityStoreDB is;
     @Mock
     private AccountStore acMock;
     @Mock

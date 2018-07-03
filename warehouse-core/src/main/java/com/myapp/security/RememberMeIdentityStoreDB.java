@@ -1,6 +1,7 @@
 package com.myapp.security;
 
 import javax.ejb.EJB;
+import javax.ejb.Local;
 import javax.enterprise.context.ApplicationScoped;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.RememberMeCredential;
@@ -20,9 +21,10 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
  */
 
 @ApplicationScoped
-public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
+@Local(RememberMeIdentityStore.class)
+public class RememberMeIdentityStoreDB implements RememberMeIdentityStore {
     @EJB
-    private AccountStore accountStore;
+    private AccountStore accountStoreDB;
     @EJB
     private TokenStore tokenStore;
 
@@ -34,7 +36,7 @@ public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
      */
     @Override
     public CredentialValidationResult validate(RememberMeCredential credential) {
-        Optional<Account> optional = accountStore.getAccountByTokenHash(credential.getToken());
+        Optional<Account> optional = accountStoreDB.getAccountByTokenHash(credential.getToken());
         if (optional.isPresent()) {
             Account account = optional.get();
             Set<String> rolesStrSet = new HashSet<>();
@@ -58,7 +60,7 @@ public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
      */
     @Override
     public String generateLoginToken(CallerPrincipal callerPrincipal, Set<String> groups) {
-        Optional<Account> optional = accountStore.getAccountByLogin(callerPrincipal.getName());
+        Optional<Account> optional = accountStoreDB.getAccountByLogin(callerPrincipal.getName());
         if (optional.isPresent()) {
             Date expiring = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
             return tokenStore.createToken(optional.get(), TokenType.REMEMBER_ME, expiring)
@@ -80,21 +82,5 @@ public class CustomRememberMeIdentityStore implements RememberMeIdentityStore {
     @Override
     public void removeLoginToken(String tokenStr) {
         tokenStore.removeToken(tokenStr);
-    }
-
-    public AccountStore getAccountStore() {
-        return accountStore;
-    }
-
-    public void setAccountStore(AccountStore accountStore) {
-        this.accountStore = accountStore;
-    }
-
-    public TokenStore getTokenStore() {
-        return tokenStore;
-    }
-
-    public void setTokenStore(TokenStore tokenStore) {
-        this.tokenStore = tokenStore;
     }
 }

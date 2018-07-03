@@ -27,9 +27,9 @@ import static org.mockito.Mockito.when;
  * <p>Created by MontolioV on 13.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CustomRememberMeIdentityStoreTest implements CommonChecks {
+public class RememberMeIdentityStoreDBTest implements CommonChecks {
     @InjectMocks
-    private CustomRememberMeIdentityStore rememberMeIS;
+    private RememberMeIdentityStoreDB rememberMeIS;
     @Mock
     private AccountStore asMock;
     @Mock

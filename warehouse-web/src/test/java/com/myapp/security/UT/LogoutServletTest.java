@@ -1,6 +1,5 @@
 package com.myapp.security.UT;
 
-import com.myapp.security.CustomRememberMeIdentityStore;
 import com.myapp.security.LogoutServlet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.security.enterprise.identitystore.RememberMeIdentityStore;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class LogoutServletTest {
     @InjectMocks
     private LogoutServlet logoutServlet = new LogoutServlet();
     @Mock
-    private CustomRememberMeIdentityStore rmStoreMock;
+    private RememberMeIdentityStore rmStoreMock;
     @Mock
     private HttpServletRequest requestMock;
     @Mock

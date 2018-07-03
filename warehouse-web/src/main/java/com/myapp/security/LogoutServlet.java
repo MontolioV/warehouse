@@ -3,6 +3,7 @@ package com.myapp.security;
 import com.myapp.utils.HttpUtils;
 
 import javax.inject.Inject;
+import javax.security.enterprise.identitystore.RememberMeIdentityStore;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -20,7 +21,7 @@ import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE;
 @WebServlet(value = "logout")
 public class LogoutServlet extends HttpServlet {
     @Inject
-    private CustomRememberMeIdentityStore rememberMeIdentityStore;
+    private RememberMeIdentityStore rememberMeIdentityStore;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,11 +35,11 @@ public class LogoutServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath());
     }
 
-    public CustomRememberMeIdentityStore getRememberMeIdentityStore() {
+    public RememberMeIdentityStore getRememberMeIdentityStore() {
         return rememberMeIdentityStore;
     }
 
-    public void setRememberMeIdentityStore(CustomRememberMeIdentityStore rememberMeIdentityStore) {
+    public void setRememberMeIdentityStore(RememberMeIdentityStore rememberMeIdentityStore) {
         this.rememberMeIdentityStore = rememberMeIdentityStore;
     }
 }

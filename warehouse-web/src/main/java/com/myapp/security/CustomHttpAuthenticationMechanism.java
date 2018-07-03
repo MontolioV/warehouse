@@ -8,6 +8,7 @@ import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticatio
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.authentication.mechanism.http.RememberMe;
 import javax.security.enterprise.credential.Credential;
+import javax.security.enterprise.identitystore.IdentityStore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 //@ApplicationScoped
 public class CustomHttpAuthenticationMechanism implements HttpAuthenticationMechanism {
     @Inject
-    private CustomIdentityStore identityStore;
+    private IdentityStore identityStore;
 
     /**
      * Authenticate an HTTP request.
@@ -67,11 +68,11 @@ public class CustomHttpAuthenticationMechanism implements HttpAuthenticationMech
         return context.getAuthParameters().isRememberMe();
     }
 
-    public CustomIdentityStore getIdentityStore() {
+    public IdentityStore getIdentityStore() {
         return identityStore;
     }
 
-    public void setIdentityStore(CustomIdentityStore identityStore) {
+    public void setIdentityStore(IdentityStore identityStore) {
         this.identityStore = identityStore;
     }
 }

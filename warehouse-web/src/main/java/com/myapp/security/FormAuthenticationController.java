@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
+import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.RememberMeIdentityStore;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -37,9 +39,9 @@ public class FormAuthenticationController {
     @Inject
     private RememberMeAuthenticator rmAuthenticator;
     @Inject
-    private CustomIdentityStore identityStore;
+    private IdentityStore identityStore;
     @Inject
-    private CustomRememberMeIdentityStore rememberMeIdentityStore;
+    private RememberMeIdentityStore rememberMeIdentityStore;
     @EJB
     private AccountStore accountStore;
     @Inject
@@ -91,11 +93,11 @@ public class FormAuthenticationController {
         }
     }
 
-    public CustomIdentityStore getIdentityStore() {
+    public IdentityStore getIdentityStore() {
         return identityStore;
     }
 
-    public void setIdentityStore(CustomIdentityStore identityStore) {
+    public void setIdentityStore(IdentityStore identityStore) {
         this.identityStore = identityStore;
     }
 
@@ -131,11 +133,11 @@ public class FormAuthenticationController {
         this.rmAuthenticator = rmAuthenticator;
     }
 
-    public CustomRememberMeIdentityStore getRememberMeIdentityStore() {
+    public RememberMeIdentityStore getRememberMeIdentityStore() {
         return rememberMeIdentityStore;
     }
 
-    public void setRememberMeIdentityStore(CustomRememberMeIdentityStore rememberMeIdentityStore) {
+    public void setRememberMeIdentityStore(RememberMeIdentityStore rememberMeIdentityStore) {
         this.rememberMeIdentityStore = rememberMeIdentityStore;
     }
 

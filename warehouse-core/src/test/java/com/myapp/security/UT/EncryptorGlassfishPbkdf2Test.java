@@ -1,6 +1,6 @@
 package com.myapp.security.UT;
 
-import com.myapp.security.Encryptor;
+import com.myapp.security.EncryptorGlassfishPbkdf2;
 import org.glassfish.soteria.identitystores.hash.Pbkdf2PasswordHashImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +14,11 @@ import static org.mockito.Mockito.verify;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class EncryptorTest implements CommonChecks {
+public class EncryptorGlassfishPbkdf2Test implements CommonChecks {
+    @InjectMocks
+    private EncryptorGlassfishPbkdf2 encryptor;
     @Mock
     private Pbkdf2PasswordHashImpl hashMock;
-    @InjectMocks
-    private Encryptor encryptor;
 
     @Test
     public void generate() {

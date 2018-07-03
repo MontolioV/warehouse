@@ -1,6 +1,9 @@
 package com.myapp.security.UT;
 
-import com.myapp.security.*;
+import com.myapp.security.Account;
+import com.myapp.security.AccountStore;
+import com.myapp.security.FormAuthenticationController;
+import com.myapp.security.RememberMeAuthenticator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +17,8 @@ import javax.faces.context.FacesContext;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
+import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.RememberMeIdentityStore;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +47,9 @@ public class FormAuthenticationControllerTest {
     @Mock
     private RememberMeAuthenticator rmAuthMock;
     @Mock
-    private CustomIdentityStore isMock;
+    private IdentityStore isMock;
     @Mock
-    private CustomRememberMeIdentityStore rmMock;
+    private RememberMeIdentityStore rmMock;
     @Mock
     private AccountStore asMock;
     @Mock

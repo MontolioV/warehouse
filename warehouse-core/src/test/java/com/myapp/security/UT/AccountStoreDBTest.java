@@ -31,9 +31,9 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 05.03.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AccountStoreTest implements CommonChecks {
+public class AccountStoreDBTest implements CommonChecks {
     @InjectMocks
-    private AccountStore accountStore;
+    private AccountStoreDB accountStoreDB;
     @Mock
     private Encryptor encryptorMock;
     @Mock
@@ -104,7 +104,7 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test
     public void createAccount() throws LoginExistsException, UnsecurePasswordException {
-        accountStore.createAccount(accountNew);
+        accountStoreDB.createAccount(accountNew);
         verify(emMock).persist(accountNew);
         verify(emMock).flush();
         verify(emMock).detach(accountNew);
@@ -122,7 +122,7 @@ public class AccountStoreTest implements CommonChecks {
     @Test
     public void createExistingAccount() throws UnsecurePasswordException {
         try {
-            accountStore.createAccount(accountExisting);
+            accountStoreDB.createAccount(accountExisting);
         } catch (LoginExistsException e) {
             //as expected
         }
@@ -134,7 +134,7 @@ public class AccountStoreTest implements CommonChecks {
         for (String password : badPasswords) {
             accountNew.setPassHash(password);
             try {
-                accountStore.createAccount(accountNew);
+                accountStoreDB.createAccount(accountNew);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
@@ -145,8 +145,8 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test
     public void getAccountByLogin() {
-        Optional<Account> accountNotExists = accountStore.getAccountByLogin(accountNew.getLogin());
-        Optional<Account> accountExists = accountStore.getAccountByLogin(accountExisting.getLogin());
+        Optional<Account> accountNotExists = accountStoreDB.getAccountByLogin(accountNew.getLogin());
+        Optional<Account> accountExists = accountStoreDB.getAccountByLogin(accountExisting.getLogin());
 
         assertFalse(accountNotExists.isPresent());
         assertTrue(accountExists.isPresent());
@@ -157,8 +157,8 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test
     public void getAccountByLoginAndPassword() {
-        Optional<Account> accountPassRight = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_VALID);
-        Optional<Account> accountPassWrong = accountStore.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_INVALID);
+        Optional<Account> accountPassRight = accountStoreDB.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_VALID);
+        Optional<Account> accountPassWrong = accountStoreDB.getAccountByLoginAndPassword(accountExisting.getLogin(), PASSWORD_INVALID);
 
         verify(encryptorMock, times(2)).verify(any(String.class), any(String.class));
         assertTrue(accountPassRight.isPresent());
@@ -169,8 +169,8 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test
     public void getAccountByTokenHash() {
-        Optional<Account> accountTokenValid = accountStore.getAccountByTokenHash(TOKEN_HASH_VALID);
-        Optional<Account> accountTokenInvalid = accountStore.getAccountByTokenHash(TOKEN_HASH_INVALID);
+        Optional<Account> accountTokenValid = accountStoreDB.getAccountByTokenHash(TOKEN_HASH_VALID);
+        Optional<Account> accountTokenInvalid = accountStoreDB.getAccountByTokenHash(TOKEN_HASH_INVALID);
 
         assertTrue(accountTokenValid.isPresent());
         assertFalse(accountTokenInvalid.isPresent());
@@ -184,25 +184,25 @@ public class AccountStoreTest implements CommonChecks {
         arrayList.add(accountExisting);
         when(emMock.createNamedQuery(Account.GET_ALL, Account.class)).thenReturn(customQueryMock);
         when(customQueryMock.getResultList()).thenReturn(arrayList);
-        assertThat(accountStore.getAllAccounts(), is(arrayList));
+        assertThat(accountStoreDB.getAllAccounts(), is(arrayList));
         verify(emMock).detach(accountExisting);
     }
 
     @Test
     public void changeExistingAccountStatus() {
-        accountStore.changeAccountStatus(accountMockID, true);
+        accountStoreDB.changeAccountStatus(accountMockID, true);
         verify(emMock).find(Account.class, accountMockID);
         verify(accountMock).setActive(true);
     }
 
     @Test(expected = NoResultException.class)
     public void changeNonExistingAccountStatus() {
-        accountStore.changeAccountStatus(accountNonExistingID, true);
+        accountStoreDB.changeAccountStatus(accountNonExistingID, true);
     }
 
     @Test
     public void changeExistingAccountPassword() throws UnsecurePasswordException {
-        accountStore.changeAccountPassword(accountMockID, PASSWORD_VALID);
+        accountStoreDB.changeAccountPassword(accountMockID, PASSWORD_VALID);
         verify(encryptorMock).generate(PASSWORD_VALID);
         verify(emMock).find(Account.class, accountMockID);
         verify(accountMock).setPassHash(PASS_HASH_VALID);
@@ -210,12 +210,12 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test(expected = NoResultException.class)
     public void changeNonExistingAccountPassword() throws UnsecurePasswordException {
-        accountStore.changeAccountPassword(accountNonExistingID, PASSWORD_VALID);
+        accountStoreDB.changeAccountPassword(accountNonExistingID, PASSWORD_VALID);
     }
 
     @Test
     public void changeSelfAccountPassword() throws UnsecurePasswordException {
-        accountStore.changeSelfAccountPassword(PASSWORD_VALID);
+        accountStoreDB.changeSelfAccountPassword(PASSWORD_VALID);
         verify(encryptorMock).generate(PASSWORD_VALID);
         verify(accountMock).setPassHash(PASS_HASH_VALID);
     }
@@ -224,12 +224,12 @@ public class AccountStoreTest implements CommonChecks {
     public void changeAccountPasswordFail() {
         for (String password : badPasswords) {
             try {
-                accountStore.changeAccountPassword(accountMockID, password);
+                accountStoreDB.changeAccountPassword(accountMockID, password);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
             try {
-                accountStore.changeSelfAccountPassword(password);
+                accountStoreDB.changeSelfAccountPassword(password);
             } catch (UnsecurePasswordException e) {
                 //as expected
             }
@@ -241,19 +241,19 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test
     public void changeExistingAccountEmail() {
-        accountStore.changeAccountEmail(accountMockID, "email");
+        accountStoreDB.changeAccountEmail(accountMockID, "email");
         verify(emMock).find(Account.class, accountMockID);
         verify(accountMock).setEmail("email");
     }
 
     @Test(expected = NoResultException.class)
     public void changeNonExistingAccountEmail() {
-        accountStore.changeAccountEmail(accountNonExistingID, "email");
+        accountStoreDB.changeAccountEmail(accountNonExistingID, "email");
     }
 
     @Test
     public void changeSelfAccountEmail() {
-        accountStore.changeSelfAccountEmail("email");
+        accountStoreDB.changeSelfAccountEmail("email");
         verify(accountMock).setEmail("email");
     }
 
@@ -261,11 +261,11 @@ public class AccountStoreTest implements CommonChecks {
     public void addRoleToExistingAccount() {
         assertTrue(accountExisting.getRoles().isEmpty());
 
-        accountStore.addRoleToAccount(accountExistingID, MODERATOR);
+        accountStoreDB.addRoleToAccount(accountExistingID, MODERATOR);
         assertThat(accountExisting.getRoles().size(), is(1));
         assertTrue(accountExisting.getRoles().contains(MODERATOR));
 
-        accountStore.addRoleToAccount(accountExistingID, MODERATOR);
+        accountStoreDB.addRoleToAccount(accountExistingID, MODERATOR);
         assertThat(accountExisting.getRoles().size(), is(1));
         assertTrue(accountExisting.getRoles().contains(MODERATOR));
 
@@ -274,7 +274,7 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test(expected = NoResultException.class)
     public void addRoleToNonExistingAccount() {
-        accountStore.addRoleToAccount(accountNonExistingID, MODERATOR);
+        accountStoreDB.addRoleToAccount(accountNonExistingID, MODERATOR);
     }
 
     @Test
@@ -283,7 +283,7 @@ public class AccountStoreTest implements CommonChecks {
         accountExisting.getRoles().add(ADMIN);
         accountExisting.getRoles().add(MODERATOR);
 
-        accountStore.removeRoleFromAccount(accountExistingID, ADMIN);
+        accountStoreDB.removeRoleFromAccount(accountExistingID, ADMIN);
 
         assertThat(accountExisting.getRoles().size(), is(1));
         assertTrue(accountExisting.getRoles().contains(MODERATOR));
@@ -292,13 +292,13 @@ public class AccountStoreTest implements CommonChecks {
 
     @Test(expected = NoResultException.class)
     public void removeRoleFromNonExistingAccount() {
-        accountStore.removeRoleFromAccount(accountNonExistingID, MODERATOR);
+        accountStoreDB.removeRoleFromAccount(accountNonExistingID, MODERATOR);
     }
 
     @Test
     public void setNewRolesToExistingAccount() {
         Set<Roles> roles = new HashSet<>();
-        accountStore.setNewRolesToAccount(accountExistingID, roles);
+        accountStoreDB.setNewRolesToAccount(accountExistingID, roles);
         verify(emMock).find(Account.class, accountExistingID);
         assertThat(accountExisting.getRoles(), sameInstance(roles));
     }
@@ -306,6 +306,6 @@ public class AccountStoreTest implements CommonChecks {
     @Test(expected = NoResultException.class)
     public void setNewRolesToNonExistingAccount() {
         Set<Roles> roles = new HashSet<>();
-        accountStore.setNewRolesToAccount(accountNonExistingID, roles);
+        accountStoreDB.setNewRolesToAccount(accountNonExistingID, roles);
     }
 }

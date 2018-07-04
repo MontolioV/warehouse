@@ -6,5 +6,6 @@ package com.myapp.security;
 public interface Encryptor {
 
     String generate(String password);
+
     boolean verify(String password, String hashedPassword);
 }

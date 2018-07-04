@@ -1,7 +1,7 @@
 package com.myapp.security.IT;
 
-import com.myapp.security.IdentityStoreDB;
-import com.myapp.security.RememberMeIdentityStoreDB;
+import com.myapp.security.IdentityStoreDefault;
+import com.myapp.security.RememberMeIdentityStoreDefault;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.AfterClass;
@@ -31,7 +31,7 @@ public class CDI_IT {
 
     @Test
     public void getCDIBeans() {
-        assertNotNull(container.select(IdentityStoreDB.class).get());
-        assertNotNull(container.select(RememberMeIdentityStoreDB.class).get());
+        assertNotNull(container.select(IdentityStoreDefault.class).get());
+        assertNotNull(container.select(RememberMeIdentityStoreDefault.class).get());
     }
 }

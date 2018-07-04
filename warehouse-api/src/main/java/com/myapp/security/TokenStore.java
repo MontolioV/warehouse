@@ -8,9 +8,14 @@ import java.util.Date;
  */
 public interface TokenStore {
 
+
     Token createToken(@NotNull Account account, TokenType tokenType, Date expiringDate);
+
     Token findToken(String tokenHash);
+
     void removeToken(String tokenHash);
+
     int removeExpiredTokens();
+
     void removeAllRememberMeTokens(@NotNull Account account);
 }

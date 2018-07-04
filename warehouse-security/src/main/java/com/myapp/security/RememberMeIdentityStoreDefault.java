@@ -22,9 +22,9 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
 
 @ApplicationScoped
 @Local(RememberMeIdentityStore.class)
-public class RememberMeIdentityStoreDB implements RememberMeIdentityStore {
+public class RememberMeIdentityStoreDefault implements RememberMeIdentityStore {
     @EJB
-    private AccountStore accountStoreDB;
+    private AccountStore accountStore;
     @EJB
     private TokenStore tokenStore;
 
@@ -36,7 +36,7 @@ public class RememberMeIdentityStoreDB implements RememberMeIdentityStore {
      */
     @Override
     public CredentialValidationResult validate(RememberMeCredential credential) {
-        Optional<Account> optional = accountStoreDB.getAccountByTokenHash(credential.getToken());
+        Optional<Account> optional = accountStore.getAccountByTokenHash(credential.getToken());
         if (optional.isPresent()) {
             Account account = optional.get();
             Set<String> rolesStrSet = new HashSet<>();
@@ -60,7 +60,7 @@ public class RememberMeIdentityStoreDB implements RememberMeIdentityStore {
      */
     @Override
     public String generateLoginToken(CallerPrincipal callerPrincipal, Set<String> groups) {
-        Optional<Account> optional = accountStoreDB.getAccountByLogin(callerPrincipal.getName());
+        Optional<Account> optional = accountStore.getAccountByLogin(callerPrincipal.getName());
         if (optional.isPresent()) {
             Date expiring = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
             return tokenStore.createToken(optional.get(), TokenType.REMEMBER_ME, expiring)

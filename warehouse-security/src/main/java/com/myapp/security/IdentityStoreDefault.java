@@ -14,9 +14,9 @@ import java.util.Set;
 
 @ApplicationScoped
 @Local(IdentityStore.class)
-public class IdentityStoreDB implements IdentityStore {
+public class IdentityStoreDefault implements IdentityStore {
     @EJB
-    private AccountStore accountStoreDB;
+    private AccountStore accountStore;
 
     @Override
     public CredentialValidationResult validate(Credential credential) {
@@ -26,14 +26,14 @@ public class IdentityStoreDB implements IdentityStore {
                 String login = usernamePasswordCredential.getCaller();
                 String password = usernamePasswordCredential.getPasswordAsString();
 
-                return validate(accountStoreDB.getAccountByLoginAndPassword(login, password)
+                return validate(accountStore.getAccountByLoginAndPassword(login, password)
                         .orElseThrow(AccountNotFoundException::new));
 
             } else if (credential instanceof CallerOnlyCredential) {
                 CallerOnlyCredential callerOnlyCredential = (CallerOnlyCredential) credential;
                 String login = callerOnlyCredential.getCaller();
 
-                return validate(accountStoreDB.getAccountByLogin(login)
+                return validate(accountStore.getAccountByLogin(login)
                         .orElseThrow(AccountNotFoundException::new));
             }
         } catch (AccountNotFoundException e) {

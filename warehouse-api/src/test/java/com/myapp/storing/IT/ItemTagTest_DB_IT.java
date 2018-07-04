@@ -1,6 +1,7 @@
 package com.myapp.storing.IT;
 
 import com.myapp.WithEmbeddedDB;
+import com.myapp.storing.FileItem;
 import com.myapp.storing.Item;
 import com.myapp.storing.Tag;
 import com.myapp.storing.TextItem;
@@ -24,15 +25,22 @@ import static org.junit.Assert.assertTrue;
  * <p>Created by MontolioV on 16.04.18.
  */
 public class ItemTagTest_DB_IT extends WithEmbeddedDB {
-    public static final String TEST_1 = "TEST_1"; 
-    public static final String TEST_2 = "TEST_2"; 
-    public static final String TEST_3 = "TEST_3";
+    private final String TEST_1 = "TEST_1"; 
+    private final String TEST_2 = "TEST_2"; 
+    private final String TEST_3 = "TEST_3";
+    private final String NATIVE_NAME = "NATIVE_NAME";
+    private final String CONTENT_TYPE = "CONTENT_TYPE";
+    private final String HASH_1 = "HASH_1";
+    private final String HASH_2 = "HASH_2";
     private Tag tag1;
     private Tag tag2;
     private Item item1;
     private Item item2;
     private Item item3;
     private Item textItem;
+    private FileItem fileItem1;
+    private FileItem fileItem2;
+    private FileItem fileItem3;
 
     @Test
     public void persist() throws Exception {
@@ -46,6 +54,9 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         item2 = new Item(0, TEST_2, TEST_2, TEST_2, yesterdayDate, true, new ArrayList<>());
         item3 = new Item(0, TEST_3, TEST_3, TEST_3, minuteAgoDate, true, new ArrayList<>());
         textItem = new TextItem(0, TEST_3, TEST_3, TEST_3, new Date(), false, new ArrayList<>(), TEST_3);
+        fileItem1 = new FileItem(0, TEST_1, TEST_1, TEST_1, weekAgoDate, true, new ArrayList<>(), NATIVE_NAME, CONTENT_TYPE, 1L, HASH_1);
+        fileItem2 = new FileItem(0, TEST_1, TEST_1, TEST_1, weekAgoDate, true, new ArrayList<>(), NATIVE_NAME, CONTENT_TYPE, 1L, HASH_2);
+        fileItem3 = new FileItem(0, TEST_1, TEST_1, TEST_1, weekAgoDate, true, new ArrayList<>(), NATIVE_NAME, CONTENT_TYPE, 1L, HASH_1);
 
         tag1.getItems().add(item1);
         tag2.getItems().add(item1);
@@ -62,6 +73,9 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
             em.persist(item3);
             em.persist(tag1);
             em.persist(tag2);
+            em.persist(fileItem1);
+            em.persist(fileItem2);
+            em.persist(fileItem3);
         } catch (ConstraintViolationException e) {
             showConstraintViolations(e);
         }
@@ -74,10 +88,13 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
 
     private void queryTests() {
         List<Item> itemResultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
-        assertThat(itemResultList.size(), is(4));
+        assertThat(itemResultList.size(), is(7));
         assertTrue(itemResultList.contains(item1));
         assertTrue(itemResultList.contains(item2));
         assertTrue(itemResultList.contains(item3));
+        assertTrue(itemResultList.contains(textItem));
+        assertTrue(itemResultList.contains(fileItem1));
+        assertTrue(itemResultList.contains(textItem));
         assertTrue(itemResultList.contains(textItem));
 
         itemResultList = em.createNamedQuery(Item.GET_ALL_BY_OWNER, Item.class)
@@ -144,5 +161,10 @@ public class ItemTagTest_DB_IT extends WithEmbeddedDB {
         assertThat(tagResultList.size(), is(2));
         tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter("name", "TEST_1").getResultList();
         assertThat(tagResultList.size(), is(1));
+
+        List<String> hashesList = em.createNamedQuery(FileItem.GET_ALL_HASHES, String.class).getResultList();
+        assertThat(hashesList.size(), is(2));
+        assertTrue(hashesList.contains(HASH_1));
+        assertTrue(hashesList.contains(HASH_2));
     }
 }

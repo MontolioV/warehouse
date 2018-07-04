@@ -9,6 +9,7 @@
         <class>com.myapp.security.Token</class>
         <class>com.myapp.storing.Item</class>
         <class>com.myapp.storing.TextItem</class>
+        <class>com.myapp.storing.FileItem</class>
         <class>com.myapp.storing.Tag</class>
 
         <properties>

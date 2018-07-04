@@ -1,7 +1,7 @@
 package com.myapp.storing.UT;
 
 import com.myapp.storing.Item;
-import com.myapp.storing.ItemStore;
+import com.myapp.storing.ItemStoreDB;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 17.04.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ItemStoreTest {
+public class ItemStoreDBTest {
     @InjectMocks
-    private ItemStore itemStore;
+    private ItemStoreDB itemStoreDB;
     @Mock
     private EntityManager emMock;
     @Mock
@@ -52,7 +52,7 @@ public class ItemStoreTest {
         when(queryMock.setFirstResult(anyInt())).thenReturn(queryMock);
         when(queryMock.setMaxResults(anyInt())).thenReturn(queryMock);
 
-        List<Item> tenLastItems = itemStore.getTenLastSharedItems();
+        List<Item> tenLastItems = itemStoreDB.getTenLastSharedItems();
         assertThat(tenLastItems, sameInstance(items));
     }
 
@@ -60,7 +60,7 @@ public class ItemStoreTest {
     public void getItemByIdShared() {
         when(itemMock.isShared()).thenReturn(true);
 
-        Item result = itemStore.getItemById(anyLong(), anyString());
+        Item result = itemStoreDB.getItemById(anyLong(), anyString());
         assertThat(result, sameInstance(itemMock));
     }
 
@@ -69,10 +69,10 @@ public class ItemStoreTest {
         when(itemMock.isShared()).thenReturn(false);
         when(itemMock.getOwner()).thenReturn(LOGIN_VALID);
 
-        Item result = itemStore.getItemById(0, LOGIN_VALID);
+        Item result = itemStoreDB.getItemById(0, LOGIN_VALID);
         assertThat(result, sameInstance(itemMock));
 
-        result = itemStore.getItemById(0, LOGIN_INVALID);
+        result = itemStoreDB.getItemById(0, LOGIN_INVALID);
         assertThat(result, nullValue());
     }
 
@@ -80,19 +80,19 @@ public class ItemStoreTest {
     public void getItemByIdMissing() {
         when(emMock.find(eq(Item.class), anyLong())).thenReturn(null);
 
-        Item result = itemStore.getItemById(anyLong(), anyString());
+        Item result = itemStoreDB.getItemById(anyLong(), anyString());
         assertThat(result, nullValue());
     }
 
     @Test
     public void saveItems() {
-        itemStore.saveItems(new Item(), new Item());
+        itemStoreDB.saveItems(new Item(), new Item());
         verify(emMock, times(2)).persist(any(Item.class));
     }
 
     @Test
     public void deleteAnyItem() {
-        itemStore.deleteAnyItem(1);
+        itemStoreDB.deleteAnyItem(1);
         verify(emMock).remove(itemMock);
     }
 
@@ -106,7 +106,7 @@ public class ItemStoreTest {
         items.add(item3);
         when(emMock.createNamedQuery(Item.GET_ALL, Item.class)).thenReturn(queryMock);
 
-        itemStore.deleteAllItems();
+        itemStoreDB.deleteAllItems();
         verify(emMock, times(3)).remove(any(Item.class));
         verify(emMock).remove(item1);
         verify(emMock).remove(item2);
@@ -118,7 +118,7 @@ public class ItemStoreTest {
         CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
         when(emMock.createQuery(cqMock)).thenReturn(queryMock);
 
-        List<Item> result = itemStore.executeCustomSelectQuery(cqMock);
+        List<Item> result = itemStoreDB.executeCustomSelectQuery(cqMock);
         assertThat(result, sameInstance(items));
     }
 }

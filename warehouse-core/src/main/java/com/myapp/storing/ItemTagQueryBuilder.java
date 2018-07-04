@@ -85,6 +85,8 @@ public class ItemTagQueryBuilder<T> {
         criteriaQuery.distinct(true);
     }
 
+    //Getters & Setters
+
     public CriteriaBuilder getCriteriaBuilder() {
         return criteriaBuilder;
     }

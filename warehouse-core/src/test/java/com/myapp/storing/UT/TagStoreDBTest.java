@@ -2,7 +2,7 @@ package com.myapp.storing.UT;
 
 import com.myapp.storing.Item;
 import com.myapp.storing.Tag;
-import com.myapp.storing.TagStore;
+import com.myapp.storing.TagStoreDB;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.*;
  * <p>Created by MontolioV on 17.04.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TagStoreTest {
+public class TagStoreDBTest {
     @InjectMocks
-    private TagStore tagStore;
+    private TagStoreDB tagStoreDB;
     @Mock
     private EntityManager emMock;
     @Mock
@@ -58,7 +58,7 @@ public class TagStoreTest {
         tags.add(existingTag);
         when(queryMock.getResultList()).thenReturn(tags);
 
-        tagStore.saveTag(tagString, item1, item2);
+        tagStoreDB.saveTag(tagString, item1, item2);
 
         verify(emMock, never()).persist(any(Tag.class));
         existingTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
@@ -69,7 +69,7 @@ public class TagStoreTest {
         ArrayList<Tag> tags = new ArrayList<>();
         when(queryMock.getResultList()).thenReturn(tags);
 
-        tagStore.saveTag(tagString, item1, item2);
+        tagStoreDB.saveTag(tagString, item1, item2);
 
         ArgumentCaptor<Tag> tagArgumentCaptor = ArgumentCaptor.forClass(Tag.class);
         verify(emMock).persist(tagArgumentCaptor.capture());
@@ -90,7 +90,7 @@ public class TagStoreTest {
         when(emMock.createQuery(cqMock)).thenReturn(queryMock);
         when(queryMock.getResultList()).thenReturn(tags);
 
-        List<Tag> result = tagStore.executeCustomSelectQuery(cqMock);
+        List<Tag> result = tagStoreDB.executeCustomSelectQuery(cqMock);
         MatcherAssert.assertThat(result, sameInstance(tags));
     }
 

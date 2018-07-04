@@ -1,8 +1,6 @@
 package com.myapp.storing;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,16 +14,16 @@ import static com.myapp.security.Roles.Const.MODERATOR;
  * <p>Created by MontolioV on 17.04.18.
  */
 @Stateless
-public class ItemStore {
+public class ItemStoreDB implements ItemStore{
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
-    @Resource
-    private SessionContext sessionContext;
 
+    @Override
     public List<Item> getTenLastSharedItems() {
         return em.createNamedQuery(Item.GET_LAST_SHARED, Item.class).setMaxResults(10).getResultList();
     }
 
+    @Override
     public Item getItemById(long id, String userName) {
         Item item = em.find(Item.class, id);
         if (item != null && (item.isShared() || item.getOwner().equals(userName))) {
@@ -35,17 +33,20 @@ public class ItemStore {
         }
     }
 
+    @Override
     public void saveItems(Item... items) {
         for (Item item : items) {
             em.persist(item);
         }
     }
 
+    @Override
     @RolesAllowed(MODERATOR)
     public void deleteAnyItem(long id) {
         deleteItem(id);
     }
 
+    @Override
     @RolesAllowed(ADMIN)
     public int deleteAllItems() {
         List<Item> resultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
@@ -62,23 +63,8 @@ public class ItemStore {
         }
     }
 
+    @Override
     public List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery) {
         return em.createQuery(criteriaQuery).getResultList();
-    }
-
-    public EntityManager getEm() {
-        return em;
-    }
-
-    public void setEm(EntityManager em) {
-        this.em = em;
-    }
-
-    public SessionContext getSessionContext() {
-        return sessionContext;
-    }
-
-    public void setSessionContext(SessionContext sessionContext) {
-        this.sessionContext = sessionContext;
     }
 }

@@ -10,10 +10,11 @@ import java.util.List;
  * <p>Created by MontolioV on 17.04.18.
  */
 @Stateless
-public class TagStore {
+public class TagStoreDB implements TagStore{
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
 
+    @Override
     public void saveTag(String tagName, Item... items) {
         List<Tag> resultList = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class)
                 .setParameter("name", tagName)
@@ -35,15 +36,8 @@ public class TagStore {
         }
     }
 
+    @Override
     public List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery) {
         return em.createQuery(criteriaQuery).getResultList();
-    }
-
-    public EntityManager getEm() {
-        return em;
-    }
-
-    public void setEm(EntityManager em) {
-        this.em = em;
     }
 }

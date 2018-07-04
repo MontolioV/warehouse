@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
-import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE;
+import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE_INSTANTLY;
 
 /**
  * <p>Created by MontolioV on 04.04.18.
@@ -28,7 +28,7 @@ public class LogoutServlet extends HttpServlet {
         Cookie rmCookie = HttpUtils.findCookie(req, JREMEMBERMEID);
         if (rmCookie != null) {
             rememberMeIdentityStore.removeLoginToken(rmCookie.getValue());
-            rmCookie.setMaxAge(MAX_AGE_TO_REMOVE);
+            rmCookie.setMaxAge(MAX_AGE_TO_REMOVE_INSTANTLY);
             resp.addCookie(rmCookie);
         }
         req.logout();

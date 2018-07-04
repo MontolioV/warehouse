@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
-import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE;
+import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE_INSTANTLY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -53,7 +53,7 @@ public class LogoutServletTest {
         verify(responseMock).addCookie(cookieArgumentCaptor.capture());
         Cookie newCookie = cookieArgumentCaptor.getValue();
         assertThat(newCookie.getName(), is(JREMEMBERMEID));
-        assertThat(newCookie.getMaxAge(), is(MAX_AGE_TO_REMOVE));
+        assertThat(newCookie.getMaxAge(), is(MAX_AGE_TO_REMOVE_INSTANTLY));
 
         verify(rmStoreMock).removeLoginToken(cookieHash);
         verify(requestMock).logout();

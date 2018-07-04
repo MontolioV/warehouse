@@ -18,7 +18,7 @@ import java.nio.file.StandardCopyOption;
  * <p>Created by MontolioV on 14.05.18.
  */
 @Stateless
-public class FileStore {
+public class FileStoreFS implements FileStore {
     @Inject
     private StorageConfig storageConfig;
     @Inject
@@ -27,6 +27,7 @@ public class FileStore {
     @Inject
     private ImagePreviewMaker imagePreviewMaker;
 
+    @Override
     public String persistFile(Part part) throws IOException {
         String hash = hasher.makeHash(part.getInputStream());
         Path resolvedPath = storageConfig.getStorageRoot().resolve(hash);
@@ -40,28 +41,14 @@ public class FileStore {
         return hash;
     }
 
+    @Override
     public void uploadFile(String fileHash, OutputStream outputStream) throws IOException {
         Path resolvedPath = storageConfig.getStorageRoot().resolve(fileHash);
         Files.copy(resolvedPath, outputStream);
     }
 
+    @Override
     public Path getPreview(String hash) {
         return storageConfig.getPreviewRoot().resolve(hash + ".jpg");
-    }
-
-    public StorageConfig getStorageConfig() {
-        return storageConfig;
-    }
-
-    public void setStorageConfig(StorageConfig storageConfig) {
-        this.storageConfig = storageConfig;
-    }
-
-    public Hasher getHasher() {
-        return hasher;
-    }
-
-    public void setHasher(Hasher hasher) {
-        this.hasher = hasher;
     }
 }

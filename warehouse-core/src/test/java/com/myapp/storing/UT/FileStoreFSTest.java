@@ -1,6 +1,6 @@
 package com.myapp.storing.UT;
 
-import com.myapp.storing.FileStore;
+import com.myapp.storing.FileStoreFS;
 import com.myapp.storing.StorageConfig;
 import com.myapp.utils.Hasher;
 import com.myapp.utils.ImagePreviewMaker;
@@ -33,10 +33,10 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
  * <p>Created by MontolioV on 14.05.18.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Files.class, FileStore.class})
-public class FileStoreTest {
+@PrepareForTest({Files.class, FileStoreFS.class})
+public class FileStoreFSTest {
     @InjectMocks
-    private FileStore fileStore;
+    private FileStoreFS fileStoreFS;
     @Mock
     private StorageConfig scMock;
     @Mock
@@ -61,9 +61,6 @@ public class FileStoreTest {
 
     @Before
     public void setUp() throws Exception {
-        fileStore.setHasher(hasherMock);
-        fileStore.setStorageConfig(scMock);
-
         mockStatic(Files.class);
         when(partMock.getInputStream()).thenReturn(isMock);
         when(hasherMock.makeHash(isMock)).thenReturn(hash);
@@ -78,7 +75,7 @@ public class FileStoreTest {
     public void persistFileNew() throws IOException {
         when(Files.exists(pathMock)).thenReturn(false);
         when(partMock.getContentType()).thenReturn("image");
-        String s = fileStore.persistFile(partMock);
+        String s = fileStoreFS.persistFile(partMock);
 
         assertThat(s, is(hash));
         verifyStatic(Files.class);
@@ -90,14 +87,14 @@ public class FileStoreTest {
     public void persistFileNotImage() throws IOException {
         when(Files.exists(pathMock)).thenReturn(false);
         when(partMock.getContentType()).thenReturn("text");
-        fileStore.persistFile(partMock);
+        fileStoreFS.persistFile(partMock);
         verify(ipmMock, never()).makePreview(isMock, fileMock);
     }
 
     @Test
     public void persistFileExisting() throws IOException {
         when(Files.exists(pathMock)).thenReturn(true);
-        String s = fileStore.persistFile(partMock);
+        String s = fileStoreFS.persistFile(partMock);
 
         assertThat(s, is(hash));
         verifyStatic(Files.class, never());
@@ -107,7 +104,7 @@ public class FileStoreTest {
 
     @Test
     public void findFileByHashSuccess() throws IOException {
-        fileStore.uploadFile(hash, osMock);
+        fileStoreFS.uploadFile(hash, osMock);
 
         verifyStatic(Files.class);
         Files.copy(pathMock, osMock);
@@ -116,13 +113,13 @@ public class FileStoreTest {
     @Test(expected = IOException.class)
     public void findFileByHashFail() throws IOException {
         when(Files.copy(pathMock, osMock)).thenThrow(new IOException());
-        fileStore.uploadFile(hash, osMock);
+        fileStoreFS.uploadFile(hash, osMock);
     }
 
     @Test
     public void getPreview() {
         when(prRootMock.resolve(hash + ".jpg")).thenReturn(pathMock);
-        Path preview = fileStore.getPreview(hash);
+        Path preview = fileStoreFS.getPreview(hash);
         assertThat(preview, is(pathMock));
     }
 }

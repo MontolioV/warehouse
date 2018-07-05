@@ -123,6 +123,16 @@ public class FetchItemsController {
         return false;
     }
 
+    public boolean itemIsUsersOwn() {
+        Principal userPrincipal = externalContext.getUserPrincipal();
+        return item != null
+                && userPrincipal != null
+                && item.getOwner() != null
+                && item.getOwner().equals(userPrincipal.getName());
+    }
+
+    //Getters & Setters
+
     public ItemStore getItemStore() {
         return itemStore;
     }

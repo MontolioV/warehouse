@@ -1,6 +1,6 @@
 package com.myapp.security.UT;
 
-import com.myapp.security.RoleChecherController;
+import com.myapp.security.RoleCheckerController;
 import com.myapp.security.Roles;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +18,9 @@ import static org.mockito.Mockito.when;
  * <p>Created by MontolioV on 19.04.18.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RoleChecherControllerTest {
+public class RoleCheckerControllerTest {
     @InjectMocks
-    private RoleChecherController controller;
+    private RoleCheckerController controller;
     @Mock
     private ExternalContext externalContext;
     

@@ -5,12 +5,12 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.myapp.security.Roles.Const.ADMIN;
-import static com.myapp.security.Roles.Const.MODERATOR;
+import static com.myapp.security.Roles.Const.*;
 
 /**
  * <p>Created by MontolioV on 17.04.18.
@@ -60,6 +60,15 @@ public class ItemStoreDB implements ItemStore{
         List<Item> resultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
         resultList.forEach(em::remove);
         return resultList.size();
+    }
+
+    @Override
+    @RolesAllowed(USER)
+    public void deleteItemByOwner(long id, @NotNull String userName) {
+        Item item = em.find(Item.class, id);
+        if (userName.equals(item.getOwner())) {
+            deleteItem(id);
+        }
     }
 
     private void deleteItem(long id) {

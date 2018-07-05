@@ -8,7 +8,7 @@ import javax.inject.Inject;
  * <p>Created by MontolioV on 19.04.18.
  */
 @Model
-public class RoleChecherController {
+public class RoleCheckerController {
     @Inject
     private ExternalContext externalContext;
 

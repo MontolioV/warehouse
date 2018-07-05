@@ -36,6 +36,12 @@
     </h:panelGrid>
 
     <h:panelGrid>
+        <c:if test="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsAdmin() or roleCheckerController.checkIsModerator()}">
+            <h:form>
+                <h:button value="Delete" outcome="delete-item.jsf?id=#{param['id']}"/>
+            </h:form>
+        </c:if>
+
         <c:if test="#{not empty fetchItemsController.textItem}">
             <h:outputText value="Text"/>
             <h:outputText escape="false" styleClass="textLabel" value="#{fetchItemsController.textItem.text}"/>

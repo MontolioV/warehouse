@@ -16,7 +16,7 @@
         <h:panelGrid>
             <h:outputLabel value="Enter item id to delete"/>
             <h:inputText value="#{deleteItemController.id}"/>
-            <h:commandButton value="Delete" action="#{deleteItemController.deleteByID()}"/>
+            <h:commandButton value="Delete" action="#{deleteItemController.deleteByIDNoRedirect()}"/>
         </h:panelGrid>
     </h:form>
 </h:body>

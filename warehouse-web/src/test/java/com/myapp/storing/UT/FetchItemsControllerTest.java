@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -258,5 +260,30 @@ public class FetchItemsControllerTest {
         controller.castItem();
         assertThat(controller.getTextItem(), nullValue());
         assertThat(controller.getFileItem(), nullValue());
+    }
+
+    @Test
+    public void itemIsUsersOwn() {
+        boolean isUsersOwn = controller.itemIsUsersOwn();
+        assertFalse(isUsersOwn);
+
+        Item itemMock = mock(Item.class);
+        controller.setItem(itemMock);
+
+        when(itemMock.getOwner()).thenReturn(LOGIN_VALID);
+        isUsersOwn = controller.itemIsUsersOwn();
+        assertTrue(isUsersOwn);
+
+        when(itemMock.getOwner()).thenReturn(null);
+        isUsersOwn = controller.itemIsUsersOwn();
+        assertFalse(isUsersOwn);
+
+        when(itemMock.getOwner()).thenReturn(LOGIN_INVALID);
+        isUsersOwn = controller.itemIsUsersOwn();
+        assertFalse(isUsersOwn);
+
+        when(ecMock.getUserPrincipal()).thenReturn(null);
+        isUsersOwn = controller.itemIsUsersOwn();
+        assertFalse(isUsersOwn);
     }
 }

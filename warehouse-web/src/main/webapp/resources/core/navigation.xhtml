@@ -13,8 +13,8 @@
 <composite:implementation>
     <h:button value="Home" styleClass="topBarButton" outcome="/index"/>
     <h:button value="Search" styleClass="topBarButton" outcome="/public/items-search"/>
-    <h:button value="Private" styleClass="topBarButton" outcome="/private/index" rendered="#{roleChecherController.checkIsUser()}"/>
-    <h:button value="Moderation" styleClass="topBarButton" outcome="/moderation/index" rendered="#{roleChecherController.checkIsModerator()}"/>
-    <h:button value="Admin" styleClass="topBarButton" outcome="/admin/index" rendered="#{roleChecherController.checkIsAdmin()}"/>
+    <h:button value="Private" styleClass="topBarButton" outcome="/private/index" rendered="#{roleCheckerController.checkIsUser()}"/>
+    <h:button value="Moderation" styleClass="topBarButton" outcome="/moderation/index" rendered="#{roleCheckerController.checkIsModerator()}"/>
+    <h:button value="Admin" styleClass="topBarButton" outcome="/admin/index" rendered="#{roleCheckerController.checkIsAdmin()}"/>
 </composite:implementation>
 </html>

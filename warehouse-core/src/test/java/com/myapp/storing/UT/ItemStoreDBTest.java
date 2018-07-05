@@ -132,6 +132,17 @@ public class ItemStoreDBTest {
     }
 
     @Test
+    public void deleteItemByOwner() {
+        when(itemMock.getOwner()).thenReturn(LOGIN_VALID);
+
+        itemStoreDB.deleteItemByOwner(1, LOGIN_INVALID);
+        verify(emMock, never()).remove(itemMock);
+
+        itemStoreDB.deleteItemByOwner(1, LOGIN_VALID);
+        verify(emMock).remove(itemMock);
+    }
+
+    @Test
     public void executeCustomSelectQuery() {
         CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
         when(emMock.createQuery(cqMock)).thenReturn(queryMock);

@@ -16,8 +16,8 @@ import static java.awt.image.AffineTransformOp.TYPE_BILINEAR;
  */
 @ApplicationScoped
 public class ImagePreviewMaker {
+    public static final String PREVIEW_IMAGE_FORMAT = "png";
 
-    // TODO: 15.05.18 image color changes
     public void makePreview(InputStream inputStream, File outputFile) throws IOException {
         BufferedImage srcImage = ImageIO.read(inputStream);
         double scaleFactor = calculateScaleFactor(srcImage.getWidth(), srcImage.getHeight());
@@ -27,7 +27,7 @@ public class ImagePreviewMaker {
         AffineTransform affineTransform = AffineTransform.getScaleInstance(scaleFactor, scaleFactor);
         AffineTransformOp scaler = new AffineTransformOp(affineTransform, TYPE_BILINEAR);
         scaler.filter(srcImage, newImage);
-        ImageIO.write(newImage, "jpg", outputFile);
+        ImageIO.write(newImage, PREVIEW_IMAGE_FORMAT, outputFile);
     }
 
     private double calculateScaleFactor(double width, double heigth) {

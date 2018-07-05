@@ -2,21 +2,24 @@ package com.myapp.storing;
 
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>Created by MontolioV on 04.07.18.
  */
 public interface ItemStore {
 
-    public List<Item> getTenLastSharedItems();
+    List<Item> getTenLastSharedItems();
 
-    public Item getItemById(long id, String userName);
+    Item getItemById(long id, String userName);
 
-    public void saveItems(Item... items);
+    Set<String> getHashesOfFileItems();
 
-    public void deleteAnyItem(long id);
+    void saveItems(Item... items);
 
-    public int deleteAllItems();
+    void deleteAnyItem(long id);
 
-    public List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery);
+    int deleteAllItems();
+
+    List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery);
 }

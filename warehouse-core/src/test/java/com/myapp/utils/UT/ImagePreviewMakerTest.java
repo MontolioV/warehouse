@@ -49,7 +49,7 @@ public class ImagePreviewMakerTest {
 
         ArgumentCaptor<BufferedImage> captor = ArgumentCaptor.forClass(BufferedImage.class);
         verifyStatic(ImageIO.class);
-        ImageIO.write(captor.capture(), eq("jpg"), eq(fileMock));
+        ImageIO.write(captor.capture(), eq(ImagePreviewMaker.PREVIEW_IMAGE_FORMAT), eq(fileMock));
         BufferedImage captorValue = captor.getValue();
         assertThat(captorValue.getWidth(), is(newWidth));
         assertThat(captorValue.getHeight(), is(newHeight));

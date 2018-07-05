@@ -5,7 +5,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.myapp.security.Roles.Const.ADMIN;
 import static com.myapp.security.Roles.Const.MODERATOR;
@@ -31,6 +33,12 @@ public class ItemStoreDB implements ItemStore{
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Set<String> getHashesOfFileItems() {
+        List<String> resultList = em.createNamedQuery(FileItem.GET_ALL_HASHES, String.class).getResultList();
+        return new HashSet<>(resultList);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.myapp.storing.UT;
 
+import com.myapp.storing.FileItem;
 import com.myapp.storing.Item;
 import com.myapp.storing.ItemStoreDB;
 import org.junit.Before;
@@ -14,12 +15,13 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -82,6 +84,22 @@ public class ItemStoreDBTest {
 
         Item result = itemStoreDB.getItemById(anyLong(), anyString());
         assertThat(result, nullValue());
+    }
+
+    @Test
+    public void getHashesOfFileItems() {
+        TypedQuery<String> queryHashesMock = mock(TypedQuery.class);
+        ArrayList<String> hashes = new ArrayList<>();
+        hashes.add("1");
+        hashes.add("1");
+        hashes.add("2");
+        when(emMock.createNamedQuery(FileItem.GET_ALL_HASHES, String.class)).thenReturn(queryHashesMock);
+        when(queryHashesMock.getResultList()).thenReturn(hashes);
+
+        Set<String> hashesOfFileItems = itemStoreDB.getHashesOfFileItems();
+        assertThat(hashesOfFileItems.size(), is(2));
+        assertTrue(hashesOfFileItems.contains("1"));
+        assertTrue(hashesOfFileItems.contains("2"));
     }
 
     @Test

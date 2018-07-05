@@ -21,9 +21,12 @@ import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 
+import static com.myapp.storing.FileStoreFS.PREVIEW_FILENAME_EXTENSION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -46,13 +49,15 @@ public class FileStoreFSTest {
     @Mock
     private Part partMock;
     @Mock
-    private Path stRootMock;
+    private Path storageRootPathMock;
     @Mock
-    private Path prRootMock;
+    private Path previewRootPathMock;
     @Mock
     private Path pathMock;
     @Mock
     private File fileMock;
+    @Mock
+    private File storageRootFileMock;
     @Mock
     private InputStream isMock;
     @Mock
@@ -64,11 +69,12 @@ public class FileStoreFSTest {
         mockStatic(Files.class);
         when(partMock.getInputStream()).thenReturn(isMock);
         when(hasherMock.makeHash(isMock)).thenReturn(hash);
-        when(scMock.getStorageRoot()).thenReturn(stRootMock);
-        when(scMock.getPreviewRoot()).thenReturn(prRootMock);
-        when(stRootMock.resolve(hash)).thenReturn(pathMock);
-        when(prRootMock.resolve(hash + ".jpg")).thenReturn(pathMock);
+        when(scMock.getStorageRoot()).thenReturn(storageRootPathMock);
+        when(scMock.getPreviewRoot()).thenReturn(previewRootPathMock);
+        when(storageRootPathMock.resolve(hash)).thenReturn(pathMock);
+        when(previewRootPathMock.resolve(hash + PREVIEW_FILENAME_EXTENSION)).thenReturn(pathMock);
         when(pathMock.toFile()).thenReturn(fileMock);
+        when(storageRootPathMock.toFile()).thenReturn(storageRootFileMock);
     }
 
     @Test
@@ -118,8 +124,31 @@ public class FileStoreFSTest {
 
     @Test
     public void getPreview() {
-        when(prRootMock.resolve(hash + ".jpg")).thenReturn(pathMock);
+        when(previewRootPathMock.resolve(hash + PREVIEW_FILENAME_EXTENSION)).thenReturn(pathMock);
         Path preview = fileStoreFS.getPreview(hash);
         assertThat(preview, is(pathMock));
+    }
+
+    @Test
+    public void getHashesOfAllStoredFiles() {
+        String[] filenames = {"1", "1", "2"};
+        when(storageRootFileMock.list()).thenReturn(filenames);
+
+        Set<String> hashesOfAllStoredFiles = fileStoreFS.getHashesOfAllStoredFiles();
+        assertThat(hashesOfAllStoredFiles.size(), is(2));
+        assertTrue(hashesOfAllStoredFiles.contains("1"));
+        assertTrue(hashesOfAllStoredFiles.contains("2"));
+
+        when(storageRootFileMock.list()).thenReturn(null);
+        hashesOfAllStoredFiles = fileStoreFS.getHashesOfAllStoredFiles();
+        assertTrue(hashesOfAllStoredFiles.isEmpty());
+    }
+
+    @Test
+    public void removeFromStorage() {
+        when(fileMock.length()).thenReturn(1L);
+        long removeFromStorageBytes = fileStoreFS.removeFromStorage(hash, hash, hash);
+        verify(fileMock, times(6)).delete();
+        assertThat(removeFromStorageBytes, is(6L));
     }
 }

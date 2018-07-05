@@ -15,6 +15,8 @@ public class DeleteItemController {
     private FacesContext facesContext;
     @EJB
     private ItemStore itemStore;
+    @EJB
+    private FileStoreCleaner fileStoreCleaner;
     private Long id;
 
     public void deleteByID() {
@@ -24,6 +26,12 @@ public class DeleteItemController {
     public void deleteAll() {
         int deletedItems = itemStore.deleteAllItems();
         facesContext.addMessage(null, new FacesMessage(deletedItems + " items deleted!"));
+    }
+
+    public void cleanupFileStorage() {
+        long bytesCleanedUp = fileStoreCleaner.cleanup();
+        double gbCleanedUp = bytesCleanedUp / Math.pow(10, 9);
+        facesContext.addMessage(null, new FacesMessage(String.format("%f GB freed!", gbCleanedUp)));
     }
 
     public Long getId() {

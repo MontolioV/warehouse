@@ -1,6 +1,7 @@
 package com.myapp.storing.UT;
 
 import com.myapp.storing.DeleteItemController;
+import com.myapp.storing.FileStoreCleaner;
 import com.myapp.storing.ItemStore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,8 @@ public class DeleteItemControllerTest {
     @Mock
     private ItemStore isMock;
     @Mock
+    private FileStoreCleaner fscMock;
+    @Mock
     private FacesContext fcMock;
 
     @Test
@@ -40,6 +43,13 @@ public class DeleteItemControllerTest {
     public void deleteAll() {
         controller.deleteAll();
         verify(isMock).deleteAllItems();
+        verify(fcMock).addMessage(eq(null), any(FacesMessage.class));
+    }
+
+    @Test
+    public void cleanupFileStorage() {
+        controller.cleanupFileStorage();
+        verify(fscMock).cleanup();
         verify(fcMock).addMessage(eq(null), any(FacesMessage.class));
     }
 }

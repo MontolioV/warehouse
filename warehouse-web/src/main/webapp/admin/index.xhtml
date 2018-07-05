@@ -27,6 +27,11 @@
                         <f:ajax render="messages"/>
                     </h:commandLink>
                 </h:form>
+                <h:form>
+                    <h:commandLink value="Clean up file store!" action="#{deleteItemController.cleanupFileStorage()}">
+                        <f:ajax render="messages"/>
+                    </h:commandLink>
+                </h:form>
                 <h:messages id="messages"/>
             </h:panelGrid>
         </h:panelGrid>

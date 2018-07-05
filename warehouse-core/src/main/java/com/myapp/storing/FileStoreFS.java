@@ -13,12 +13,17 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>Created by MontolioV on 14.05.18.
  */
 @Stateless
 public class FileStoreFS implements FileStore {
+    public static final String PREVIEW_FILENAME_EXTENSION = "." + ImagePreviewMaker.PREVIEW_IMAGE_FORMAT;
     @Inject
     private StorageConfig storageConfig;
     @Inject
@@ -34,7 +39,7 @@ public class FileStoreFS implements FileStore {
         if (!Files.exists(resolvedPath)) {
             Files.copy(part.getInputStream(), resolvedPath, StandardCopyOption.REPLACE_EXISTING);
             if (part.getContentType().startsWith("image")) {
-                File previewFile = storageConfig.getPreviewRoot().resolve(hash + ".jpg").toFile();
+                File previewFile = storageConfig.getPreviewRoot().resolve(hash + PREVIEW_FILENAME_EXTENSION).toFile();
                 imagePreviewMaker.makePreview(part.getInputStream(), previewFile);
             }
         }
@@ -49,6 +54,30 @@ public class FileStoreFS implements FileStore {
 
     @Override
     public Path getPreview(String hash) {
-        return storageConfig.getPreviewRoot().resolve(hash + ".jpg");
+        return storageConfig.getPreviewRoot().resolve(hash + PREVIEW_FILENAME_EXTENSION);
+    }
+
+    @Override
+    public Set<String> getHashesOfAllStoredFiles() {
+        String[] filenames = storageConfig.getStorageRoot().toFile().list();
+        return filenames == null ? new HashSet<>() : new HashSet<>(Arrays.asList(filenames));
+    }
+
+    @Override
+    public long removeFromStorage(String... hash) {
+        long result = 0;
+        ArrayList<File> filesToDelete = new ArrayList<>();
+        Path storageRoot = storageConfig.getStorageRoot();
+        Path previewRoot = storageConfig.getPreviewRoot();
+
+        for (String s : hash) {
+            filesToDelete.add(storageRoot.resolve(s).toFile());
+            filesToDelete.add(previewRoot.resolve(s + PREVIEW_FILENAME_EXTENSION).toFile());
+        }
+        for (File file : filesToDelete) {
+            result += file.length();
+            file.delete();
+        }
+        return result;
     }
 }

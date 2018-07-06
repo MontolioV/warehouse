@@ -49,11 +49,13 @@ body, input {
     font-family: 'Muli', sans-serif;
 }
 
-input[type="button"], input[type="submit"] {
+button, input[type="button"], input[type="submit"] {
     background-color: #56ACFF;
     border: 1px solid #1C62A6;
     color: white;
     text-align: center;
+    padding: 10px 20px;
+    width: 150px;
 }
 
 table {
@@ -84,7 +86,7 @@ table {
     position: -webkit-sticky;
     top: 0;
 }
-.topBarButton {
+.topBar .topBarButton {
     border: none;
     display: inline-block;
     font-size: large;
@@ -155,7 +157,7 @@ table {
     max-height: 200px;
 }
 
-.largeButton {
+button.largeButton, input[type="button"].largeButton, input[type="submit"].largeButton, .largeButton {
     font-size: large;
     width: 200px;
     height: 100px;

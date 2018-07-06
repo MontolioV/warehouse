@@ -29,12 +29,12 @@
                 <p:selectBooleanButton onLabel="Item has all listed tags" offLabel="Item has any listed tag" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
 
                 <p:commandButton value="Find" actionListener="#{fetchItemsController.filteredFetch()}"
-                                 process="@form" update="itemsTable:itemsTable"/>
+                                 process="@form" update="itemsTableComponent:itemsTableContainer"/>
             </h:panelGrid>
         </h:form>
     </h:panelGrid>
 
-    <compc:itemsTable id="itemsTable" items="#{fetchItemsController.items}"/>
+    <compc:itemsTable id="itemsTableComponent" items="#{fetchItemsController.items}"/>
 
     <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
         '%' matches zero or more of any characters. '\\%' and '\\_' to match an actual percent and underscore character."  />

@@ -17,8 +17,10 @@
 <h:body>
     <compc:topBar/>
     <h:panelGrid columns="1">
-        <h:link outcome="/public/create-text-item.xhtml" value="create text item"/>
-        <h:link outcome="/public/create-file-item.xhtml" value="create file item"/>
+        <h:panelGrid columns="2">
+            <h:button outcome="/public/create-text-item.xhtml" value="Create text item" styleClass="largeButton"/>
+            <h:button outcome="/public/create-file-item.xhtml" value="Create file item" styleClass="largeButton"/>
+        </h:panelGrid>
         <h:outputLabel value="10 recent shares:"/>
     </h:panelGrid>
 

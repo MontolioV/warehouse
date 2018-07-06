@@ -50,41 +50,44 @@
                     </h:selectManyCheckbox>
 
                     <h:commandButton value="Save" action="#{userManagementController.updateAccount()}">
-                        <f:ajax execute="@form" render="@form usersTable"/>
+                        <f:ajax execute="@form" render="@form tableContainer"/>
                     </h:commandButton>
                 </h:panelGrid>
             </h:form>
         </h:panelGroup>
 
-        <h:dataTable id="usersTable"
-                     styleClass="dataTable"
-                     headerClass="dataTableHeader"
-                     rowClasses="dataTableRowOdd,dataTableRowEven"
-                     value="#{userManagementController.accountList}" var="account">
-            <h:column>
-                <f:facet name="header">id</f:facet>
-                #{account.id}
-            </h:column>
-            <h:column>
-                <f:facet name="header">login</f:facet>
-                <h:commandLink value="#{account.login}" action="#{userManagementController.changeLogin(account.login)}">
-                    <f:ajax render="@all"/>
-                </h:commandLink>
-            </h:column>
-            <h:column>
-                <f:facet name="header">email</f:facet>
-                #{account.email}
-            </h:column>
-            <h:column>
-                <f:facet name="header">active</f:facet>
+        <h:panelGroup id="tableContainer">
+            <h:dataTable id="usersTable"
+                         rendered="#{not empty userManagementController.accountList}"
+                         styleClass="dataTable"
+                         headerClass="dataTableHeader"
+                         rowClasses="dataTableRowOdd,dataTableRowEven"
+                         value="#{userManagementController.accountList}" var="account">
+                <h:column>
+                    <f:facet name="header">id</f:facet>
+                    #{account.id}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">login</f:facet>
+                    <h:commandLink value="#{account.login}" action="#{userManagementController.changeLogin(account.login)}">
+                        <f:ajax render="@all"/>
+                    </h:commandLink>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">email</f:facet>
+                    #{account.email}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">active</f:facet>
 
-                #{account.active}
-            </h:column>
-            <h:column>
-                <f:facet name="header">roles</f:facet>
-                #{account.roles}
-            </h:column>
-        </h:dataTable>
+                    #{account.active}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">roles</f:facet>
+                    #{account.roles}
+                </h:column>
+            </h:dataTable>
+        </h:panelGroup>
     </h:panelGrid>
 </h:body>
 </html>

@@ -10,45 +10,48 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:dataTable id="itemsTable"
-                 styleClass="dataTable"
-                 headerClass="dataTableHeader"
-                 rowClasses="dataTableRowOdd,dataTableRowEven"
-                 value="#{cc.attrs.items}" var="item">
-        <h:column>
-            <f:facet name="header">id</f:facet>
-            #{item.id}
-        </h:column>
-        <h:column>
-            <f:facet name="header">dType</f:facet>
-            #{item.dType}
-        </h:column>
-        <h:column>
-            <f:facet name="header">name</f:facet>
-            <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/show-item.jsf?id=#{item.id}">
-                #{item.name}
-            </h:outputLink>
-        </h:column>
-        <h:column>
-            <f:facet name="header">description</f:facet>
-            #{item.description}
-        </h:column>
-        <h:column>
-            <f:facet name="header">owner</f:facet>
-            #{item.owner}
-        </h:column>
-        <h:column>
-            <f:facet name="header">creationDate</f:facet>
-            #{item.creationDate}
-        </h:column>
-        <h:column>
-            <f:facet name="header">shared</f:facet>
-            #{item.shared}
-        </h:column>
-        <h:column>
-            <f:facet name="header">tags</f:facet>
-            #{item.tags}
-        </h:column>
-    </h:dataTable>
+    <h:panelGroup id="itemsTableContainer">
+        <h:dataTable id="itemsTable"
+                     rendered="#{not empty cc.attrs.items}"
+                     styleClass="dataTable"
+                     headerClass="dataTableHeader"
+                     rowClasses="dataTableRowOdd,dataTableRowEven"
+                     value="#{cc.attrs.items}" var="item">
+            <h:column>
+                <f:facet name="header">id</f:facet>
+                #{item.id}
+            </h:column>
+            <h:column>
+                <f:facet name="header">dType</f:facet>
+                #{item.dType}
+            </h:column>
+            <h:column>
+                <f:facet name="header">name</f:facet>
+                <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/show-item.jsf?id=#{item.id}">
+                    #{item.name}
+                </h:outputLink>
+            </h:column>
+            <h:column>
+                <f:facet name="header">description</f:facet>
+                #{item.description}
+            </h:column>
+            <h:column>
+                <f:facet name="header">owner</f:facet>
+                #{item.owner}
+            </h:column>
+            <h:column>
+                <f:facet name="header">creationDate</f:facet>
+                #{item.creationDate}
+            </h:column>
+            <h:column>
+                <f:facet name="header">shared</f:facet>
+                #{item.shared}
+            </h:column>
+            <h:column>
+                <f:facet name="header">tags</f:facet>
+                #{item.tags}
+            </h:column>
+        </h:dataTable>
+    </h:panelGroup>
 </composite:implementation>
 </html>

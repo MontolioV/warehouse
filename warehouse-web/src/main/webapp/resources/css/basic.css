@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Muli');
+
 html, body {
     margin: 0;
 }
+/*
 
 @media only screen and (max-width: 1000px){
     body {
@@ -16,7 +19,7 @@ html, body {
     }
 
     table {
-        /*border: 1px solid black;*/
+        !*border: 1px solid black;*!
         width: 88%;
         margin-left: 6%;
         margin-right: 6%;
@@ -26,27 +29,42 @@ html, body {
 @media only screen and (min-width: 1000px){
 
     body {
-        background: linear-gradient(
-                to right,
-                palegreen,
-                #ebee5c 15%,
-                #d5fff3 15%,
-                #d5fff3 85%,
-                #ebee5c 85%,
-                palegreen
-        );
+        background: #d0f0ff;
     }
 
     table {
-        /*border: 1px solid black;*/
+        !*border: 1px solid black;*!
         width: 70%;
         margin-left: 15%;
         margin-right: 15%;
     }
 }
+*/
 
-.signboard {
-    color: dodgerblue;
+body {
+    background: #d0f0ff;
+}
+
+body, input {
+    font-family: 'Muli', sans-serif;
+}
+
+input[type="button"], input[type="submit"] {
+    background-color: #56ACFF;
+    border: 1px solid #1C62A6;
+    color: white;
+    text-align: center;
+}
+
+table {
+    /*border: 1px solid black;*/
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.nameBoard {
+    color: #56ACFF;
     color: rgba(30,144,255,0.7);
     background-color: #ffffff;
     text-align: center;
@@ -59,18 +77,17 @@ html, body {
 }
 
 .topBar {
+    padding-bottom: 5px;
     display: flex;
-    background-color: dodgerblue;
+    background: linear-gradient(to top, rgba(208, 240, 255, 0), #5d5a6f 3px, #0A59A6 5px, #56ACFF 5px);
     position: sticky;
     position: -webkit-sticky;
     top: 0;
 }
 .topBarButton {
-    background-color: dodgerblue;
-    color: white;
     border: none;
     display: inline-block;
-    text-align: center;
+    font-size: large;
     padding: 16px 32px;
     transition-duration: 0.5s;
     float: left;
@@ -84,37 +101,43 @@ html, body {
 }
 
 .dataTable {
-    border: 1px solid #005fff;
+    border: 1px solid #1C62A6;
     border-collapse: separate;
     border-spacing: 0;
-    border-radius: 10px;
+    /*border-radius: 4px;*/
+    box-shadow: 3px 3px lightgray;
 }
+/*
 .dataTable th:first-child {
-    border-radius: 10px 0 0 0;
+    border-radius: 4px 0 0 0;
 }
 .dataTable th:last-child {
-    border-radius: 0 10px 0 0;
+    border-radius: 0 4px 0 0;
     border-right: none;
 }
 .dataTable tbody tr:last-child td:first-child {
-    border-radius: 0 0 0 10px;
+    border-radius: 0 0 0 4px;
 }
 .dataTable tbody tr:last-child td:last-child {
-    border-radius: 0 0 10px 0;
+    border-radius: 0 0 4px 0;
 }
+*/
 .dataTableHeader {
-    background: linear-gradient(to bottom, #b8ebfa 70%, #8be3fa);
-    font-weight: bold;
-    border-bottom: 1px solid #005fff;
-    border-right: 1px solid #005fff;
+    padding: 10px;
+    background: linear-gradient(to right, #4c8ed7, #56ACFF  3px);
+    color: white;
+    font-weight: normal;
+    border-bottom: 1px solid #1C62A6;
 }
 .dataTableRowOdd {}
 .dataTableRowEven {}
 .dataTableRowOdd td {
-    background: #dafff9;
+    padding: 10px;
+    background: linear-gradient(to right, #8db8e1, #A2D1FF  3px);
 }
 .dataTableRowEven td {
-    background: #c7f6ed;
+    padding: 10px;
+    background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
 }
 
 .textEditor {
@@ -130,4 +153,11 @@ html, body {
 .imagePreview {
     max-width: 200px;
     max-height: 200px;
+}
+
+.largeButton {
+    font-size: large;
+    width: 200px;
+    height: 100px;
+    margin: 50px;
 }

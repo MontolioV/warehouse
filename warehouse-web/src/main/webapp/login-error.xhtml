@@ -12,9 +12,12 @@
     <h:panelGrid columns="1">
         <h:outputLabel value="Authentication fail!"/>
         <h:outputLabel value="Enshure entered credentials are valid and yor account is active."/>
-        <h:button outcome="login.xhtml" value="Try again"/>
-        <h:button outcome="registration.xhtml" value="Registration"/>
-        <h:button outcome="index.xhtml" value="Home"/>
+        <h:button outcome="login.xhtml" value="Try again"
+                  styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
+        <h:button outcome="registration.xhtml" value="Registration"
+                  styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
+        <h:button outcome="index.xhtml" value="Home"
+                  styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
     </h:panelGrid>
 </h:body>
 </html>

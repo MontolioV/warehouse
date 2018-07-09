@@ -3,7 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
 
 <composite:interface>
     <composite:attribute name="style" required="false"/>
@@ -12,12 +13,17 @@
 <composite:implementation>
     <c:choose>
         <c:when test="#{empty request.userPrincipal}">
-            <h:button value="Login" styleClass="topBarButton authenticationFirst" outcome="/login"/>
-            <h:button value="Registration" styleClass="topBarButton" outcome="/registration"/>
+            <h:button value="Login" outcome="/login"
+                      styleClass="decoratedButton topBarButton authenticationFirst"/>
+            <h:button value="Registration" outcome="/registration"
+                      styleClass="decoratedButton topBarButton"/>
         </c:when>
         <c:otherwise>
-            <h:button value="#{request.userPrincipal.name}" styleClass="topBarButton authenticationFirst" outcome="/private/personal-cabinet"/>
-            <h:commandButton value="Logout" styleClass="topBarButton" action="#{redirectController.logoutRedirect}"/>
+            <h:button value="#{request.userPrincipal.name}" outcome="/private/personal-cabinet"
+                      styleClass="decoratedButton topBarButton authenticationFirst"/>
+
+            <h:commandButton value="Logout" action="#{redirectController.logoutRedirect}"
+                             styleClass="decoratedButton topBarButton"/>
         </c:otherwise>
     </c:choose>
 </composite:implementation>

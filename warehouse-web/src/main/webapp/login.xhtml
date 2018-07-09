@@ -3,34 +3,39 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-<h:head>
-    <title>Authentication</title>
-    <f:metadata>
-        <f:viewAction action="#{formAuthenticationController.checkCookie()}"/>
-    </f:metadata>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <h:outputLabel value="Authentication"/>
-    <h:form>
-        <h:panelGrid columns="2">
-            <h:outputLabel value="Login" for="login"/>
-            <h:inputText id="login" value="#{formAuthenticationController.login}" required="true"/>
+    <ui:composition template="template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Authentication</title>
+            <f:metadata>
+                <f:viewAction action="#{formAuthenticationController.checkCookie()}"/>
+            </f:metadata>
+        </ui:define>
 
-            <h:outputLabel value="Password" for="password"/>
-            <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
+        <ui:define name="body">
+            <h:outputLabel value="Authentication"/>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Login" for="login"/>
+                    <h:inputText id="login" value="#{formAuthenticationController.login}" required="true"/>
 
-            <h:outputLabel value="Remember me" for="rememberme"/>
-            <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
+                    <h:outputLabel value="Password" for="password"/>
+                    <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
 
-            <h:commandButton value="Submit" action="#{formAuthenticationController.submit}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:messages globalOnly="true" layout="table"/>
-        </h:panelGrid>
-    </h:form>
+                    <h:outputLabel value="Remember me" for="rememberme"/>
+                    <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
+
+                    <p:commandButton value="Submit" action="#{formAuthenticationController.submit}"
+                                     process="@form" update="@form"
+                                     styleClass="decoratedButton"/>
+                    <h:messages globalOnly="true" layout="table"/>
+                </h:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

@@ -5,14 +5,14 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
-      xmlns:o="http://omnifaces.org/ui">
+      xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>User management</title>
     <h:outputStylesheet name="css/basic.css"/>
 </h:head>
 
 <h:body>
-    <compc:topBar/>
+    <compc:header/>
     <h:panelGrid columns="1">
         <h:panelGrid columns="2">
             <h:form  id="usersListForm">
@@ -24,13 +24,14 @@
                     </h:panelGrid>
 
                     <h:panelGrid columns="2">
-                        <h:commandButton id="singleFind" value="Find user" action="#{userManagementController.fetchSingleAccount()}">
-                            <f:ajax execute="@this loginGrid" render="@all"/>
-                        </h:commandButton>
-
-                        <h:commandButton id="allFind" value="Show all users" action="#{userManagementController.fetchAccounts()}">
-                            <f:ajax render="@all"/>
-                        </h:commandButton>
+                        <p:commandButton id="singleFind" value="Find user"
+                                         action="#{userManagementController.fetchSingleAccount()}"
+                                         process="@this loginGrid" update="loginGrid editGroup tableContainer"
+                                         styleClass="decoratedButton"/>
+                        <p:commandButton id="allFind" value="Show all users"
+                                         action="#{userManagementController.fetchAccounts()}"
+                                         update="loginGrid editGroup tableContainer"
+                                         styleClass="decoratedButton"/>
                     </h:panelGrid>
                 </h:panelGrid>
             </h:form>
@@ -49,9 +50,10 @@
                         <f:selectItems value="#{Roles}"/>
                     </h:selectManyCheckbox>
 
-                    <h:commandButton value="Save" action="#{userManagementController.updateAccount()}">
-                        <f:ajax execute="@form" render="@form tableContainer"/>
-                    </h:commandButton>
+                    <p:commandButton value="Save"
+                                     action="#{userManagementController.updateAccount()}"
+                                     process="@form" update="@form tableContainer"
+                                     styleClass="decoratedButton"/>
                 </h:panelGrid>
             </h:form>
         </h:panelGroup>

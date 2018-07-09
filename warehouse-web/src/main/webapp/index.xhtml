@@ -15,16 +15,20 @@
 </h:head>
 
 <h:body>
-    <compc:topBar/>
-    <h:panelGrid columns="1">
-        <h:panelGrid columns="2">
-            <h:button outcome="/public/create-text-item.xhtml" value="Create text item" styleClass="largeButton"/>
-            <h:button outcome="/public/create-file-item.xhtml" value="Create file item" styleClass="largeButton"/>
+    <compc:header/>
+    <h:panelGroup layout="block" styleClass="base">
+        <h:panelGrid columns="1">
+            <h:panelGrid columns="2">
+                <h:button outcome="/public/create-text-item.xhtml" value="Create text item"
+                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton largeButton"/>
+                <h:button outcome="/public/create-file-item.xhtml" value="Create file item"
+                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton largeButton"/>
+            </h:panelGrid>
+            <h:outputLabel value="10 recent shares:"/>
         </h:panelGrid>
-        <h:outputLabel value="10 recent shares:"/>
-    </h:panelGrid>
 
-    <compc:itemsTable items="#{fetchItemsController.items}"/>
+        <compc:itemsTable items="#{fetchItemsController.items}"/>
+    </h:panelGroup>
 </h:body>
 
 </html>

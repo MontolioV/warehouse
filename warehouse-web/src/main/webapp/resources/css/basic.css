@@ -49,21 +49,41 @@ body, input {
     font-family: 'Muli', sans-serif;
 }
 
-button, input[type="button"], input[type="submit"] {
-    background-color: #56ACFF;
-    border: 1px solid #1C62A6;
-    color: white;
-    text-align: center;
-    padding: 10px 20px;
-    width: 150px;
-}
-
 table {
     /*border: 1px solid black;*/
     width: 70%;
     margin-left: 15%;
     margin-right: 15%;
 }
+
+.decoratedButton, .ui-button.decoratedButton {
+    background-color: #56ACFF;
+    border: 1px solid #1C62A6;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+    min-width: 150px;
+}
+.decoratedButton:focus{
+    background-color: #4694d7;
+    outline: none;
+}
+.decoratedButton::-moz-focus-inner {
+    border: 0;
+}
+.decoratedButton:hover {
+    box-shadow: 0 0 10px 3px lightgray;
+}
+.decoratedButton:active {
+    background: #4080bd;
+}
+
+.ui-corner-all.decoratedButton {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
 
 .nameBoard {
     color: #56ACFF;
@@ -94,12 +114,18 @@ table {
     transition-duration: 0.5s;
     float: left;
 }
-.topBarButton:hover {
+.topBar .topBarButton:hover {
     background-color: white;
     color: black;
 }
 .authenticationFirst {
     margin-left: auto;
+}
+
+div.base {
+    margin: 50px;
+    padding: 30px;
+    background-color: white;
 }
 
 .dataTable {
@@ -161,5 +187,13 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     font-size: large;
     width: 200px;
     height: 100px;
-    margin: 50px;
+    margin: 10%;
+}
+
+#copyright {
+    width: 100%;
+    padding: 20px 0 20px 40%;
+    background-color: #56ACFF;
+    color: white;
+    position: relative;
 }

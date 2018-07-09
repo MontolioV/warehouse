@@ -3,7 +3,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Registration</title>
     <h:outputStylesheet name="css/basic.css"/>
@@ -43,9 +43,10 @@
             </h:inputText>
             <h:message id="m_email" for="email"/>
 
-            <h:commandButton value="Register" action="#{registrationController.register}">
-                <f:ajax execute="@form" render="@form" listener="#{registrationController.passwordConfirmation}"/>
-            </h:commandButton>
+            <p:commandButton value="Register" action="#{registrationController.register}"
+                             actionListener="#{registrationController.passwordConfirmation}"
+                             process="@form" update="@form"
+                             styleClass="decoratedButton"/>
         </h:panelGrid>
 
         <h:messages globalOnly="true" layout="table"/>

@@ -11,7 +11,7 @@
 </h:head>
 
 <h:body>
-    <compc:topBar/>
+    <compc:header/>
 
     <h:panelGrid columns="1">
         <h:outputText value="Create file item"/>
@@ -23,7 +23,8 @@
                 <h:message for="fileInput"/>
             </h:panelGrid>
 
-            <h:commandButton value="Create" action="#{createItemController.createFileItem()}">
+            <h:commandButton value="Create" action="#{createItemController.createFileItem()}"
+                             styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
         </h:form>

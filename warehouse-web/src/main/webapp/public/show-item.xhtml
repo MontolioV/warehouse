@@ -19,7 +19,7 @@
 </h:head>
 
 <h:body>
-    <compc:topBar/>
+    <compc:header/>
 
     <h:panelGrid columns="2">
         <h:outputText value="Owner"/>
@@ -38,7 +38,8 @@
     <h:panelGrid>
         <c:if test="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsAdmin() or roleCheckerController.checkIsModerator()}">
             <h:form>
-                <h:button value="Delete" outcome="delete-item.jsf?id=#{param['id']}"/>
+                <h:button value="Delete" outcome="delete-item.jsf?id=#{param['id']}"
+                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
             </h:form>
         </c:if>
 
@@ -49,7 +50,8 @@
 
         <c:if test="#{not empty fetchItemsController.fileItem}">
             <h:form>
-                <h:button value="Download" outcome="download.jsf?id=#{param['id']}"/>
+                <h:button value="Download" outcome="download.jsf?id=#{param['id']}"
+                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
             </h:form>
 
             <h:outputText value="Preview"/>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<h:body>
+    <ui:composition>
+        <h:outputLabel value="WAREHOUSE" styleClass="nameBoard"/>
+
+        <h:form styleClass="topBar">
+            <h:button value="Home" outcome="/index"
+                      styleClass="decoratedButton topBarButton"/>
+            <h:button value="Search" outcome="/public/items-search"
+                      styleClass="decoratedButton topBarButton"/>
+            <h:button value="Private" outcome="/private/index" rendered="#{roleCheckerController.checkIsUser()}"
+                      styleClass="decoratedButton topBarButton"/>
+            <h:button value="Moderation" outcome="/moderation/index" rendered="#{roleCheckerController.checkIsModerator()}"
+                      styleClass="decoratedButton topBarButton"/>
+            <h:button value="Admin" outcome="/admin/index" rendered="#{roleCheckerController.checkIsAdmin()}"
+                      styleClass="decoratedButton topBarButton"/>
+
+            <c:choose>
+                <c:when test="#{empty request.userPrincipal}">
+                    <h:button value="Login" outcome="/login"
+                              styleClass="decoratedButton topBarButton authenticationFirst"/>
+                    <h:button value="Registration" outcome="/registration"
+                              styleClass="decoratedButton topBarButton"/>
+                </c:when>
+                <c:otherwise>
+                    <h:button value="#{request.userPrincipal.name}" outcome="/private/personal-cabinet"
+                              styleClass="decoratedButton topBarButton authenticationFirst"/>
+
+                    <h:commandButton value="Logout" action="#{redirectController.logoutRedirect}"
+                                     styleClass="decoratedButton topBarButton"/>
+                </c:otherwise>
+            </c:choose>
+        </h:form>
+    </ui:composition>
+</h:body>
+</html>

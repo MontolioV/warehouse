@@ -14,22 +14,24 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGrid columns="1">
-                <h:outputText value="Create file item"/>
-                <h:form enctype="multipart/form-data">
+            <h:form id="createFileItem" enctype="multipart/form-data">
+                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm">
+                    <h:outputLabel value="Create file item"/>
+
                     <compc:itemInput item="#{createItemController.fileItem}" tagsString="#{createItemController.tagsString}"/>
 
-                    <h:panelGrid columns="2">
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel for="fileInput" value="File"/>
                         <h:inputFile id="fileInput" value="#{createItemController.tmpFile}" required="true"/>
                         <h:message for="fileInput"/>
-                    </h:panelGrid>
+                    </h:panelGroup>
 
                     <h:commandButton value="Create" action="#{createItemController.createFileItem()}"
                                      styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton">
                         <f:ajax execute="@form" render="@form"/>
                     </h:commandButton>
-                </h:form>
-            </h:panelGrid>
+                </h:panelGroup>
+            </h:form>
         </ui:define>
     </ui:composition>
 </h:body>

@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css?family=Muli');
+/*main color 56ACFF*/
 
-html, body {
-    margin: 0;
-}
+@import url('https://fonts.googleapis.com/css?family=Muli');
 /*
 
 @media only screen and (max-width: 1000px){
@@ -41,6 +39,10 @@ html, body {
 }
 */
 
+html, body {
+    margin: 0;
+}
+
 body {
     background: #d0f0ff;
 }
@@ -63,6 +65,7 @@ table {
     text-align: center;
     padding: 10px 20px;
     min-width: 150px;
+    white-space: nowrap;
 }
 .decoratedButton:focus{
     background-color: #4694d7;
@@ -84,8 +87,7 @@ table {
     border-radius: 0;
 }
 
-
-.nameBoard {
+#nameBoard {
     color: #56ACFF;
     color: rgba(30,144,255,0.7);
     background-color: #ffffff;
@@ -98,7 +100,7 @@ table {
     text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
 }
 
-.topBar {
+#topBar {
     padding-bottom: 5px;
     display: flex;
     background: linear-gradient(to top, rgba(208, 240, 255, 0), #5d5a6f 3px, #0A59A6 5px, #56ACFF 5px);
@@ -106,7 +108,7 @@ table {
     position: -webkit-sticky;
     top: 0;
 }
-.topBar .topBarButton {
+#topBar .topBarButton {
     border: none;
     display: inline-block;
     font-size: large;
@@ -114,7 +116,7 @@ table {
     transition-duration: 0.5s;
     float: left;
 }
-.topBar .topBarButton:hover {
+#topBar .topBarButton:hover {
     background-color: white;
     color: black;
 }
@@ -126,8 +128,8 @@ table {
     border: 1px solid #1C62A6;
     border-collapse: separate;
     border-spacing: 0;
-    /*border-radius: 4px;*/
     box-shadow: 3px 3px lightgray;
+    /*border-radius: 4px;*/
 }
 /*
 .dataTable th:first-child {
@@ -144,30 +146,28 @@ table {
     border-radius: 0 0 4px 0;
 }
 */
-.dataTableHeader {
+.dataTable td, .dataTable th {
     padding: 10px;
+}
+.dataTableHeader {
     background: linear-gradient(to right, #4c8ed7, #56ACFF  3px);
     color: white;
     font-weight: normal;
     border-bottom: 1px solid #1C62A6;
 }
-.dataTableRowOdd {}
-.dataTableRowEven {}
 .dataTableRowOdd td {
-    padding: 10px;
     background: linear-gradient(to right, #8db8e1, #A2D1FF  3px);
 }
 .dataTableRowEven td {
-    padding: 10px;
     background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
 }
 
-.textEditor {
-    background: #ffffff;
+.textEditor, .textLabel {
+    background: rgba(255, 212, 73, 0.11);
+    margin: 10px 0;
 }
 .textLabel {
     display: block;
-    background: #ffffff;
     border: 1px solid gray;
     padding: 10px;
 }
@@ -200,4 +200,35 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     padding: 20px 0 20px 40%;
     background-color: #56ACFF;
     color: white;
+}
+
+.mirrorContainer > * {
+    position: relative;
+    left: 20%;
+    border: 1px solid #f900ff;
+
+}
+.mirrorContainer > .mirror {
+    position: static;
+    flex-direction: row;
+    border: 1px solid #00fff3;
+
+}
+.mirrorContainer > .mirror > :nth-child(1) {
+    display: inline-block;
+    width: 30%;
+    text-align: right;
+    border: 1px solid #006fff;
+
+}
+.mirrorContainer > .mirror > :nth-child(2) {
+    width: 50%;
+    border: 1px solid #4cff06;
+
+}
+
+#createFileItem{
+    width: 500px;
+    margin: auto;
+    border: 1px solid red;
 }

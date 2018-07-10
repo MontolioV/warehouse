@@ -4,92 +4,96 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
-      xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>User management</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:o="http://omnifaces.org/ui"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <compc:header/>
-    <h:panelGrid columns="1">
-        <h:panelGrid columns="2">
-            <h:form  id="usersListForm">
-                <h:panelGrid columns="1">
-                    <h:panelGrid id="loginGrid" columns="3">
-                        <h:outputLabel for="login" value="Login"/>
-                        <h:inputText id="login" value="#{userManagementController.login}"/>
-                        <h:message for="login"/>
-                    </h:panelGrid>
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>User management</title>
+        </ui:define>
 
-                    <h:panelGrid columns="2">
-                        <p:commandButton id="singleFind" value="Find user"
-                                         action="#{userManagementController.fetchSingleAccount()}"
-                                         process="@this loginGrid" update="loginGrid editGroup tableContainer"
-                                         styleClass="decoratedButton"/>
-                        <p:commandButton id="allFind" value="Show all users"
-                                         action="#{userManagementController.fetchAccounts()}"
-                                         update="loginGrid editGroup tableContainer"
-                                         styleClass="decoratedButton"/>
-                    </h:panelGrid>
+        <ui:define name="body">
+            <h:panelGrid columns="1">
+                <h:panelGrid columns="2">
+                    <h:form  id="usersListForm">
+                        <h:panelGrid columns="1">
+                            <h:panelGrid id="loginGrid" columns="3">
+                                <h:outputLabel for="login" value="Login"/>
+                                <h:inputText id="login" value="#{userManagementController.login}"/>
+                                <h:message for="login"/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2">
+                                <p:commandButton id="singleFind" value="Find user"
+                                                 action="#{userManagementController.fetchSingleAccount()}"
+                                                 process="@this loginGrid" update="loginGrid editGroup tableContainer"
+                                                 styleClass="decoratedButton"/>
+                                <p:commandButton id="allFind" value="Show all users"
+                                                 action="#{userManagementController.fetchAccounts()}"
+                                                 update="loginGrid editGroup tableContainer"
+                                                 styleClass="decoratedButton"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </h:form>
                 </h:panelGrid>
-            </h:form>
-        </h:panelGrid>
 
-        <h:panelGroup id="editGroup" rendered="#{not empty userManagementController.singleAccount}">
-            <o:importConstants type="com.myapp.security.Roles"/>
-            <h:form id="editForm">
-                <h:panelGrid columns="1">
-                    <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
-                    <h:panelGrid columns="2">
-                        <h:outputLabel value="Is active"/>
-                        <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
-                    </h:panelGrid>
-                    <h:selectManyCheckbox layout="lineDirection" label="Roles" value="#{userManagementController.roles}">
-                        <f:selectItems value="#{Roles}"/>
-                    </h:selectManyCheckbox>
+                <h:panelGroup id="editGroup" rendered="#{not empty userManagementController.singleAccount}">
+                    <o:importConstants type="com.myapp.security.Roles"/>
+                    <h:form id="editForm">
+                        <h:panelGrid columns="1">
+                            <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Is active"/>
+                                <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
+                            </h:panelGrid>
+                            <h:selectManyCheckbox layout="lineDirection" label="Roles" value="#{userManagementController.roles}">
+                                <f:selectItems value="#{Roles}"/>
+                            </h:selectManyCheckbox>
 
-                    <p:commandButton value="Save"
-                                     action="#{userManagementController.updateAccount()}"
-                                     process="@form" update="@form tableContainer"
-                                     styleClass="decoratedButton"/>
-                </h:panelGrid>
-            </h:form>
-        </h:panelGroup>
+                            <p:commandButton value="Save"
+                                             action="#{userManagementController.updateAccount()}"
+                                             process="@form" update="@form tableContainer"
+                                             styleClass="decoratedButton"/>
+                        </h:panelGrid>
+                    </h:form>
+                </h:panelGroup>
 
-        <h:panelGroup id="tableContainer">
-            <h:dataTable id="usersTable"
-                         rendered="#{not empty userManagementController.accountList}"
-                         styleClass="dataTable"
-                         headerClass="dataTableHeader"
-                         rowClasses="dataTableRowOdd,dataTableRowEven"
-                         value="#{userManagementController.accountList}" var="account">
-                <h:column>
-                    <f:facet name="header">id</f:facet>
-                    #{account.id}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">login</f:facet>
-                    <h:commandLink value="#{account.login}" action="#{userManagementController.changeLogin(account.login)}">
-                        <f:ajax render="@all"/>
-                    </h:commandLink>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">email</f:facet>
-                    #{account.email}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">active</f:facet>
+                <h:panelGroup id="tableContainer">
+                    <h:dataTable id="usersTable"
+                                 rendered="#{not empty userManagementController.accountList}"
+                                 styleClass="dataTable"
+                                 headerClass="dataTableHeader"
+                                 rowClasses="dataTableRowOdd,dataTableRowEven"
+                                 value="#{userManagementController.accountList}" var="account">
+                        <h:column>
+                            <f:facet name="header">id</f:facet>
+                            #{account.id}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">login</f:facet>
+                            <h:commandLink value="#{account.login}" action="#{userManagementController.changeLogin(account.login)}">
+                                <f:ajax render="@all"/>
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">email</f:facet>
+                            #{account.email}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">active</f:facet>
 
-                    #{account.active}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">roles</f:facet>
-                    #{account.roles}
-                </h:column>
-            </h:dataTable>
-        </h:panelGroup>
-    </h:panelGrid>
+                            #{account.active}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">roles</f:facet>
+                            #{account.roles}
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+            </h:panelGrid>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

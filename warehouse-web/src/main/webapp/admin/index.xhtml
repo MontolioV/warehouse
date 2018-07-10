@@ -4,37 +4,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
->
-<h:head>
-    <title>Admin</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <compc:header/>
-    <h:panelGrid>
-        <h:outputLabel value="You are Admin!"/>
-        <h:panelGrid columns="2">
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Admin</title>
+        </ui:define>
+
+        <ui:define name="body">
             <h:panelGrid>
-                <h:outputLabel value="Services:"/>
-                <h:outputLink value="user-management.jsf">User management</h:outputLink>
+                <h:outputLabel value="You are Admin!"/>
+                <h:panelGrid columns="2">
+                    <h:panelGrid>
+                        <h:outputLabel value="Services:"/>
+                        <h:outputLink value="user-management.jsf">User management</h:outputLink>
+                    </h:panelGrid>
+                    <h:panelGrid>
+                        <h:outputLabel value="Actions:"/>
+                        <h:form>
+                            <h:commandLink value="Delete all items!" action="#{deleteItemController.deleteAll()}">
+                                <f:ajax render="messages"/>
+                            </h:commandLink>
+                        </h:form>
+                        <h:form>
+                            <h:commandLink value="Clean up file store!" action="#{deleteItemController.cleanupFileStorage()}">
+                                <f:ajax render="messages"/>
+                            </h:commandLink>
+                        </h:form>
+                        <h:messages id="messages"/>
+                    </h:panelGrid>
+                </h:panelGrid>
             </h:panelGrid>
-            <h:panelGrid>
-                <h:outputLabel value="Actions:"/>
-                <h:form>
-                    <h:commandLink value="Delete all items!" action="#{deleteItemController.deleteAll()}">
-                        <f:ajax render="messages"/>
-                    </h:commandLink>
-                </h:form>
-                <h:form>
-                    <h:commandLink value="Clean up file store!" action="#{deleteItemController.cleanupFileStorage()}">
-                        <f:ajax render="messages"/>
-                    </h:commandLink>
-                </h:form>
-                <h:messages id="messages"/>
-            </h:panelGrid>
-        </h:panelGrid>
-    </h:panelGrid>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

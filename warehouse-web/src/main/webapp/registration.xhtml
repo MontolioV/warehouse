@@ -3,53 +3,59 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Registration</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <h:outputLabel value="Registration"/>
-    <h:form id="reg_form">
-        <h:panelGrid columns="3">
-            <h:outputLabel value="Login" for="login"/>
-            <h:inputText id="login" value="#{registrationController.account.login}" required="true">
-                <f:ajax event="blur" render="m_login"/>
-            </h:inputText>
-            <h:message id="m_login" for="login"/>
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Registration</title>
+        </ui:define>
 
-            <h:outputLabel value="Password" for="password"/>
-            <h:inputSecret id="password" value="#{registrationController.password}" required="true">
-                <f:ajax event="blur"
-                        execute="@this passwordConf"
-                        listener="#{registrationController.passwordConfirmation}"
-                        render="m_password"/>
-            </h:inputSecret>
-            <h:message id="m_password" for="password"/>
+        <ui:define name="body">
+            <h:outputLabel value="Registration"/>
+            <h:form id="reg_form">
+                <h:panelGrid columns="3">
+                    <h:outputLabel value="Login" for="login"/>
+                    <h:inputText id="login" value="#{registrationController.account.login}" required="true">
+                        <f:ajax event="blur" render="m_login"/>
+                    </h:inputText>
+                    <h:message id="m_login" for="login"/>
 
-            <h:outputLabel value="Confirm password" for="passwordConf"/>
-            <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
-                <f:ajax event="blur"
-                        execute="@this password"
-                        listener="#{registrationController.passwordConfirmation}"
-                        render="m_passwordConf"/>
-            </h:inputSecret>
-            <h:message id="m_passwordConf" for="passwordConf"/>
+                    <h:outputLabel value="Password" for="password"/>
+                    <h:inputSecret id="password" value="#{registrationController.password}" required="true">
+                        <f:ajax event="blur"
+                                execute="@this passwordConf"
+                                listener="#{registrationController.passwordConfirmation}"
+                                render="m_password"/>
+                    </h:inputSecret>
+                    <h:message id="m_password" for="password"/>
 
-            <h:outputLabel value="Email" for="email"/>
-            <h:inputText id="email" value="#{registrationController.account.email}" required="true">
-                <f:ajax event="blur" render="m_email"/>
-            </h:inputText>
-            <h:message id="m_email" for="email"/>
+                    <h:outputLabel value="Confirm password" for="passwordConf"/>
+                    <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
+                        <f:ajax event="blur"
+                                execute="@this password"
+                                listener="#{registrationController.passwordConfirmation}"
+                                render="m_passwordConf"/>
+                    </h:inputSecret>
+                    <h:message id="m_passwordConf" for="passwordConf"/>
 
-            <p:commandButton value="Register" action="#{registrationController.register}"
-                             actionListener="#{registrationController.passwordConfirmation}"
-                             process="@form" update="@form"
-                             styleClass="decoratedButton"/>
-        </h:panelGrid>
+                    <h:outputLabel value="Email" for="email"/>
+                    <h:inputText id="email" value="#{registrationController.account.email}" required="true">
+                        <f:ajax event="blur" render="m_email"/>
+                    </h:inputText>
+                    <h:message id="m_email" for="email"/>
 
-        <h:messages globalOnly="true" layout="table"/>
-    </h:form>
+                    <p:commandButton value="Register" action="#{registrationController.register}"
+                                     actionListener="#{registrationController.passwordConfirmation}"
+                                     process="@form" update="@form"
+                                     styleClass="decoratedButton"/>
+                </h:panelGrid>
+
+                <h:messages globalOnly="true" layout="table"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

@@ -122,12 +122,6 @@ table {
     margin-left: auto;
 }
 
-div.base {
-    margin: 50px;
-    padding: 30px;
-    background-color: white;
-}
-
 .dataTable {
     border: 1px solid #1C62A6;
     border-collapse: separate;
@@ -190,10 +184,20 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     margin: 10%;
 }
 
+#mainDiv {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+#base {
+    flex-grow: 1;
+    margin: 20px 50px;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 0 3px 3px darkgray;
+}
 #copyright {
-    width: 100%;
     padding: 20px 0 20px 40%;
     background-color: #56ACFF;
     color: white;
-    position: relative;
 }

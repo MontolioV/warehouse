@@ -3,22 +3,25 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core" xmlns:p="http://primefaces.org/ui"
->
-<h:head>
-    <title>Delete items</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <compc:header/>
-    <h:form>
-        <h:panelGrid>
-            <h:outputLabel value="Enter item id to delete"/>
-            <h:inputText id="input" value="#{deleteItemController.id}"/>
-            <p:commandButton value="Delete" action="#{deleteItemController.deleteByIDNoRedirect()}"
-                             styleClass="decoratedButton"/>
-        </h:panelGrid>
-    </h:form>
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Delete items</title>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form>
+                <h:panelGrid>
+                    <h:outputLabel value="Enter item id to delete"/>
+                    <h:inputText id="input" value="#{deleteItemController.id}"/>
+                    <p:commandButton value="Delete" action="#{deleteItemController.deleteByIDNoRedirect()}"
+                                     styleClass="decoratedButton"/>
+                </h:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

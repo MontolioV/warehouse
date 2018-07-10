@@ -5,40 +5,43 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
       xmlns:p="http://primefaces.org/ui"
->
-<h:head>
-    <title>Warehouse</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <compc:header/>
-    <h:panelGrid columns="1">
-        <h:outputLabel value="Filters"/>
-        <h:form id="filterForm">
-            <h:panelGrid columns="2">
-                <h:outputLabel value="Name filter" for="names"/>
-                <p:chips id="names" value="#{fetchItemsController.itemNames}"/>
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Search items</title>
+        </ui:define>
 
-                <h:outputLabel value="Owner filter" for="owners"/>
-                <p:chips id="owners" value="#{fetchItemsController.itemOwners}"/>
+        <ui:define name="body">
+            <h:panelGrid columns="1">
+                <h:outputLabel value="Filters"/>
+                <h:form id="filterForm">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Name filter" for="names"/>
+                        <p:chips id="names" value="#{fetchItemsController.itemNames}"/>
 
-                <h:outputLabel value="Tag filter" for="tags"/>
-                <p:chips id="tags" value="#{fetchItemsController.tags}"/>
-                <div/>
-                <p:selectBooleanButton onLabel="Item has all listed tags" offLabel="Item has any listed tag" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
+                        <h:outputLabel value="Owner filter" for="owners"/>
+                        <p:chips id="owners" value="#{fetchItemsController.itemOwners}"/>
 
-                <p:commandButton value="Find" action="#{fetchItemsController.filteredFetch()}"
-                                 process="@form" update="itemsTableComponent:itemsTableContainer"
-                                 styleClass="decoratedButton"/>
+                        <h:outputLabel value="Tag filter" for="tags"/>
+                        <p:chips id="tags" value="#{fetchItemsController.tags}"/>
+                        <div/>
+                        <p:selectBooleanButton onLabel="Item has all listed tags" offLabel="Item has any listed tag" for="tags" value="#{fetchItemsController.tagsConjunction}"/>
+
+                        <p:commandButton value="Find" action="#{fetchItemsController.filteredFetch()}"
+                                         process="@form" update="itemsTableComponent:itemsTableContainer"
+                                         styleClass="decoratedButton"/>
+                    </h:panelGrid>
+                </h:form>
             </h:panelGrid>
-        </h:form>
-    </h:panelGrid>
 
-    <compc:itemsTable id="itemsTableComponent" items="#{fetchItemsController.items}"/>
+            <compc:itemsTable id="itemsTableComponent" items="#{fetchItemsController.items}"/>
 
-    <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
-        '%' matches zero or more of any characters. '\\%' and '\\_' to match an actual percent and underscore character."  />
+            <h:outputLabel value="Wildcard simbols are allowed. '_' matches any single character and
+            '%' matches zero or more of any characters. '\\%' and '\\_' to match an actual percent and underscore character."  />
+        </ui:define>
+    </ui:composition>
 </h:body>
 
 </html>

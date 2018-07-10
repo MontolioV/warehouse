@@ -3,50 +3,54 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core" xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Personal cabinet</title>
-    <h:outputStylesheet name="css/basic.css"/>
-</h:head>
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
-    <compc:header/>
-    <h:panelGrid columns="1">
-        <h:outputLabel value="Account info"/>
-        <h:panelGrid id="accountInfo" columns="2">
-            <h:outputLabel value="Login" for="login"/>
-            <h:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
+    <ui:composition template="/template/default/layout.xhtml">
+        <ui:define name="htmlHead">
+            <title>Personal cabinet</title>
+        </ui:define>
 
-            <h:outputLabel value="Email" for="email"/>
-            <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
-        </h:panelGrid>
+        <ui:define name="body">
+            <h:panelGrid columns="1">
+                <h:outputLabel value="Account info"/>
+                <h:panelGrid id="accountInfo" columns="2">
+                    <h:outputLabel value="Login" for="login"/>
+                    <h:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
 
-        <h:outputLabel value="Edit account"/>
-        <h:form>
-            <h:panelGrid columns="2">
-                <h:outputLabel value="New password" for="newPassword"/>
-                <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
+                    <h:outputLabel value="Email" for="email"/>
+                    <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
+                </h:panelGrid>
 
-                <h:outputLabel value="New password confirm" for="confirm"/>
-                <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
+                <h:outputLabel value="Edit account"/>
+                <h:form>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="New password" for="newPassword"/>
+                        <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
 
-                <p:commandButton value="Change password" action="#{personalCabinetController.changePassword()}"
-                                 process="@form" update="accountInfo messages"
-                                 styleClass="decoratedButton"/>
+                        <h:outputLabel value="New password confirm" for="confirm"/>
+                        <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
+
+                        <p:commandButton value="Change password" action="#{personalCabinetController.changePassword()}"
+                                         process="@form" update="accountInfo messages"
+                                         styleClass="decoratedButton"/>
+                    </h:panelGrid>
+                </h:form>
+                <h:form>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="New email" for="newEmail"/>
+                        <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+
+                        <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
+                                         process="@form" update="accountInfo messages"
+                                         styleClass="decoratedButton"/>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:messages id="messages" globalOnly="true" layout="table"/>
             </h:panelGrid>
-        </h:form>
-        <h:form>
-            <h:panelGrid columns="2">
-                <h:outputLabel value="New email" for="newEmail"/>
-                <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
-
-                <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
-                                 process="@form" update="accountInfo messages"
-                                 styleClass="decoratedButton"/>
-            </h:panelGrid>
-        </h:form>
-
-        <h:messages id="messages" globalOnly="true" layout="table"/>
-    </h:panelGrid>
+        </ui:define>
+    </ui:composition>
 </h:body>
 </html>

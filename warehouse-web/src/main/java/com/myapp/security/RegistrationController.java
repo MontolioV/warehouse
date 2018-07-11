@@ -19,7 +19,7 @@ public class RegistrationController {
     private String password;
     private String passwordConfirm;
 
-    public String register() {
+    public String registration() {
         try {
             accountStore.createAccount(account);
             facesContext.addMessage(null, new FacesMessage("Account has been successfully registered!"));

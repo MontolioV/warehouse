@@ -14,46 +14,55 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:outputLabel value="Registration"/>
             <h:form id="reg_form">
-                <h:panelGrid columns="3">
-                    <h:outputLabel value="Login" for="login"/>
-                    <h:inputText id="login" value="#{registrationController.account.login}" required="true">
-                        <f:ajax event="blur" render="m_login"/>
-                    </h:inputText>
-                    <h:message id="m_login" for="login"/>
+                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
+                    <h:outputLabel value="Registration"/>
 
-                    <h:outputLabel value="Password" for="password"/>
-                    <h:inputSecret id="password" value="#{registrationController.password}" required="true">
-                        <f:ajax event="blur"
-                                execute="@this passwordConf"
-                                listener="#{registrationController.passwordConfirmation}"
-                                render="m_password"/>
-                    </h:inputSecret>
-                    <h:message id="m_password" for="password"/>
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Login" for="login"/>
+                        <h:inputText id="login" value="#{registrationController.account.login}" required="true">
+                            <f:ajax event="blur" render="m_login"/>
+                        </h:inputText>
+                        <h:message id="m_login" for="login"/>
+                    </h:panelGroup>
 
-                    <h:outputLabel value="Confirm password" for="passwordConf"/>
-                    <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
-                        <f:ajax event="blur"
-                                execute="@this password"
-                                listener="#{registrationController.passwordConfirmation}"
-                                render="m_passwordConf"/>
-                    </h:inputSecret>
-                    <h:message id="m_passwordConf" for="passwordConf"/>
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Password" for="password"/>
+                        <h:inputSecret id="password" value="#{registrationController.password}" required="true">
+                            <f:ajax event="blur"
+                                    execute="@this passwordConf"
+                                    listener="#{registrationController.passwordConfirmation}"
+                                    render="m_password"/>
+                        </h:inputSecret>
+                        <h:message id="m_password" for="password"/>
+                    </h:panelGroup>
 
-                    <h:outputLabel value="Email" for="email"/>
-                    <h:inputText id="email" value="#{registrationController.account.email}" required="true">
-                        <f:ajax event="blur" render="m_email"/>
-                    </h:inputText>
-                    <h:message id="m_email" for="email"/>
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Confirm password" for="passwordConf"/>
+                        <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
+                            <f:ajax event="blur"
+                                    execute="@this password"
+                                    listener="#{registrationController.passwordConfirmation}"
+                                    render="m_passwordConf"/>
+                        </h:inputSecret>
+                        <h:message id="m_passwordConf" for="passwordConf"/>
+                    </h:panelGroup>
 
-                    <p:commandButton value="Register" action="#{registrationController.register}"
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Email" for="email"/>
+                        <h:inputText id="email" value="#{registrationController.account.email}" required="true">
+                            <f:ajax event="blur" render="m_email"/>
+                        </h:inputText>
+                        <h:message id="m_email" for="email"/>
+                    </h:panelGroup>
+
+                    <p:commandButton value="Registration" action="#{registrationController.registration}"
                                      actionListener="#{registrationController.passwordConfirmation}"
                                      process="@form" update="@form"
                                      styleClass="decoratedButton"/>
-                </h:panelGrid>
 
-                <h:messages globalOnly="true" layout="table"/>
+                    <h:messages globalOnly="true" layout="table"/>
+                </h:panelGroup>
             </h:form>
         </ui:define>
     </ui:composition>

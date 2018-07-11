@@ -11,22 +11,25 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGrid columns="3">
+    <h:panelGroup layout="block" styleClass="mirror">
         <h:outputLabel value="Name" for="name"/>
         <h:inputText id="name" value="#{cc.attrs.item.name}" required="true"/>
         <h:message id="m_name" for="name"/>
-
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="mirror">
         <h:outputLabel value="Description" for="description"/>
-        <h:inputTextarea id="description" value="#{cc.attrs.item.description}"/>
+        <h:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="3"/>
         <h:message id="m_description" for="description"/>
-
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="mirror">
         <h:outputLabel value="Tag per string" for="tagsString"/>
-        <h:inputTextarea id="tagsString" value="#{cc.attrs.tagsString}"/>
+        <h:inputTextarea id="tagsString" value="#{cc.attrs.tagsString}" rows="3"/>
         <h:message id="m_tagsString" for="tagsString"/>
-
+    </h:panelGroup>
+    <h:panelGroup layout="block" styleClass="mirror">
         <h:outputLabel value="Shared" for="shared" rendered="#{not empty request.userPrincipal}"/>
         <h:selectBooleanCheckbox id="shared" value="#{cc.attrs.item.shared}" rendered="#{not empty request.userPrincipal}"/>
         <h:message id="m_shared" for="shared"/>
-    </h:panelGrid>
+    </h:panelGroup>
 </composite:implementation>
 </html>

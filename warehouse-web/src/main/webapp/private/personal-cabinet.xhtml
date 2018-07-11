@@ -13,43 +13,50 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGrid columns="1">
+            <h:panelGroup id="accountInfo" layout="block" styleClass="mirrorContainer mediumForm centered">
                 <h:outputLabel value="Account info"/>
-                <h:panelGrid id="accountInfo" columns="2">
+                <h:panelGroup layout="block" styleClass="mirror">
                     <h:outputLabel value="Login" for="login"/>
                     <h:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
-
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="mirror">
                     <h:outputLabel value="Email" for="email"/>
                     <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
-                </h:panelGrid>
+                </h:panelGroup>
+            </h:panelGroup>
 
-                <h:outputLabel value="Edit account"/>
+            <h:panelGroup layout="block">
                 <h:form>
-                    <h:panelGrid columns="2">
-                        <h:outputLabel value="New password" for="newPassword"/>
-                        <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
-
-                        <h:outputLabel value="New password confirm" for="confirm"/>
-                        <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
-
+                    <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
+                        <h:outputLabel value="Edit password"/>
+                        <h:panelGroup layout="block" styleClass="mirror">
+                            <h:outputLabel value="New password" for="newPassword"/>
+                            <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" styleClass="mirror">
+                            <h:outputLabel value="New password confirm" for="confirm"/>
+                            <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
+                        </h:panelGroup>
                         <p:commandButton value="Change password" action="#{personalCabinetController.changePassword()}"
                                          process="@form" update="accountInfo messages"
                                          styleClass="decoratedButton"/>
-                    </h:panelGrid>
+                    </h:panelGroup>
                 </h:form>
                 <h:form>
-                    <h:panelGrid columns="2">
-                        <h:outputLabel value="New email" for="newEmail"/>
-                        <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
-
+                    <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
+                        <h:outputLabel value="Edit email"/>
+                        <h:panelGroup layout="block" styleClass="mirror">
+                            <h:outputLabel value="New email" for="newEmail"/>
+                            <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+                        </h:panelGroup>
                         <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
                                          process="@form" update="accountInfo messages"
                                          styleClass="decoratedButton"/>
-                    </h:panelGrid>
+                    </h:panelGroup>
                 </h:form>
+            </h:panelGroup>
 
-                <h:messages id="messages" globalOnly="true" layout="table"/>
-            </h:panelGrid>
+            <h:messages id="messages" globalOnly="true" layout="table"/>
         </ui:define>
     </ui:composition>
 </h:body>

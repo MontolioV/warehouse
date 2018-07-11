@@ -14,8 +14,8 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:form id="createFileItem" enctype="multipart/form-data">
-                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm">
+            <h:form enctype="multipart/form-data">
+                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
                     <h:outputLabel value="Create file item"/>
 
                     <compc:itemInput item="#{createItemController.fileItem}" tagsString="#{createItemController.tagsString}"/>
@@ -23,7 +23,7 @@
                     <h:panelGroup layout="block" styleClass="mirror">
                         <h:outputLabel for="fileInput" value="File"/>
                         <h:inputFile id="fileInput" value="#{createItemController.tmpFile}" required="true"/>
-                        <h:message for="fileInput"/>
+                        <h:message id="m_fileInput" for="fileInput"/>
                     </h:panelGroup>
 
                     <h:commandButton value="Create" action="#{createItemController.createFileItem()}"

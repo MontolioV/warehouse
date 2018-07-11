@@ -17,23 +17,30 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:outputLabel value="Authentication"/>
             <h:form>
-                <h:panelGrid columns="2">
-                    <h:outputLabel value="Login" for="login"/>
-                    <h:inputText id="login" value="#{formAuthenticationController.login}" required="true"/>
+                <h:panelGroup layout="block" styleClass="mirrorContainer smallForm centered">
+                    <h:outputLabel value="Authentication"/>
 
-                    <h:outputLabel value="Password" for="password"/>
-                    <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Login" for="login"/>
+                        <h:inputText id="login" value="#{formAuthenticationController.login}" required="true"/>
+                    </h:panelGroup>
 
-                    <h:outputLabel value="Remember me" for="rememberme"/>
-                    <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Password" for="password"/>
+                        <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block" styleClass="mirror">
+                        <h:outputLabel value="Remember me" for="rememberme"/>
+                        <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
+                    </h:panelGroup>
 
                     <p:commandButton value="Submit" action="#{formAuthenticationController.submit}"
                                      process="@form" update="@form"
                                      styleClass="decoratedButton"/>
                     <h:messages globalOnly="true" layout="table"/>
-                </h:panelGrid>
+                </h:panelGroup>
             </h:form>
         </ui:define>
     </ui:composition>

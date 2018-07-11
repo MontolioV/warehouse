@@ -41,6 +41,7 @@
 
 html, body {
     margin: 0;
+    height: 100%;
 }
 
 body {
@@ -56,6 +57,11 @@ table {
     width: 70%;
     margin-left: 15%;
     margin-right: 15%;
+}
+
+textarea, input[type="text"], input[type="password"] {
+    border: 1px solid #1C62A6;
+    background: linear-gradient(to bottom, #c2ddff, #eff8ff 30%);
 }
 
 .decoratedButton, .ui-button.decoratedButton {
@@ -186,6 +192,7 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
 
 #mainDiv {
     min-height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -197,38 +204,50 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     box-shadow: 0 0 3px 3px darkgray;
 }
 #copyright {
-    padding: 20px 0 20px 40%;
+    padding: 20px 0;
     background-color: #56ACFF;
     color: white;
+    text-align: center;
 }
 
-.mirrorContainer > * {
-    position: relative;
-    left: 20%;
-    border: 1px solid #f900ff;
+.mediumForm{
+    width: 50%;
+}
+.smallForm{
+    width: 30%;
+}
+.centered {
+    margin: auto;
+}
 
+.mirrorContainer {
+    text-align: center;
+}
+.mirrorContainer > * {
+    margin: auto;
+}
+.mirrorContainer > :first-child {
+    font-size: larger;
+    margin-bottom: 50px;
 }
 .mirrorContainer > .mirror {
-    position: static;
-    flex-direction: row;
-    border: 1px solid #00fff3;
-
+    display: flex;
+    align-items: flex-start;
+}
+.mirrorContainer > .mirror > * {
+    flex: none;
+    margin: 10px 1%;
 }
 .mirrorContainer > .mirror > :nth-child(1) {
-    display: inline-block;
-    width: 30%;
+    width: 25%;
     text-align: right;
-    border: 1px solid #006fff;
-
 }
 .mirrorContainer > .mirror > :nth-child(2) {
-    width: 50%;
-    border: 1px solid #4cff06;
-
+    width: 65%;
 }
-
-#createFileItem{
-    width: 500px;
-    margin: auto;
-    border: 1px solid red;
+.mirrorContainer > .mirror > :nth-child(3) {
+    width: 50%;
+    color: red;
+    overflow-wrap: break-word;
+    border-radius: 100px;
 }

@@ -32,8 +32,8 @@ public class RegistrationControllerTest {
     private Account accountMock;
 
     @Test
-    public void doRegister() throws LoginExistsException, UnsecurePasswordException {
-        controller.register();
+    public void doRegistration() throws LoginExistsException, UnsecurePasswordException {
+        controller.registration();
         verify(accountStore).createAccount(any(Account.class));
         verify(facesContext).addMessage(anyString(), any(FacesMessage.class));
     }

@@ -2,13 +2,18 @@ package com.myapp.storing.UT;
 
 import com.myapp.storing.*;
 import com.myapp.utils.QueryTarget;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.faces.context.ExternalContext;
 import javax.persistence.criteria.CriteriaQuery;
@@ -27,11 +32,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * <p>Created by MontolioV on 18.04.18.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Jsoup.class, Whitelist.class})
+@PowerMockIgnore("javax.security.auth.Subject")
 public class FetchItemsControllerTest {
     @InjectMocks
     private FetchItemsController controller;
@@ -285,5 +293,25 @@ public class FetchItemsControllerTest {
         when(ecMock.getUserPrincipal()).thenReturn(null);
         isUsersOwn = controller.itemIsUsersOwn();
         assertFalse(isUsersOwn);
+    }
+
+    @Test
+    public void sanitisedText() {
+        mockStatic(Jsoup.class);
+        mockStatic(Whitelist.class);
+        TextItem tiMock = mock(TextItem.class);
+        Whitelist whitelist = mock(Whitelist.class);
+
+        when(tiMock.getText()).thenReturn("rawText");
+        PowerMockito.when(Whitelist.basic()).thenReturn(whitelist);
+        PowerMockito.when(Jsoup.clean("rawText", whitelist)).thenReturn("sanitisedText");
+
+        controller.setTextItem(tiMock);
+        String s = controller.sanitisedText();
+        assertThat(s, is("sanitisedText"));
+
+        controller.setTextItem(null);
+        s = controller.sanitisedText();
+        assertThat(s, nullValue());
     }
 }

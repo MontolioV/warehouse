@@ -1,6 +1,8 @@
 package com.myapp.storing;
 
 import com.myapp.utils.QueryTarget;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -129,6 +131,14 @@ public class FetchItemsController {
                 && userPrincipal != null
                 && item.getOwner() != null
                 && item.getOwner().equals(userPrincipal.getName());
+    }
+
+    public String sanitisedText() {
+        if (textItem == null) {
+            return null;
+        }
+        String text = textItem.getText();
+        return Jsoup.clean(text, Whitelist.basic());
     }
 
     //Getters & Setters

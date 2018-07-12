@@ -44,7 +44,7 @@
 
                 <c:if test="#{not empty fetchItemsController.textItem}">
                     <h:outputText value="Text"/>
-                    <h:outputText escape="false" styleClass="textLabel" value="#{fetchItemsController.textItem.text}"/>
+                    <h:outputText escape="false" styleClass="textLabel" value="#{fetchItemsController.sanitisedText()}"/>
                 </c:if>
 
                 <c:if test="#{not empty fetchItemsController.fileItem}">

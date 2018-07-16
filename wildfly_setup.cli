@@ -17,6 +17,10 @@ batch
 
 /subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=max-post-size,value=1000000000)
 
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp/:write-attribute(name=host,value=smtp.gmail.com)
+
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp/:write-attribute(name=port,value=587)
+
 run-batch
 
 :reload

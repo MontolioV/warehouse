@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ejb.SessionContext;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -40,6 +41,8 @@ public class AccountStoreDBTest implements CommonChecks {
     private Encryptor encryptorMock;
     @Mock
     private EntityManager emMock;
+    @Mock
+    private AccountActivator aaMock;
     @Mock
     private SessionContext contextMock;
     @Mock
@@ -105,11 +108,12 @@ public class AccountStoreDBTest implements CommonChecks {
     }
 
     @Test
-    public void createAccount() throws LoginExistsException, UnsecurePasswordException {
+    public void createAccount() throws LoginExistsException, UnsecurePasswordException, MessagingException {
         accountStoreDB.createAccount(accountNew);
         verify(emMock).persist(accountNew);
         verify(emMock).flush();
         verify(emMock).detach(accountNew);
+        verify(aaMock).prepareActivation(accountNew);
 
         assertThat(accountNew.getId(), is(1L));
         assertThat(accountNew.getLogin(), is("test"));
@@ -122,17 +126,18 @@ public class AccountStoreDBTest implements CommonChecks {
     }
 
     @Test
-    public void createExistingAccount() throws UnsecurePasswordException {
+    public void createExistingAccount() throws UnsecurePasswordException, MessagingException {
         try {
             accountStoreDB.createAccount(accountExisting);
         } catch (LoginExistsException e) {
             //as expected
         }
-        verify(emMock, never()).persist(accountNew);
+        verify(emMock, never()).persist(any(Account.class));
+        verify(aaMock, never()).prepareActivation(any(Account.class));
     }
 
     @Test
-    public void createAccountWithBadPass() throws LoginExistsException {
+    public void createAccountWithBadPass() throws LoginExistsException, MessagingException {
         for (String password : badPasswords) {
             accountNew.setPassHash(password);
             try {
@@ -141,8 +146,9 @@ public class AccountStoreDBTest implements CommonChecks {
                 //as expected
             }
         }
-        verify(emMock, never()).persist(accountNew);
-        verify(emMock, never()).detach(accountNew);
+        verify(emMock, never()).persist(any(Account.class));
+        verify(emMock, never()).detach(any(Account.class));
+        verify(aaMock, never()).prepareActivation(any(Account.class));
     }
 
     @Test

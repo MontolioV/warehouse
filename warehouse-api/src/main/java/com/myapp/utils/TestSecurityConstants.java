@@ -17,6 +17,7 @@ public interface TestSecurityConstants {
     String PASS_HASH_INVALID = "PASS_HASH_INVALID";
     String TOKEN_HASH_VALID = "TOKEN_HASH_VALID";
     String TOKEN_HASH_INVALID = "TOKEN_HASH_INVALID";
+    String EMAIL = "email@email.com";
     Set<Roles> ROLES_SET = Collections.singleton(Roles.USER);
     Set<String> ROLES_STR_SET = Collections.singleton(Roles.USER.name());
 

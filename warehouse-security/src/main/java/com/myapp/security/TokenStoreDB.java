@@ -50,7 +50,6 @@ public class TokenStoreDB implements TokenStore{
     }
 
     @Override
-    @RolesAllowed(USER)
     public void removeToken(String tokenHash) {
         em.createNamedQuery(Token.DELETE_BY_HASH)
                 .setParameter("hash", tokenHash)

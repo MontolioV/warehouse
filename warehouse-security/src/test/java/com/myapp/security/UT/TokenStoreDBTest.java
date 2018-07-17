@@ -11,13 +11,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.myapp.utils.TestSecurityConstants.TOKEN_HASH_VALID;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -54,14 +56,20 @@ public class TokenStoreDBTest implements CommonChecks {
 
     @Test
     public void createToken() {
+        Instant plus1min = Instant.now().plus(1, MINUTES);
+        Instant plus3min = Instant.now().plus(3, MINUTES);
+
         when(encryptorMock.generate(any(String.class))).thenReturn(TOKEN_HASH_VALID);
 
-        Token token = tokenStoreDB.createToken(accountMock, TokenType.REMEMBER_ME, new Date());
+        Token token = tokenStoreDB.createToken(accountMock, TokenType.REMEMBER_ME, 2, MINUTES);
 
         verify(encryptorMock).generate(any(String.class));
         verify(accountMock).addToken(token);
         verify(emMock).merge(accountMock);
         assertThat(token.getTokenHash(), CoreMatchers.is(TOKEN_HASH_VALID));
+        Instant expiredInstant = token.getExpiredDate().toInstant();
+        assertTrue(plus1min.isBefore(expiredInstant));
+        assertTrue(plus3min.isAfter(expiredInstant));
     }
 
     @Test

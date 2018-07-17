@@ -12,15 +12,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.RememberMeCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
-import java.util.Date;
 import java.util.Optional;
 
+import static com.myapp.security.TokenType.REMEMBER_ME;
 import static com.myapp.utils.TestSecurityConstants.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +56,7 @@ public class RememberMeIdentityStoreDefaultTest implements CommonChecks {
         when(asMock.getAccountByLogin(LOGIN_INVALID)).thenReturn(Optional.empty());
         when(asMock.getAccountByTokenHash(TOKEN_HASH_VALID)).thenReturn(Optional.of(accountMock));
         when(asMock.getAccountByTokenHash(TOKEN_HASH_INVALID)).thenReturn(Optional.empty());
-        when(tsMock.createToken(any(Account.class), any(TokenType.class), any(Date.class))).thenReturn(tokenMock);
+        when(tsMock.createToken(accountMock, REMEMBER_ME, 14, DAYS)).thenReturn(tokenMock);
         when(tokenMock.getTokenHash()).thenReturn(TOKEN_HASH_VALID);
         when(rememberMeCredValidMock.getToken()).thenReturn(TOKEN_HASH_VALID);
         when(rememberMeCredInvalidMock.getToken()).thenReturn(TOKEN_HASH_INVALID);
@@ -80,7 +80,7 @@ public class RememberMeIdentityStoreDefaultTest implements CommonChecks {
 
         assertThat(resultValid, CoreMatchers.is(TOKEN_HASH_VALID));
         assertNull(resultInvalid);
-        verify(tsMock).createToken(any(Account.class), any(TokenType.class), any(Date.class));
+        verify(tsMock).createToken(accountMock, REMEMBER_ME, 14, DAYS);
     }
 
     @Test

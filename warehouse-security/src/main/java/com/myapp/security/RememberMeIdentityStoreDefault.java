@@ -7,9 +7,7 @@ import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.credential.RememberMeCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.RememberMeIdentityStore;
-import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -61,13 +59,8 @@ public class RememberMeIdentityStoreDefault implements RememberMeIdentityStore {
     @Override
     public String generateLoginToken(CallerPrincipal callerPrincipal, Set<String> groups) {
         Optional<Account> optional = accountStore.getAccountByLogin(callerPrincipal.getName());
-        if (optional.isPresent()) {
-            Date expiring = Date.from(Instant.now().plus(14, ChronoUnit.DAYS));
-            return tokenStore.createToken(optional.get(), TokenType.REMEMBER_ME, expiring)
-                             .getTokenHash();
-        } else {
-            return null;
-        }
+        return optional.map(account -> tokenStore.createToken(account, TokenType.REMEMBER_ME, 14, ChronoUnit.DAYS).getTokenHash())
+                .orElse(null);
     }
 
     /**

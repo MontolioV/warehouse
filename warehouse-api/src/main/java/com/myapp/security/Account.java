@@ -1,5 +1,7 @@
 package com.myapp.security;
 
+import com.myapp.validation.constraints.Unique;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -8,25 +10,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.*;
 
+import static com.myapp.security.Account.*;
+import static com.myapp.security.Token.HASH_PARAM;
+
 /**
  * <p>Created by MontolioV on 01.03.18.
  */
 @Entity
 @Access(value = AccessType.PROPERTY)
 @NamedQueries({
-        @NamedQuery(name = Account.GET_ALL, query = "select a from Account a"),
-        @NamedQuery(name = Account.GET_BY_LOGIN, query = "select a from Account a where a.login = :login"),
-        @NamedQuery(name = Account.GET_BY_TOKEN_HASH, query = "select a from Account a inner join a.tokens t where t.tokenHash=:hash"),
+        @NamedQuery(name = GET_ALL, query = "select a from Account a"),
+        @NamedQuery(name = GET_BY_LOGIN, query = "select a from Account a where a.login = :" + LOGIN_PARAM),
+        @NamedQuery(name = GET_BY_EMAIL, query = "select a from Account a where a.email = :" + EMAIL_PARAM),
+        @NamedQuery(name = GET_BY_TOKEN_HASH, query = "select a from Account a inner join a.tokens t where t.tokenHash=:" + HASH_PARAM),
 })
 @Table(indexes = {
-        @Index(columnList = "LOGIN", unique = true)
+        @Index(columnList = "LOGIN", unique = true),
+        @Index(columnList = "EMAIL", unique = true)
 })
 @XmlRootElement
 public class Account implements Serializable {
     private static final String PREFIX = "com.myapp.security.Account.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_LOGIN = PREFIX + "GET_BY_LOGIN";
+    public static final String GET_BY_EMAIL = PREFIX + "GET_BY_EMAIL";
     public static final String GET_BY_TOKEN_HASH = PREFIX + "GET_BY_TOKEN_HASH";
+    public static final String LOGIN_PARAM = "LOGIN_PARAM";
+    public static final String EMAIL_PARAM = "EMAIL_PARAM";
 
     private long id;
     private String login;
@@ -61,6 +71,7 @@ public class Account implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 30)
+    @Unique(entityClass = Account.class, queryName = GET_BY_LOGIN, queryParameterName = LOGIN_PARAM)
     @Column(unique = true)
     public String getLogin() {
         return login;
@@ -80,7 +91,9 @@ public class Account implements Serializable {
         this.passHash = passHash;
     }
 
+    @NotNull
     @Email
+    @Unique(entityClass = Account.class, queryName = GET_BY_EMAIL, queryParameterName = EMAIL_PARAM)
     @Column(unique = true)
     public String getEmail() {
         return email;
@@ -147,5 +160,18 @@ public class Account implements Serializable {
     public int hashCode() {
 
         return Objects.hash(id, login, passHash, email, tokens, roles, active);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", passHash='" + passHash + '\'' +
+                ", email='" + email + '\'' +
+                ", tokens=" + tokens +
+                ", roles=" + roles +
+                ", active=" + active +
+                '}';
     }
 }

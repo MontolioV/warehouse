@@ -5,6 +5,8 @@
              version="2.2">
 
     <persistence-unit name="it-pu" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>java:/jdbc/warehouse</non-jta-data-source>
+
         <class>com.myapp.security.Account</class>
         <class>com.myapp.security.Token</class>
         <class>com.myapp.storing.Item</class>

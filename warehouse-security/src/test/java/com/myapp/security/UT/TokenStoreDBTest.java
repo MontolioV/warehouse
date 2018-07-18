@@ -15,6 +15,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.myapp.security.Token.DATE_PARAM;
+import static com.myapp.security.Token.HASH_PARAM;
 import static com.myapp.utils.TestSecurityConstants.TOKEN_HASH_VALID;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.hamcrest.CoreMatchers.is;
@@ -76,7 +78,7 @@ public class TokenStoreDBTest implements CommonChecks {
     public void findToken() {
         Query queryMock = mock(Query.class);
         when(emMock.createNamedQuery(Token.DELETE_BY_HASH)).thenReturn(queryMock);
-        when(queryMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(queryMock);
+        when(queryMock.setParameter(HASH_PARAM, TOKEN_HASH_VALID)).thenReturn(queryMock);
 
     }
 
@@ -84,7 +86,7 @@ public class TokenStoreDBTest implements CommonChecks {
     public void removeToken() {
         Query queryMock = mock(Query.class);
         when(emMock.createNamedQuery(Token.DELETE_BY_HASH)).thenReturn(queryMock);
-        when(queryMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(queryMock);
+        when(queryMock.setParameter(HASH_PARAM, TOKEN_HASH_VALID)).thenReturn(queryMock);
 
         tokenStoreDB.removeToken(TOKEN_HASH_VALID);
         verify(queryMock).executeUpdate();
@@ -94,7 +96,7 @@ public class TokenStoreDBTest implements CommonChecks {
     public void removeExpiredTokens() {
         Query queryMock = mock(Query.class);
         when(emMock.createNamedQuery(Token.DELETE_EXPIRED_TO_DATE)).thenReturn(queryMock);
-        when(queryMock.setParameter(eq("date"), any())).thenReturn(queryMock);
+        when(queryMock.setParameter(eq(DATE_PARAM), any())).thenReturn(queryMock);
         when(queryMock.executeUpdate()).thenReturn(123);
 
         int deleted = tokenStoreDB.removeExpiredTokens();

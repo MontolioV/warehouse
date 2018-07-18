@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.myapp.TestUtils.serializationRoutine;
+import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -26,7 +27,7 @@ public class AccountTest {
         Set<Roles> roles = new HashSet<>();
         tokens.add(new Token());
         roles.add(Roles.ADMIN);
-        Account account = new Account(1, "test", "test", "test", tokens, roles);
+        Account account = new Account(0, LOGIN_VALID, PASS_HASH_VALID, EMAIL_VALID, tokens, roles);
 
         Account restored = (Account) serializationRoutine(account);
         assertThat(restored, is(account));

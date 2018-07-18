@@ -3,17 +3,15 @@ package com.myapp.security;
 import java.security.PrivilegedActionException;
 
 /**
- * This exception indicates that account can't be created because
- * specified login is not available. Login must be unique.
- * <p>Created by MontolioV on 05.03.18.
+ * <p>Created by MontolioV on 18.07.18.
  */
-public class LoginExistsException extends AccountCantBeCreatedException {
+public class AccountCantBeCreatedException extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public LoginExistsException() {
+    public AccountCantBeCreatedException() {
         super();
     }
 
@@ -25,7 +23,7 @@ public class LoginExistsException extends AccountCantBeCreatedException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public LoginExistsException(String message) {
+    public AccountCantBeCreatedException(String message) {
         super(message);
     }
 
@@ -43,7 +41,7 @@ public class LoginExistsException extends AccountCantBeCreatedException {
      *                unknown.)
      * @since 1.4
      */
-    public LoginExistsException(String message, Throwable cause) {
+    public AccountCantBeCreatedException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -61,7 +59,7 @@ public class LoginExistsException extends AccountCantBeCreatedException {
      *              unknown.)
      * @since 1.4
      */
-    public LoginExistsException(Throwable cause) {
+    public AccountCantBeCreatedException(Throwable cause) {
         super(cause);
     }
 
@@ -79,7 +77,7 @@ public class LoginExistsException extends AccountCantBeCreatedException {
      *                           be writable
      * @since 1.7
      */
-    protected LoginExistsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected AccountCantBeCreatedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

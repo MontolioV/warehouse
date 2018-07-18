@@ -10,9 +10,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.mail.MessagingException;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.Optional;
 
 import static com.myapp.security.RestAccountActivator.MAIL_SUBJECT;
+import static com.myapp.security.RestAccountActivator.QP_TOKEN;
 import static com.myapp.security.TokenType.EMAIL_VERIFICATION;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -33,28 +37,39 @@ public class RestAccountActivatorTest {
     @Mock
     private MailManager mmMock;
     @Mock
+    private UriInfo uiMock;
+    @Mock
     private Account accountMock;
     @Mock
     private Token tokenMock;
+    @Mock
+    private UriBuilder ubEmptyMock;
+    @Mock
+    private UriBuilder ubSetMock;
+    private URI uriMock;
 
     @Before
     public void setUp() throws Exception {
+        uriMock = new URI("http://uriWithQParam.com");
+
         when(tsMock.createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS)).thenReturn(tokenMock);
         when(tokenMock.getTokenHash()).thenReturn(TOKEN_HASH_VALID);
-        when(accountMock.getEmail()).thenReturn(EMAIL);
+        when(accountMock.getEmail()).thenReturn(EMAIL_VALID);
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
         when(accountMock.getId()).thenReturn(1L);
         when(asMock.getAccountByTokenHash(TOKEN_HASH_VALID)).thenReturn(Optional.of(accountMock));
         when(asMock.getAccountByTokenHash(TOKEN_HASH_INVALID)).thenReturn(Optional.empty());
+        when(uiMock.getAbsolutePathBuilder()).thenReturn(ubEmptyMock);
+        when(ubEmptyMock.queryParam(QP_TOKEN, TOKEN_HASH_VALID)).thenReturn(ubSetMock);
+        when(ubSetMock.build(anyVararg())).thenReturn(uriMock);
     }
 
     @Test
     public void prepareActivationSuccess() throws MessagingException {
         restAccountActivator.prepareActivation(accountMock);
         verify(tsMock).createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS);
-        verify(mmMock).sendEmail(EMAIL, MAIL_SUBJECT, "<h1>Hi, " + LOGIN_VALID + "!</h1>" +
-                "<p>Follow <a href='http://localhost:8080/warehouse/activation?token=" +
-                TOKEN_HASH_VALID + "'>link</a> to verify your account:</p>");
+        verify(mmMock).sendEmail(EMAIL_VALID, MAIL_SUBJECT, "<h1>Hi, " + LOGIN_VALID + "!</h1>" +
+                "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account:</p>");
     }
 
     @Test

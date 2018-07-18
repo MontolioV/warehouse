@@ -1,12 +1,13 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.Token;
-import com.myapp.security.TokenType;
 import org.junit.Test;
 
 import java.io.*;
 import java.util.Date;
 
+import static com.myapp.security.TokenType.REMEMBER_ME;
+import static com.myapp.utils.TestSecurityConstants.TOKEN_HASH_VALID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -17,7 +18,7 @@ public class TokenTest {
 
     @Test
     public void serialization() throws IOException, ClassNotFoundException {
-        Token token = new Token(1, "test", TokenType.REMEMBER_ME, new Date(), new Date());
+        Token token = new Token(0, TOKEN_HASH_VALID, REMEMBER_ME, new Date(), new Date());
 
         try (PipedInputStream inputStream = new PipedInputStream();
              PipedOutputStream outputStream = new PipedOutputStream(inputStream);

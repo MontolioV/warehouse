@@ -21,7 +21,9 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.myapp.security.Account.LOGIN_PARAM;
 import static com.myapp.security.Roles.*;
+import static com.myapp.security.Token.HASH_PARAM;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -59,8 +61,8 @@ public class AccountStoreDBTest implements CommonChecks {
 
     @Before
     public void setUp() throws Exception {
-        accountNew = new Account(accountNewID, "test", PASSWORD_VALID, "test", new ArrayList<>(), new HashSet<>());
-        accountExisting = new Account(accountExistingID, "existing", PASS_HASH_VALID, "existing", new ArrayList<>(), new HashSet<>());
+        accountNew = new Account(accountNewID, "new_login", PASSWORD_VALID, "new_email", new ArrayList<>(), new HashSet<>());
+        accountExisting = new Account(accountExistingID, "existing_login", PASS_HASH_VALID, "existing_email", new ArrayList<>(), new HashSet<>());
 
         when(contextMock.getCallerPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
@@ -84,21 +86,21 @@ public class AccountStoreDBTest implements CommonChecks {
 
         ArrayList<Account> accountsEmpty = new ArrayList<>();
         TypedQuery<Account> uniqueLoginQueryMock = mock(TypedQuery.class);
-        when(getByLoginQueryMock.setParameter("login", accountNew.getLogin())).thenReturn(uniqueLoginQueryMock);
-        when(getByTokenHashMock.setParameter("hash", TOKEN_HASH_INVALID)).thenReturn(uniqueLoginQueryMock);
+        when(getByLoginQueryMock.setParameter(LOGIN_PARAM, accountNew.getLogin())).thenReturn(uniqueLoginQueryMock);
+        when(getByTokenHashMock.setParameter(HASH_PARAM, TOKEN_HASH_INVALID)).thenReturn(uniqueLoginQueryMock);
         when(uniqueLoginQueryMock.getResultList()).thenReturn(accountsEmpty);
         when(uniqueLoginQueryMock.getSingleResult()).thenThrow(new NoResultException());
 
         ArrayList<Account> accountsNotEmpty = new ArrayList<>();
         accountsNotEmpty.add(accountExisting);
         TypedQuery<Account> existingLoginQueryMock = mock(TypedQuery.class);
-        when(getByLoginQueryMock.setParameter("login", accountExisting.getLogin())).thenReturn(existingLoginQueryMock);
-        when(getByTokenHashMock.setParameter("hash", TOKEN_HASH_VALID)).thenReturn(existingLoginQueryMock);
+        when(getByLoginQueryMock.setParameter(LOGIN_PARAM, accountExisting.getLogin())).thenReturn(existingLoginQueryMock);
+        when(getByTokenHashMock.setParameter(HASH_PARAM, TOKEN_HASH_VALID)).thenReturn(existingLoginQueryMock);
         when(existingLoginQueryMock.getResultList()).thenReturn(accountsNotEmpty);
         when(existingLoginQueryMock.getSingleResult()).thenReturn(accountExisting);
 
         TypedQuery<Account> mockAccountLoginQueryMock = mock(TypedQuery.class);
-        when(getByLoginQueryMock.setParameter("login", LOGIN_VALID)).thenReturn(mockAccountLoginQueryMock);
+        when(getByLoginQueryMock.setParameter(LOGIN_PARAM, LOGIN_VALID)).thenReturn(mockAccountLoginQueryMock);
         when(mockAccountLoginQueryMock.getSingleResult()).thenReturn(accountMock);
 
         when(emMock.find(Account.class, accountExistingID)).thenReturn(accountExisting);
@@ -116,9 +118,9 @@ public class AccountStoreDBTest implements CommonChecks {
         verify(aaMock).prepareActivation(accountNew);
 
         assertThat(accountNew.getId(), is(1L));
-        assertThat(accountNew.getLogin(), is("test"));
+        assertThat(accountNew.getLogin(), is("new_login"));
         MatcherAssert.assertThat(accountNew.getPassHash(), CoreMatchers.is(PASS_HASH_VALID));
-        assertThat(accountNew.getEmail(), is("test"));
+        assertThat(accountNew.getEmail(), is("new_email"));
         assertThat(accountNew.isActive(), is(false));
         assertThat(accountNew.getRoles().size(), is(1));
         assertTrue(accountNew.getRoles().contains(USER));
@@ -132,7 +134,13 @@ public class AccountStoreDBTest implements CommonChecks {
         } catch (LoginExistsException e) {
             //as expected
         }
+        try {
+            accountStoreDB.createAccount(accountExisting);
+        } catch (LoginExistsException e) {
+            //as expected
+        }
         verify(emMock, never()).persist(any(Account.class));
+        verify(emMock, never()).detach(any(Account.class));
         verify(aaMock, never()).prepareActivation(any(Account.class));
     }
 

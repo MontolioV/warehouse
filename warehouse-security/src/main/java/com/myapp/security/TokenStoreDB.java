@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.myapp.security.Roles.Const.USER;
+import static com.myapp.security.Token.DATE_PARAM;
+import static com.myapp.security.Token.HASH_PARAM;
 import static java.util.UUID.randomUUID;
 
 @Stateless
@@ -45,21 +47,21 @@ public class TokenStoreDB implements TokenStore{
     @Override
     public Token findToken(String tokenHash) {
         return em.createNamedQuery(Token.GET_BY_HASH, Token.class)
-                .setParameter("hash", tokenHash)
+                .setParameter(HASH_PARAM, tokenHash)
                 .getSingleResult();
     }
 
     @Override
     public void removeToken(String tokenHash) {
         em.createNamedQuery(Token.DELETE_BY_HASH)
-                .setParameter("hash", tokenHash)
+                .setParameter(HASH_PARAM, tokenHash)
                 .executeUpdate();
     }
 
     @Override
     public int removeExpiredTokens() {
         return em.createNamedQuery(Token.DELETE_EXPIRED_TO_DATE)
-                .setParameter("date", new Date())
+                .setParameter(DATE_PARAM, new Date())
                 .executeUpdate();
     }
 

@@ -6,7 +6,7 @@ import java.security.PrivilegedActionException;
  * Thrown if password isn't secure enough.
  * <p>Created by MontolioV on 05.03.18.
  */
-public class UnsecurePasswordException extends Exception{
+public class UnsecurePasswordException extends AccountCantBeCreatedException{
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

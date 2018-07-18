@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.myapp.security.Account.LOGIN_PARAM;
 import static com.myapp.security.Roles.Const.*;
+import static com.myapp.security.Token.HASH_PARAM;
 
 @Stateless
 @Local(AccountStore.class)
@@ -35,7 +37,7 @@ public class AccountStoreDB implements AccountStore {
     @Override
     public Account createAccount(@NotNull Account account) throws LoginExistsException, UnsecurePasswordException {
         List<Account> existing = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
-                .setParameter("login", account.getLogin())
+                .setParameter(LOGIN_PARAM, account.getLogin())
                 .getResultList();
         if (!existing.isEmpty()) {
             throw new LoginExistsException();
@@ -62,6 +64,8 @@ public class AccountStoreDB implements AccountStore {
         return account;
     }
 
+
+
     @Override
     public Optional<Account> getAccountByLogin(@NotBlank String login) {
         try {
@@ -75,7 +79,7 @@ public class AccountStoreDB implements AccountStore {
 
     private Account getAccountByLoginNotSafe(String login) throws NoResultException {
         return em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
-                .setParameter("login", login)
+                .setParameter(LOGIN_PARAM, login)
                 .getSingleResult();
     }
 
@@ -93,7 +97,7 @@ public class AccountStoreDB implements AccountStore {
     public Optional<Account> getAccountByTokenHash(@NotBlank String tokenHash) {
         try {
             Account account = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
-                    .setParameter("hash", tokenHash)
+                    .setParameter(HASH_PARAM, tokenHash)
                     .getSingleResult();
             em.detach(account);
             return Optional.of(account);

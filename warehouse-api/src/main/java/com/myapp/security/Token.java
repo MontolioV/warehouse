@@ -9,16 +9,18 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.myapp.security.Token.*;
+
 /**
  * <p>Created by MontolioV on 01.03.18.
  */
 @Entity
 @Access(value = AccessType.PROPERTY)
 @NamedQueries({
-        @NamedQuery(name = Token.GET_ALL, query = "select t from Token t"),
-        @NamedQuery(name = Token.GET_BY_HASH, query = "select t from Token t where t.tokenHash=:hash"),
-        @NamedQuery(name = Token.DELETE_BY_HASH, query = "delete from Token t where t.tokenHash=:hash"),
-        @NamedQuery(name = Token.DELETE_EXPIRED_TO_DATE, query = "delete from Token t where t.expiredDate < :date"),
+        @NamedQuery(name = GET_ALL, query = "select t from Token t"),
+        @NamedQuery(name = GET_BY_HASH, query = "select t from Token t where t.tokenHash=:" + HASH_PARAM),
+        @NamedQuery(name = DELETE_BY_HASH, query = "delete from Token t where t.tokenHash=:" + HASH_PARAM),
+        @NamedQuery(name = DELETE_EXPIRED_TO_DATE, query = "delete from Token t where t.expiredDate < :" + DATE_PARAM),
 })
 @Table(indexes = {
         @Index(columnList = "TOKEN_HASH", unique = true)
@@ -29,7 +31,9 @@ public class Token implements Serializable {
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_HASH = PREFIX + "GET_BY_HASH";
     public static final String DELETE_BY_HASH = PREFIX + "DELETE_BY_HASH";
-    public static final String DELETE_EXPIRED_TO_DATE = PREFIX + "Token.DELETE_EXPIRED_TO_DATE";
+    public static final String DELETE_EXPIRED_TO_DATE = PREFIX + "DELETE_EXPIRED_TO_DATE";
+    public static final String HASH_PARAM = "HASH_PARAM";
+    public static final String DATE_PARAM = "DATE_PARAM";
 
     private long id;
     private String tokenHash;

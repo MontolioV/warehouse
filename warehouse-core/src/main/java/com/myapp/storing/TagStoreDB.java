@@ -6,6 +6,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
+import static com.myapp.storing.Tag.NAME_PARAM;
+
 /**
  * <p>Created by MontolioV on 17.04.18.
  */
@@ -17,7 +19,7 @@ public class TagStoreDB implements TagStore{
     @Override
     public void saveTag(String tagName, Item... items) {
         List<Tag> resultList = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class)
-                .setParameter("name", tagName)
+                .setParameter(NAME_PARAM, tagName)
                 .getResultList();
         if (resultList.isEmpty()) {
             Tag tag = new Tag();

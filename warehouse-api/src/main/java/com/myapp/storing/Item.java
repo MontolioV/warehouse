@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.myapp.storing.Item.CLASS_PARAM;
+import static com.myapp.storing.Item.OWNER_PARAM;
+
 /**
  * <p>Created by MontolioV on 16.04.18.
  */
@@ -19,12 +22,14 @@ import java.util.Objects;
 @DiscriminatorColumn(name = "dType")
 @NamedQueries({
         @NamedQuery(name = Item.GET_ALL, query = "select i from Item i"),
-        @NamedQuery(name = Item.GET_ALL_BY_OWNER, query = "select i from Item i where i.owner=:owner"),
-        @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:class"),
+        @NamedQuery(name = Item.GET_ALL_BY_OWNER, query = "select i from Item i where i.owner=:" + OWNER_PARAM),
+        @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM),
         @NamedQuery(name = Item.GET_LAST_SHARED, query = "select i from Item i where i.shared=true order by i.creationDate desc"),
-        @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:class order by i.creationDate desc"),
-        @NamedQuery(name = Item.GET_BY_OWNER, query = "select i from Item i where i.owner=:owner"),
-        @NamedQuery(name = Item.GET_BY_OWNER_OF_CLASS, query = "select i from Item i where i.owner=:owner and type(i)=:class"),
+        @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM
+                                                         + " order by i.creationDate desc"),
+        @NamedQuery(name = Item.GET_BY_OWNER, query = "select i from Item i where i.owner=:" + OWNER_PARAM),
+        @NamedQuery(name = Item.GET_BY_OWNER_OF_CLASS, query = "select i from Item i where i.owner=:" + OWNER_PARAM
+                                                         + " and type(i)=:" + CLASS_PARAM),
 })
 @Table(indexes = {
         @Index(columnList = "name"),
@@ -39,6 +44,8 @@ public class Item implements Serializable {
     public static final String GET_LAST_OF_CLASS = PREFIX + "GET_LAST_OF_CLASS";
     public static final String GET_BY_OWNER = PREFIX + "GET_BY_OWNER";
     public static final String GET_BY_OWNER_OF_CLASS = PREFIX + "GET_BY_OWNER_OF_CLASS";
+    public static final String OWNER_PARAM = "OWNER_PARAM";
+    public static final String CLASS_PARAM = "CLASS_PARAM";
 
     private long id;
     private String dType;
@@ -63,7 +70,7 @@ public class Item implements Serializable {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -127,7 +134,7 @@ public class Item implements Serializable {
         this.shared = shared;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     public List<Tag> getTags() {
         return tags;
     }

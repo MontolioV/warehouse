@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.myapp.storing.Tag.NAME_PARAM;
+
 /**
  * <p>Created by MontolioV on 16.04.18.
  */
@@ -15,8 +17,8 @@ import java.util.Set;
 @Access(value = AccessType.PROPERTY)
 @NamedQueries({
         @NamedQuery(name = Tag.GET_ALL, query = "select t from Tag t"),
-        @NamedQuery(name = Tag.GET_BY_NAME, query = "select t from Tag t where t.name=:name"),
-        @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:name,'%')"),
+        @NamedQuery(name = Tag.GET_BY_NAME, query = "select t from Tag t where t.name=:" + NAME_PARAM),
+        @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:" + NAME_PARAM + ",'%')"),
 })
 @Table(indexes = {
         @Index(columnList = "name", unique = true),
@@ -26,6 +28,7 @@ public class Tag implements Serializable {
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_NAME = PREFIX + "GET_BY_NAME";
     public static final String GET_LIKE_NAME = PREFIX + "GET_LIKE_NAME";
+    public static final String NAME_PARAM = "NAME_PARAM";
 
     private long id;
     private String name;

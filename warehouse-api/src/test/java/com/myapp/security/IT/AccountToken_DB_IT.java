@@ -6,6 +6,7 @@ import com.myapp.security.Roles;
 import com.myapp.security.Token;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.RollbackException;
@@ -26,6 +27,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class AccountToken_DB_IT extends WithEmbeddedDB {
     private Instant instant;
     private Token expectedToken;

@@ -3,6 +3,7 @@ package com.myapp.security.IT;
 import com.myapp.security.Account;
 import com.myapp.security.Roles;
 import com.myapp.security.Token;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.json.bind.JsonbBuilder;
@@ -23,6 +24,7 @@ import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
+@Ignore
 public class AccountToken_JAXB_JSONB_IT {
     private JAXBContext jaxbContext = JAXBContext.newInstance(Account.class);
     private Marshaller marshaller = jaxbContext.createMarshaller();

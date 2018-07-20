@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.myapp.storing.Tag.NAME_PARAM;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -48,7 +49,7 @@ public class TagStoreDBTest {
         when(emMock.find(Item.class, item1.getId())).thenReturn(item1);
         when(emMock.find(Item.class, item2.getId())).thenReturn(item2);
         when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
-        when(queryMock.setParameter("name", tagString)).thenReturn(queryMock);
+        when(queryMock.setParameter(NAME_PARAM, tagString)).thenReturn(queryMock);
     }
 
     @Test

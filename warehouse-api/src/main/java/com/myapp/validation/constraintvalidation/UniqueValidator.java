@@ -3,6 +3,8 @@ package com.myapp.validation.constraintvalidation;
 import com.myapp.validation.constraints.Unique;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
+import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -12,7 +14,7 @@ import javax.validation.ConstraintValidatorContext;
 public class UniqueValidator implements ConstraintValidator<Unique, String> {
     public static final String MESSAGE = "Value isn't unique, but must be unique!";
 
-//    @PersistenceContext(unitName = "warehouse-api-pu")
+    @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
     private Class<?> entityClass;
     private String queryName;
@@ -33,7 +35,6 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
      */
     @Override
     public void initialize(Unique constraintAnnotation) {
-        System.out.println("!@# validator initialize");
         entityClass = constraintAnnotation.entityClass();
         queryName = constraintAnnotation.queryName();
         queryParameterName = constraintAnnotation.queryParameterName();
@@ -52,12 +53,10 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        System.out.println("!@# validator em is null" + (em == null));
-
-        return true;
-//        return em.createNamedQuery(queryName, entityClass)
-//                .setParameter(queryParameterName, value)
-//                .getResultList()
-//                .isEmpty();
+        em.setFlushMode(FlushModeType.COMMIT);
+        return em.createNamedQuery(queryName, entityClass)
+                .setParameter(queryParameterName, value)
+                .getResultList()
+                .isEmpty();
     }
 }

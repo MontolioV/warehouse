@@ -41,7 +41,7 @@ public class TagStoreDBTest {
     private Item item2;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         item1 = new Item();
         item2 = new Item();
         item1.setId(1);
@@ -56,6 +56,7 @@ public class TagStoreDBTest {
     public void saveTagExisting() {
         ArrayList<Tag> tags = new ArrayList<>();
         Tag existingTag = new Tag();
+        existingTag.setName("existing");
         tags.add(existingTag);
         when(queryMock.getResultList()).thenReturn(tags);
 

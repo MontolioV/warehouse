@@ -2,6 +2,7 @@ package com.myapp.storing;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -70,7 +71,7 @@ public class Item implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     public long getId() {
         return id;
     }
@@ -117,6 +118,7 @@ public class Item implements Serializable {
         this.owner = owner;
     }
 
+    @NotNull
     @PastOrPresent
     public Date getCreationDate() {
         return creationDate;

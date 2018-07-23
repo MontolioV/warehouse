@@ -73,6 +73,11 @@ public class Tag implements Serializable {
         this.items = items;
     }
 
+    @PreRemove
+    public void removeThisTagFromItems() {
+        items.forEach(item -> item.getTags().remove(this));
+    }
+
     /**
      * Tags are equal by name only
      * @param o
@@ -89,8 +94,7 @@ public class Tag implements Serializable {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, name);
+        return name.hashCode();
     }
 
     @Override

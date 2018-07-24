@@ -53,9 +53,9 @@ public class UniqueValidator implements ConstraintValidator<Unique, String> {
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        em.setFlushMode(FlushModeType.COMMIT);
         return em.createNamedQuery(queryName, entityClass)
                 .setParameter(queryParameterName, value)
+                .setFlushMode(FlushModeType.COMMIT)
                 .getResultList()
                 .isEmpty();
     }

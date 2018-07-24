@@ -4,13 +4,15 @@ import com.myapp.security.Account;
 import com.myapp.security.AccountStore;
 import com.myapp.security.FormAuthenticationController;
 import com.myapp.security.RememberMeAuthenticator;
+import com.myapp.utils.HttpUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -40,7 +42,8 @@ import static org.mockito.Mockito.*;
 /**
  * <p>Created by MontolioV on 29.03.18.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@SuppressStaticInitializationFor("javax.servlet.http.Cookie")
 public class FormAuthenticationControllerTest {
     @InjectMocks
     private FormAuthenticationController controller;
@@ -60,6 +63,10 @@ public class FormAuthenticationControllerTest {
     private ExternalContext ecMock;
     @Mock
     private HttpServletRequest requestMock;
+    @Mock
+    private HttpUtils huMock;
+    @Mock
+    private Cookie cookieMock;
     private UsernamePasswordCredential credentialValid = new UsernamePasswordCredential(LOGIN_VALID, PASSWORD_VALID);
     private UsernamePasswordCredential credentialInvalid = new UsernamePasswordCredential(LOGIN_INVALID, PASSWORD_INVALID);
     private String cookieValueNew = "hash1";
@@ -70,8 +77,10 @@ public class FormAuthenticationControllerTest {
     public void setUp() throws Exception {
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getRequest()).thenReturn(requestMock);
-        when(requestMock.getCookies()).thenReturn(new Cookie[]{new Cookie(JREMEMBERMEID, cookieValueOld)});
         when(requestMock.getContextPath()).thenReturn(contextPath);
+        when(cookieMock.getName()).thenReturn(JREMEMBERMEID);
+        when(cookieMock.getValue()).thenReturn(cookieValueOld);
+        when(huMock.findCookie(requestMock, JREMEMBERMEID)).thenReturn(cookieMock);
     }
 
     @Test
@@ -92,7 +101,7 @@ public class FormAuthenticationControllerTest {
         assertThat(credentialValid.getCaller(), is(captorCredentials.getValue().getCaller()));
         assertThat(credentialValid.getPasswordAsString(), is(captorCredentials.getValue().getPasswordAsString()));
 
-        verify(asMock).getAccountByLogin(eq(LOGIN_VALID));
+        verify(asMock).getAccountByLogin(LOGIN_VALID);
         verify(rmMock).removeLoginToken(cookieValueOld);
         verify(rmMock).generateLoginToken(any(CallerPrincipal.class), any(Set.class));
 

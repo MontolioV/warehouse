@@ -1,29 +1,15 @@
 package com.myapp.storing.IT;
 
+import com.myapp.IT.AbstractITArquillianWithEM;
 import com.myapp.storing.FileItem;
 import com.myapp.storing.Item;
 import com.myapp.storing.Tag;
 import com.myapp.storing.TextItem;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.RollbackException;
-import javax.transaction.UserTransaction;
-import javax.validation.ConstraintViolationException;
-import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -31,7 +17,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.myapp.TestUtils.showConstraintViolations;
 import static com.myapp.storing.Item.CLASS_PARAM;
 import static com.myapp.storing.Item.OWNER_PARAM;
 import static com.myapp.storing.Tag.NAME_PARAM;
@@ -44,10 +29,9 @@ import static org.junit.Assert.assertTrue;
  * <p>Created by MontolioV on 16.04.18.
  */
 
-@RunWith(Arquillian.class)
-public class ItemTagTest_DB_IT {
+public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
     private final String TEST_1 = "TEST_1";
-    private final String TEST_2 = "TEST_2"; 
+    private final String TEST_2 = "TEST_2";
     private final String TEST_3 = "TEST_3";
     private final String TEST_4 = "TEST_4";
     private final String TEST_5 = "TEST_5";
@@ -56,34 +40,10 @@ public class ItemTagTest_DB_IT {
     private final String HASH_1 = "HASH_1";
     private final String HASH_2 = "HASH_2";
 
-    @PersistenceContext
-    private EntityManager em;
-    @Inject
-    private UserTransaction transaction;
-
     @Deployment
     public static WebArchive createDeployment() {
-        File libFile = Maven.resolver().loadPomFromFile("pom.xml")
-                .resolve("org.apache.commons:commons-lang3").withTransitivity().asSingleFile();
-        WebArchive javaArchive = ShrinkWrap.create(WebArchive.class)
-                .addClasses(Item.class, TextItem.class, FileItem.class, Tag.class)
-                .addAsLibraries(libFile)
-                .addAsWebInfResource("test-persistence.xml", "classes/META-INF/persistence.xml ")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsWebInfResource(new StringAsset("<web-app></web-app>"), "web.xml");
-        return javaArchive;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        transaction.begin();
-        em.joinTransaction();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        transaction.commit();
-        em.clear();
+        return AbstractITArquillianWithEM.createDeployment()
+                .addClasses(Item.class, TextItem.class, FileItem.class, Tag.class);
     }
 
     @Test
@@ -121,11 +81,7 @@ public class ItemTagTest_DB_IT {
         items.add(fileItem2);
         items.add(fileItem3);
 
-        try {
-            items.forEach(em::persist);
-        } catch (ConstraintViolationException e) {
-            showConstraintViolations(e);
-        }
+        persistAllowed(items);
     }
 
     @Test
@@ -162,27 +118,10 @@ public class ItemTagTest_DB_IT {
         tags.add(new Tag(0, repeat("1", 31), null));
         tags.add(new Tag(0, TEST_1, null));
 
-        persisted += persistAll(items);
-        persisted += persistAll(tags);
+        persisted += persistNotAllowed(items);
+        persisted += persistNotAllowed(tags);
 
         assertThat(persisted, is(0));
-    }
-
-    private int persistAll(List<?> objects) throws Exception {
-        int persisted = 0;
-        for (Object object : objects) {
-            try {
-                em.persist(object);
-                tearDown();
-                persisted++;
-            } catch (ConstraintViolationException e) {
-                transaction.rollback();
-            } catch (RollbackException e) {
-            } finally {
-                setUp();
-            }
-        }
-        return persisted;
     }
 
     @Test

@@ -4,7 +4,8 @@ import com.myapp.utils.HttpUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -17,27 +18,32 @@ import static org.mockito.Mockito.when;
 /**
  * <p>Created by MontolioV on 04.04.18.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@SuppressStaticInitializationFor("javax.servlet.http.Cookie")
 public class HttpUtilsTest {
+    private HttpUtils httpUtils = new HttpUtils();
     @Mock
     private HttpServletRequest requestMock;
+    @Mock
+    private Cookie cookieMock;
+    @Mock
+    private Cookie cookieOtherMock;
+    private String name = "name";
 
     @Test
     public void findCookie() {
-        Cookie cookie = new Cookie("exists", "1");
-        when(requestMock.getCookies()).thenReturn(new Cookie[]{cookie});
+        when(cookieMock.getName()).thenReturn(name);
+        when(cookieOtherMock.getName()).thenReturn("other name");
+        when(requestMock.getCookies()).thenReturn(new Cookie[]{cookieOtherMock, cookieMock});
 
-        Cookie result = HttpUtils.findCookie(requestMock, "exists");
-        assertThat(result, is(cookie));
-        result = HttpUtils.findCookie(requestMock, "null");
+        Cookie result = httpUtils.findCookie(requestMock, name);
+        assertThat(result, is(cookieMock));
+        result = httpUtils.findCookie(requestMock, "null");
         assertNull(result);
-    }
 
-    @Test
-    public void findCookieNPE() {
         when(requestMock.getCookies()).thenReturn(null);
 
-        Cookie result = HttpUtils.findCookie(requestMock, "");
+        result = httpUtils.findCookie(requestMock, name);
         assertNull(result);
     }
 }

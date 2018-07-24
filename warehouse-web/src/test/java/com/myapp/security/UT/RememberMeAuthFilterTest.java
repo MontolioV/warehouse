@@ -6,7 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.verify;
 /**
  * <p>Created by MontolioV on 04.04.18.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@SuppressStaticInitializationFor("javax.servlet.GenericFilter")
 public class RememberMeAuthFilterTest {
     @InjectMocks
     private RememberMeAuthFilter filter;

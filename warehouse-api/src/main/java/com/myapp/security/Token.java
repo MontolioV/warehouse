@@ -2,6 +2,7 @@ package com.myapp.security;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -96,7 +97,7 @@ public class Token implements Serializable {
         this.expiredDate = expiredDate;
     }
 
-    @NotNull
+    @NotBlank
     @Column(name = "TOKEN_HASH", nullable = false, unique = true)
     public String getTokenHash() {
         return tokenHash;

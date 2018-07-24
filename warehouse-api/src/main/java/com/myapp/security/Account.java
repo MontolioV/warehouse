@@ -49,6 +49,13 @@ public class Account implements Serializable {
     public Account() {
     }
 
+    public Account(long id, String login, String passHash, String email) {
+        this.id = id;
+        this.login = login;
+        this.passHash = passHash;
+        this.email = email;
+    }
+
     public Account(long id, String login, String passHash, String email, List<Token> tokens, Set<Roles> roles) {
         this.id = id;
         this.login = login;
@@ -82,7 +89,6 @@ public class Account implements Serializable {
     }
 
     @NotNull
-    //@Size(min = 128, max = 128)
     public String getPassHash() {
         return passHash;
     }
@@ -92,7 +98,8 @@ public class Account implements Serializable {
     }
 
     @NotNull
-    @Email
+    @Email()
+    @Size(max = 320)
     @Unique(entityClass = Account.class, queryName = GET_BY_EMAIL, queryParameterName = EMAIL_PARAM)
     @Column(unique = true)
     public String getEmail() {
@@ -103,6 +110,7 @@ public class Account implements Serializable {
         this.email = email;
     }
 
+    @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "ACCOUNT_ID")
     public List<Token> getTokens() {

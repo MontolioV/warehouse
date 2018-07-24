@@ -24,6 +24,7 @@ public class RestAccountActivator implements AccountActivator {
             "<p>Follow <a href='%s'>link</a> to verify your account:</p>";
     public static final String QP_TOKEN = "token";
 
+    // TODO: 24.07.18 NPE AccountStore
     @EJB
     private AccountStore accountStore;
     @EJB
@@ -41,9 +42,11 @@ public class RestAccountActivator implements AccountActivator {
         });
     }
 
+    // TODO: 24.07.18 Make asynchronous
     @Override
     public void prepareActivation(@NotNull Account account) throws MessagingException {
         Token token = tokenStore.createToken(account, TokenType.EMAIL_VERIFICATION, 1, ChronoUnit.DAYS);
+        // TODO: 24.07.18 Path builder doesn't work
 //        String uriActivation = uriInfo.getAbsolutePathBuilder().queryParam(QP_TOKEN, token.getTokenHash()).build().toString();
         String uriActivation = "http://37.229.148.120/warehouse/rs/activation?" + QP_TOKEN + "=" + token.getTokenHash();
         String htmlText = String.format(MAIL_TEXT, account.getLogin(), uriActivation);

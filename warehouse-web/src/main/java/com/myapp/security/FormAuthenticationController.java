@@ -37,6 +37,8 @@ public class FormAuthenticationController {
     public static final int REMEMBERME_MAX_AGE = 60 * 60 * 24 * 14;
 
     @Inject
+    private HttpUtils httpUtils;
+    @Inject
     private RememberMeAuthenticator rmAuthenticator;
     @Inject
     private IdentityStore identityStore;
@@ -70,7 +72,7 @@ public class FormAuthenticationController {
         httpServletRequest.login(account.getLogin(), account.getPassHash());
 
         if (rememberMe) {
-            Cookie rmCookie = HttpUtils.findCookie(httpServletRequest, JREMEMBERMEID);
+            Cookie rmCookie = httpUtils.findCookie(httpServletRequest, JREMEMBERMEID);
             if (rmCookie != null) {
                 rememberMeIdentityStore.removeLoginToken(rmCookie.getValue());
             }

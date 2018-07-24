@@ -15,6 +15,9 @@ import java.util.List;
         @NamedQuery(name = FileItem.GET_ALL_HASHES, query = "select distinct fi.hash from FileItem fi"),
 })
 @Access(value = AccessType.PROPERTY)
+@Table(indexes = {
+        @Index(columnList = "hash"),
+})
 public class FileItem extends Item {
     private static final String PREFIX = "com.myapp.storing.FileItem.";
     public static final String GET_ALL_HASHES = PREFIX + "GET_ALL_HASHES";

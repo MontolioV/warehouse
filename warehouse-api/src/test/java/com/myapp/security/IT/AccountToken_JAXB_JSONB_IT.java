@@ -3,8 +3,13 @@ package com.myapp.security.IT;
 import com.myapp.security.Account;
 import com.myapp.security.Roles;
 import com.myapp.security.Token;
-import org.junit.Ignore;
+import com.myapp.security.TokenType;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.json.bind.JsonbBuilder;
 import javax.xml.bind.JAXBContext;
@@ -24,7 +29,7 @@ import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-@Ignore
+@RunWith(Arquillian.class)
 public class AccountToken_JAXB_JSONB_IT {
     private JAXBContext jaxbContext = JAXBContext.newInstance(Account.class);
     private Marshaller marshaller = jaxbContext.createMarshaller();
@@ -32,6 +37,12 @@ public class AccountToken_JAXB_JSONB_IT {
 
 
     public AccountToken_JAXB_JSONB_IT() throws Exception {
+    }
+
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return ShrinkWrap.create(JavaArchive.class)
+                .addClasses(Account.class, Token.class, Roles.class, TokenType.class);
     }
 
     @Test

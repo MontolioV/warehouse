@@ -21,11 +21,13 @@ import static com.myapp.utils.CookiesConstants.MAX_AGE_TO_REMOVE_INSTANTLY;
 @WebServlet(value = "logout")
 public class LogoutServlet extends HttpServlet {
     @Inject
+    private HttpUtils httpUtils;
+    @Inject
     private RememberMeIdentityStore rememberMeIdentityStore;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cookie rmCookie = HttpUtils.findCookie(req, JREMEMBERMEID);
+        Cookie rmCookie = httpUtils.findCookie(req, JREMEMBERMEID);
         if (rmCookie != null) {
             rememberMeIdentityStore.removeLoginToken(rmCookie.getValue());
             rmCookie.setMaxAge(MAX_AGE_TO_REMOVE_INSTANTLY);

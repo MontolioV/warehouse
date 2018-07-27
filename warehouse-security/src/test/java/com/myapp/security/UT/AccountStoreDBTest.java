@@ -44,8 +44,6 @@ public class AccountStoreDBTest implements CommonChecks {
     @Mock
     private EntityManager emMock;
     @Mock
-    private AccountActivator aaMock;
-    @Mock
     private SessionContext contextMock;
     @Mock
     private Principal principalMock;
@@ -115,7 +113,6 @@ public class AccountStoreDBTest implements CommonChecks {
         verify(emMock).persist(accountNew);
         verify(emMock).flush();
         verify(emMock).detach(accountNew);
-        verify(aaMock).prepareActivation(accountNew);
 
         assertThat(accountNew.getId(), is(1L));
         assertThat(accountNew.getLogin(), is("new_login"));
@@ -141,7 +138,6 @@ public class AccountStoreDBTest implements CommonChecks {
         }
         verify(emMock, never()).persist(any(Account.class));
         verify(emMock, never()).detach(any(Account.class));
-        verify(aaMock, never()).prepareActivation(any(Account.class));
     }
 
     @Test
@@ -156,7 +152,6 @@ public class AccountStoreDBTest implements CommonChecks {
         }
         verify(emMock, never()).persist(any(Account.class));
         verify(emMock, never()).detach(any(Account.class));
-        verify(aaMock, never()).prepareActivation(any(Account.class));
     }
 
     @Test
@@ -202,6 +197,18 @@ public class AccountStoreDBTest implements CommonChecks {
         when(customQueryMock.getResultList()).thenReturn(arrayList);
         assertThat(accountStoreDB.getAllAccounts(), is(arrayList));
         verify(emMock).detach(accountExisting);
+    }
+
+    @Test
+    public void activateAccountValidHash() {
+        assertFalse(accountExisting.isActive());
+        accountStoreDB.activateAccount(TOKEN_HASH_VALID);
+        assertTrue(accountExisting.isActive());
+    }
+
+    @Test(expected = NoResultException.class)
+    public void activateAccountInvalidHash() {
+        accountStoreDB.activateAccount(TOKEN_HASH_INVALID);
     }
 
     @Test

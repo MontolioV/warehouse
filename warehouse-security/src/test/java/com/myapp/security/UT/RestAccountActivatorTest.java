@@ -3,6 +3,7 @@ package com.myapp.security.UT;
 import com.myapp.communication.MailManager;
 import com.myapp.security.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -10,9 +11,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.mail.MessagingException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static com.myapp.security.RestAccountActivator.MAIL_SUBJECT;
@@ -20,12 +23,15 @@ import static com.myapp.security.RestAccountActivator.QP_TOKEN;
 import static com.myapp.security.TokenType.EMAIL_VERIFICATION;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static java.time.temporal.ChronoUnit.DAYS;
-import static org.mockito.Matchers.anyLong;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
  * <p>Created by MontolioV on 17.07.18.
  */
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class RestAccountActivatorTest {
     @InjectMocks
@@ -45,45 +51,55 @@ public class RestAccountActivatorTest {
     @Mock
     private UriBuilder ubEmptyMock;
     @Mock
+    private UriBuilder ubClassMock;
+    @Mock
     private UriBuilder ubSetMock;
-    private URI uriMock;
+    private URI uriActivationMock;
+    private URI uriRootMock;
 
     @Before
     public void setUp() throws Exception {
-        uriMock = new URI("http://uriWithQParam.com");
+        uriActivationMock = new URI("http://uriWithQParam.com");
+        uriRootMock = new URI("http://home.com");
 
         when(tsMock.createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS)).thenReturn(tokenMock);
         when(tokenMock.getTokenHash()).thenReturn(TOKEN_HASH_VALID);
         when(accountMock.getEmail()).thenReturn(EMAIL_VALID);
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
         when(accountMock.getId()).thenReturn(1L);
-        when(asMock.getAccountByTokenHash(TOKEN_HASH_VALID)).thenReturn(Optional.of(accountMock));
-        when(asMock.getAccountByTokenHash(TOKEN_HASH_INVALID)).thenReturn(Optional.empty());
-        when(uiMock.getAbsolutePathBuilder()).thenReturn(ubEmptyMock);
-        when(ubEmptyMock.queryParam(QP_TOKEN, TOKEN_HASH_VALID)).thenReturn(ubSetMock);
-        when(ubSetMock.build(anyVararg())).thenReturn(uriMock);
+        when(uiMock.getBaseUri()).thenReturn(uriRootMock);
+        when(uiMock.getBaseUriBuilder()).thenReturn(ubEmptyMock);
+        when(ubEmptyMock.path(RestAccountActivator.class)).thenReturn(ubClassMock);
+        when(ubClassMock.queryParam(QP_TOKEN, TOKEN_HASH_VALID)).thenReturn(ubSetMock);
+        when(ubSetMock.build(anyVararg())).thenReturn(uriActivationMock);
+        when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(accountMock));
+        when(asMock.getAccountByLogin(LOGIN_INVALID)).thenReturn(Optional.empty());
     }
 
     @Test
     public void prepareActivationSuccess() throws MessagingException {
-        restAccountActivator.prepareActivation(accountMock);
+        Response response = restAccountActivator.prepareActivation(LOGIN_VALID);
+        verify(asMock).getAccountByLogin(LOGIN_VALID);
         verify(tsMock).createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS);
         verify(mmMock).sendEmail(EMAIL_VALID, MAIL_SUBJECT, "<h1>Hi, " + LOGIN_VALID + "!</h1>" +
-//                "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account:</p>");
-                "<p>Follow <a href='http://37.229.148.120/warehouse/rs/activation?token=TOKEN_HASH_VALID'>link</a> to verify your account:</p>");
+                "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account:</p>");
+        assertThat(response.getLocation(), is(uriRootMock));
     }
 
     @Test
-    public void activateRightHash() {
-        restAccountActivator.activate(TOKEN_HASH_VALID);
-        verify(asMock).changeAccountStatus(1L, true);
+    public void prepareActivationFail() throws MessagingException {
+        Response response = restAccountActivator.prepareActivation(LOGIN_INVALID);
+        verify(asMock).getAccountByLogin(LOGIN_INVALID);
+        verify(tsMock, never()).createToken(any(Account.class), any(TokenType.class), anyInt(), any(ChronoUnit.class));
+        verify(mmMock, never()).sendEmail(anyString(), anyString(), anyString());
+        assertThat(response.getLocation(), is(nullValue()));
+    }
+
+    @Test
+    public void activate() {
+        Response response = restAccountActivator.activate(TOKEN_HASH_VALID);
+        verify(asMock).activateAccount(TOKEN_HASH_VALID);
         verify(tsMock).removeToken(TOKEN_HASH_VALID);
-    }
-
-    @Test
-    public void activateWrongHash() {
-        restAccountActivator.activate(TOKEN_HASH_INVALID);
-        verify(asMock, never()).changeAccountStatus(anyLong(), eq(true));
-        verify(tsMock, never()).removeToken(TOKEN_HASH_INVALID);
+        assertThat(response.getLocation(), is(uriRootMock));
     }
 }

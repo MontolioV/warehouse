@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -15,7 +16,8 @@ public class StorageConfig {
     private Path storageRoot;
     private Path previewRoot;
 
-    public StorageConfig() throws FileNotFoundException, StoragePropertyNotFoundException {
+    @PostConstruct
+    public void init() throws FileNotFoundException, StoragePropertyNotFoundException {
         String rootStr = System.getProperty("warehouse.storage");
         if (rootStr == null) {
             throw new StoragePropertyNotFoundException();

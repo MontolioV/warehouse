@@ -1,6 +1,7 @@
 package com.myapp.security.UT;
 
 import com.myapp.security.*;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -8,14 +9,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import java.io.IOException;
 
-import static com.myapp.utils.TestSecurityConstants.PASSWORD_INVALID;
-import static com.myapp.utils.TestSecurityConstants.PASSWORD_VALID;
+import static com.myapp.utils.TestSecurityConstants.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * <p>Created by MontolioV on 13.03.18.
@@ -25,17 +26,31 @@ public class RegistrationControllerTest {
     @InjectMocks
     private RegistrationController controller;
     @Mock
-    private AccountStore accountStore;
+    private AccountStore asMock;
     @Mock
-    private FacesContext facesContext;
+    private FacesContext fcMock;
+    @Mock
+    private ExternalContext ecMock;
     @Mock
     private Account accountMock;
+    private String webAppAddress = "webAppAddress";
+
+    @Before
+    public void setUp() {
+        when(fcMock.getExternalContext()).thenReturn(ecMock);
+        controller.setWebAppAddress(webAppAddress);
+    }
 
     @Test
-    public void doRegistration() throws LoginExistsException, UnsecurePasswordException {
+    public void doRegistration() throws LoginExistsException, UnsecurePasswordException, IOException {
+        Account accountNewMock = mock(Account.class);
+        when(asMock.createAccount(accountMock)).thenReturn(accountNewMock);
+        when(accountNewMock.getLogin()).thenReturn(LOGIN_VALID);
+
         controller.registration();
-        verify(accountStore).createAccount(any(Account.class));
-        verify(facesContext).addMessage(anyString(), any(FacesMessage.class));
+        verify(asMock).createAccount(any(Account.class));
+        verify(fcMock).addMessage(anyString(), any(FacesMessage.class));
+        verify(ecMock).redirect(webAppAddress + "rs/activation/" + LOGIN_VALID + "/send-email");
     }
 
     @Test
@@ -45,7 +60,7 @@ public class RegistrationControllerTest {
         controller.passwordConfirmation();
 
         verify(accountMock).setPassHash(PASSWORD_VALID);
-        verify(facesContext, never()).addMessage(anyString(), any(FacesMessage.class));
+        verify(fcMock, never()).addMessage(anyString(), any(FacesMessage.class));
     }
 
     @Test
@@ -56,6 +71,6 @@ public class RegistrationControllerTest {
 
         verify(accountMock, never()).setPassHash(PASSWORD_VALID);
         verify(accountMock, never()).setPassHash(PASSWORD_INVALID);
-        verify(facesContext).addMessage(anyString(), any(FacesMessage.class));
+        verify(fcMock).addMessage(anyString(), any(FacesMessage.class));
     }
 }

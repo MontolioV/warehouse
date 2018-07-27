@@ -1,12 +1,15 @@
 package com.myapp.security;
 
 import javax.mail.MessagingException;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.ws.rs.core.Response;
 
 /**
  * <p>Created by MontolioV on 17.07.18.
  */
 public interface AccountActivator {
 
-    void prepareActivation(@NotNull Account account) throws MessagingException;
+    Response activate(String tokenHash);
+
+    Response prepareActivation(@NotBlank String login) throws MessagingException;
 }

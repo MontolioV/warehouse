@@ -1,6 +1,7 @@
 package com.myapp.security;
 
 import com.myapp.validation.constraints.Unique;
+import com.myapp.validation.groups.Gui;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -78,7 +79,8 @@ public class Account implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 30)
-    @Unique(entityClass = Account.class, queryName = GET_BY_LOGIN, queryParameterName = LOGIN_PARAM)
+    @Unique(groups = Gui.class, entityClass = Account.class,
+            queryName = GET_BY_LOGIN, queryParameterName = LOGIN_PARAM)
     @Column(unique = true)
     public String getLogin() {
         return login;
@@ -100,7 +102,8 @@ public class Account implements Serializable {
     @NotNull
     @Email()
     @Size(max = 320)
-    @Unique(entityClass = Account.class, queryName = GET_BY_EMAIL, queryParameterName = EMAIL_PARAM)
+    @Unique(groups = Gui.class, entityClass = Account.class,
+            queryName = GET_BY_EMAIL, queryParameterName = EMAIL_PARAM)
     @Column(unique = true)
     public String getEmail() {
         return email;

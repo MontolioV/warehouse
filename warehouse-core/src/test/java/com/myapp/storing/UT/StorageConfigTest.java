@@ -53,6 +53,7 @@ public class StorageConfigTest {
     public void allExists() throws FileNotFoundException, StoragePropertyNotFoundException {
         when(fileMock.exists()).thenReturn(true);
         StorageConfig storageConfig = new StorageConfig();
+        storageConfig.init();
         assertThat(storageConfig.getStorageRoot(), is(storageMock));
         assertThat(storageConfig.getPreviewRoot(), is(previewMock));
         verify(fileMock, never()).mkdir();
@@ -61,13 +62,13 @@ public class StorageConfigTest {
     @Test(expected = StoragePropertyNotFoundException.class)
     public void propertyDoesntExist() throws FileNotFoundException, StoragePropertyNotFoundException {
         when(System.getProperty(rootProp)).thenReturn(null);
-        new StorageConfig();
+        new StorageConfig().init();
     }
 
     @Test(expected = FileNotFoundException.class)
     public void dirDoesntExist() throws FileNotFoundException, StoragePropertyNotFoundException {
         when(fileMock.exists()).thenReturn(false);
-        new StorageConfig();
+        new StorageConfig().init();
     }
 
     class SystemPropertyUser {

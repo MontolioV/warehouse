@@ -22,6 +22,8 @@ public interface AccountStore {
 
     List<Account> getAllAccounts();
 
+    void activateAccount(@NotBlank String tokenHash);
+
     void changeAccountStatus(long accountID, boolean isActive) throws NoResultException;
 
     void changeAccountPassword(long accountID, @NotBlank String newPassword) throws UnsecurePasswordException;

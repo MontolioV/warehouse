@@ -6,7 +6,6 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -29,8 +28,6 @@ public class AccountStoreDB implements AccountStore {
     private EntityManager em;
     @EJB
     private Encryptor encryptor;
-    @EJB
-    private AccountActivator accountActivator;
     @Resource
     private SessionContext sessionContext;
 
@@ -54,17 +51,8 @@ public class AccountStoreDB implements AccountStore {
         em.persist(account);
         em.flush();
         em.detach(account);
-
-        // TODO: 17.07.18 Handle exception
-        try {
-            accountActivator.prepareActivation(account);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
         return account;
     }
-
-
 
     @Override
     public Optional<Account> getAccountByLogin(@NotBlank String login) {
@@ -120,6 +108,14 @@ public class AccountStoreDB implements AccountStore {
         List<Account> resultList = em.createNamedQuery(Account.GET_ALL, Account.class).getResultList();
         resultList.forEach(em::detach);
         return resultList;
+    }
+
+    @Override
+    public void activateAccount(@NotBlank String tokenHash) {
+        Account account = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
+                .setParameter(HASH_PARAM, tokenHash)
+                .getSingleResult();
+        account.setActive(true);
     }
 
     @Override

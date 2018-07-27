@@ -6,7 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough" xmlns:o="http://omnifaces.org/ui">
 
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
@@ -24,6 +24,7 @@
                         <h:inputText id="login" value="#{registrationController.account.login}" required="true"
                                      a:autofocus="true">
                             <f:ajax event="blur" render="m_login"/>
+                            <f:validateBean validationGroups="com.myapp.validation.groups.Gui"/>
                         </h:inputText>
                         <h:message id="m_login" for="login"/>
                     </h:panelGroup>
@@ -54,6 +55,7 @@
                         <h:outputLabel value="Email" for="email"/>
                         <h:inputText id="email" value="#{registrationController.account.email}" required="true">
                             <f:ajax event="blur" render="m_email"/>
+                            <o:validateBean validationGroups="com.myapp.validation.groups.Gui"/>
                         </h:inputText>
                         <h:message id="m_email" for="email"/>
                     </h:panelGroup>

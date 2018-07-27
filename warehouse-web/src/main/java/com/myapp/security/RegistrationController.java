@@ -1,16 +1,20 @@
 package com.myapp.security;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import java.io.IOException;
 
 /**
  * <p>Created by MontolioV on 13.03.18.
  */
 @Model
 public class RegistrationController {
+    @Resource(lookup = "java:/strings/webAppAddress")
+    private String webAppAddress;
     @Inject
     private FacesContext facesContext;
     @EJB
@@ -19,17 +23,17 @@ public class RegistrationController {
     private String password;
     private String passwordConfirm;
 
-    public String registration() {
+    public void registration() throws IOException {
         try {
-            accountStore.createAccount(account);
+            Account newAccount = accountStore.createAccount(this.account);
             facesContext.addMessage(null, new FacesMessage("Account has been successfully registered!"));
-            return "index?faces-redirect=true";
+            String restSendEmailUrl = webAppAddress + "rs/activation/" + newAccount.getLogin() + "/send-email";
+            facesContext.getExternalContext().redirect(restSendEmailUrl);
         } catch (LoginExistsException e) {
             facesContext.addMessage("reg_form:login", new FacesMessage("Login already exists!"));
         } catch (UnsecurePasswordException e) {
             facesContext.addMessage("reg_form:password", new FacesMessage("Password is not secure!"));
         }
-        return null;
     }
 
     public void passwordConfirmation() {
@@ -78,5 +82,13 @@ public class RegistrationController {
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
+    }
+
+    public String getWebAppAddress() {
+        return webAppAddress;
+    }
+
+    public void setWebAppAddress(String webAppAddress) {
+        this.webAppAddress = webAppAddress;
     }
 }

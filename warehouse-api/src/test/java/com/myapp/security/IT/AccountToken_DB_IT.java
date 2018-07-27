@@ -147,7 +147,22 @@ public class AccountToken_DB_IT extends AbstractITArquillianWithEM {
 
     @Test
     @InSequence(3)
+    public void updateAccount() {
+        Account accountFromLogin = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
+                .setParameter(LOGIN_PARAM, LOGIN_VALID)
+                .getSingleResult();
+        em.detach(accountFromLogin);
+        em.find(Account.class, accountFromLogin.getId()).setActive(true);
+    }
+
+    @Test
+    @InSequence(4)
     public void clearDB() {
+        Account accountFromLogin = em.createNamedQuery(Account.GET_BY_LOGIN, Account.class)
+                .setParameter(LOGIN_PARAM, LOGIN_VALID)
+                .getSingleResult();
+        assertTrue(accountFromLogin.isActive());
+
         em.remove(em.createNamedQuery(Account.GET_ALL).getSingleResult());
         assertTrue(em.createNamedQuery(Account.GET_ALL).getResultList().isEmpty());
         assertTrue(em.createNamedQuery(Token.GET_ALL).getResultList().isEmpty());

@@ -5,13 +5,16 @@ import com.myapp.communication.MailManager;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * <p>Created by MontolioV on 17.07.18.
@@ -24,7 +27,6 @@ public class RestAccountActivator implements AccountActivator {
             "<p>Follow <a href='%s'>link</a> to verify your account:</p>";
     public static final String QP_TOKEN = "token";
 
-    // TODO: 24.07.18 NPE AccountStore
     @EJB
     private AccountStore accountStore;
     @EJB
@@ -34,22 +36,33 @@ public class RestAccountActivator implements AccountActivator {
     @Context
     private UriInfo uriInfo;
 
+    @Override
     @GET
-    public void activate(@QueryParam(QP_TOKEN) String tokenHash) {
-        accountStore.getAccountByTokenHash(tokenHash).ifPresent(account -> {
-            accountStore.changeAccountStatus(account.getId(), true);
-            tokenStore.removeToken(tokenHash);
-        });
+    public Response activate(@QueryParam(QP_TOKEN) String tokenHash) {
+        accountStore.activateAccount(tokenHash);
+        tokenStore.removeToken(tokenHash);
+        return redirectHome();
     }
 
-    // TODO: 24.07.18 Make asynchronous
     @Override
-    public void prepareActivation(@NotNull Account account) throws MessagingException {
-        Token token = tokenStore.createToken(account, TokenType.EMAIL_VERIFICATION, 1, ChronoUnit.DAYS);
-        // TODO: 24.07.18 Path builder doesn't work
-//        String uriActivation = uriInfo.getAbsolutePathBuilder().queryParam(QP_TOKEN, token.getTokenHash()).build().toString();
-        String uriActivation = "http://37.229.148.120/warehouse/rs/activation?" + QP_TOKEN + "=" + token.getTokenHash();
-        String htmlText = String.format(MAIL_TEXT, account.getLogin(), uriActivation);
-        mailManager.sendEmail(account.getEmail(), MAIL_SUBJECT, htmlText);
+    @GET
+    @Path("/{login}/send-email")
+    public Response prepareActivation(@PathParam("login")@NotBlank String login) throws MessagingException {
+        Optional<Account> optionalAccount = accountStore.getAccountByLogin(login);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            Token token = tokenStore.createToken(account, TokenType.EMAIL_VERIFICATION, 1, ChronoUnit.DAYS);
+            String uriActivation = uriInfo.getBaseUriBuilder().path(RestAccountActivator.class)
+                    .queryParam(QP_TOKEN, token.getTokenHash()).build().toString();
+            System.out.println("!@# " + uriActivation);
+            String htmlText = String.format(MAIL_TEXT, account.getLogin(), uriActivation);
+            mailManager.sendEmail(account.getEmail(), MAIL_SUBJECT, htmlText);
+            return redirectHome();
+        }
+        return null;
+    }
+
+    private Response redirectHome() {
+        return Response.temporaryRedirect(uriInfo.getBaseUri()).build();
     }
 }

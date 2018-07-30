@@ -2,6 +2,7 @@ package com.myapp.security;
 
 import com.myapp.communication.MailManager;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
@@ -13,6 +14,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -35,10 +38,12 @@ public class RestAccountActivator implements AccountActivator {
     private MailManager mailManager;
     @Context
     private UriInfo uriInfo;
+    @Resource(lookup = "java:/strings/webAppAddress")
+    private String webAppAddress;
 
     @Override
     @GET
-    public Response activate(@QueryParam(QP_TOKEN) String tokenHash) {
+    public Response activate(@QueryParam(QP_TOKEN) String tokenHash) throws URISyntaxException {
         accountStore.activateAccount(tokenHash);
         tokenStore.removeToken(tokenHash);
         return redirectHome();
@@ -47,7 +52,7 @@ public class RestAccountActivator implements AccountActivator {
     @Override
     @GET
     @Path("/{login}/send-email")
-    public Response prepareActivation(@PathParam("login")@NotBlank String login) throws MessagingException {
+    public Response prepareActivation(@PathParam("login")@NotBlank String login) throws MessagingException, URISyntaxException {
         Optional<Account> optionalAccount = accountStore.getAccountByLogin(login);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
@@ -62,7 +67,15 @@ public class RestAccountActivator implements AccountActivator {
         return null;
     }
 
-    private Response redirectHome() {
-        return Response.temporaryRedirect(uriInfo.getBaseUri()).build();
+    private Response redirectHome() throws URISyntaxException {
+        return Response.temporaryRedirect(new URI(webAppAddress)).build();
+    }
+
+    public String getWebAppAddress() {
+        return webAppAddress;
+    }
+
+    public void setWebAppAddress(String webAppAddress) {
+        this.webAppAddress = webAppAddress;
     }
 }

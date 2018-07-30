@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -55,19 +56,18 @@ public class RestAccountActivatorTest {
     @Mock
     private UriBuilder ubSetMock;
     private URI uriActivationMock;
-    private URI uriRootMock;
+    private String webAppAddress = "webAppAddress";
 
     @Before
     public void setUp() throws Exception {
+        restAccountActivator.setWebAppAddress(webAppAddress);
         uriActivationMock = new URI("http://uriWithQParam.com");
-        uriRootMock = new URI("http://home.com");
 
         when(tsMock.createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS)).thenReturn(tokenMock);
         when(tokenMock.getTokenHash()).thenReturn(TOKEN_HASH_VALID);
         when(accountMock.getEmail()).thenReturn(EMAIL_VALID);
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
         when(accountMock.getId()).thenReturn(1L);
-        when(uiMock.getBaseUri()).thenReturn(uriRootMock);
         when(uiMock.getBaseUriBuilder()).thenReturn(ubEmptyMock);
         when(ubEmptyMock.path(RestAccountActivator.class)).thenReturn(ubClassMock);
         when(ubClassMock.queryParam(QP_TOKEN, TOKEN_HASH_VALID)).thenReturn(ubSetMock);
@@ -77,17 +77,17 @@ public class RestAccountActivatorTest {
     }
 
     @Test
-    public void prepareActivationSuccess() throws MessagingException {
+    public void prepareActivationSuccess() throws MessagingException, URISyntaxException {
         Response response = restAccountActivator.prepareActivation(LOGIN_VALID);
         verify(asMock).getAccountByLogin(LOGIN_VALID);
         verify(tsMock).createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS);
         verify(mmMock).sendEmail(EMAIL_VALID, MAIL_SUBJECT, "<h1>Hi, " + LOGIN_VALID + "!</h1>" +
                 "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account:</p>");
-        assertThat(response.getLocation(), is(uriRootMock));
+        assertThat(response.getLocation().toString(), is(webAppAddress));
     }
 
     @Test
-    public void prepareActivationFail() throws MessagingException {
+    public void prepareActivationFail() throws MessagingException, URISyntaxException {
         Response response = restAccountActivator.prepareActivation(LOGIN_INVALID);
         verify(asMock).getAccountByLogin(LOGIN_INVALID);
         verify(tsMock, never()).createToken(any(Account.class), any(TokenType.class), anyInt(), any(ChronoUnit.class));
@@ -96,10 +96,10 @@ public class RestAccountActivatorTest {
     }
 
     @Test
-    public void activate() {
+    public void activate() throws URISyntaxException {
         Response response = restAccountActivator.activate(TOKEN_HASH_VALID);
         verify(asMock).activateAccount(TOKEN_HASH_VALID);
         verify(tsMock).removeToken(TOKEN_HASH_VALID);
-        assertThat(response.getLocation(), is(uriRootMock));
+        assertThat(response.getLocation().toString(), is(webAppAddress));
     }
 }

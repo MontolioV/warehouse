@@ -145,6 +145,11 @@ public class Item implements Serializable {
         this.tags = tags;
     }
 
+    @PreRemove
+    public void updateTagsLazyCounters() {
+        tags.forEach(Tag::decrementLazyItemCounter);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

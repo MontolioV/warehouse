@@ -64,6 +64,7 @@ public class TagStoreDBTest {
 
         verify(emMock, never()).persist(any(Tag.class));
         existingTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
+        assertThat(existingTag.getLazyItemCounter(), is(2));
     }
 
     @Test
@@ -80,6 +81,7 @@ public class TagStoreDBTest {
         assertTrue(item1.getTags().contains(capturedTag));
         assertTrue(item2.getTags().contains(capturedTag));
         capturedTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
+        assertThat(capturedTag.getLazyItemCounter(), is(2));
     }
 
     @Test

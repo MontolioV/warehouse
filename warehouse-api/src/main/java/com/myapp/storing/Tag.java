@@ -2,6 +2,8 @@ package com.myapp.storing;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,6 +20,7 @@ import static com.myapp.storing.Tag.NAME_PARAM;
 @NamedQueries({
         @NamedQuery(name = Tag.GET_ALL, query = "select t from Tag t"),
         @NamedQuery(name = Tag.GET_BY_NAME, query = "select t from Tag t where t.name=:" + NAME_PARAM),
+        @NamedQuery(name = Tag.GET_MOST_POPULAR, query = "select t from Tag t order by t.lazyItemCounter desc"),
         @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:" + NAME_PARAM + ",'%')"),
 })
 @Table(indexes = {
@@ -27,20 +30,21 @@ public class Tag implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Tag.";
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_BY_NAME = PREFIX + "GET_BY_NAME";
+    public static final String GET_MOST_POPULAR = PREFIX + "GET_MOST_POPULAR";
     public static final String GET_LIKE_NAME = PREFIX + "GET_LIKE_NAME";
     public static final String NAME_PARAM = "NAME_PARAM";
 
     private long id;
     private String name;
     private Set<Item> items = new HashSet<>();
+    private int lazyItemCounter = 0;
 
     public Tag() {
     }
 
-    public Tag(long id, String name, Set<Item> items) {
+    public Tag(long id, String name) {
         this.id = id;
         this.name = name;
-        this.items = items;
     }
 
     @Id
@@ -64,6 +68,7 @@ public class Tag implements Serializable {
         this.name = name;
     }
 
+    @NotNull
     @ManyToMany(mappedBy = "tags")
     public Set<Item> getItems() {
         return items;
@@ -71,6 +76,24 @@ public class Tag implements Serializable {
 
     public void setItems(Set<Item> items) {
         this.items = items;
+        updateLazyItemCounter();
+    }
+
+    @PositiveOrZero
+    public int getLazyItemCounter() {
+        return lazyItemCounter;
+    }
+
+    public void setLazyItemCounter(int itemsCount) {
+        this.lazyItemCounter = itemsCount;
+    }
+
+    public void updateLazyItemCounter() {
+        lazyItemCounter = items.size();
+    }
+
+    public void decrementLazyItemCounter() {
+        lazyItemCounter--;
     }
 
     @PreRemove

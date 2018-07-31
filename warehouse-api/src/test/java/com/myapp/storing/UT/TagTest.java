@@ -4,7 +4,6 @@ import com.myapp.storing.Tag;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 import static com.myapp.TestUtils.serializationRoutine;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,7 +16,7 @@ public class TagTest {
 
     @Test
     public void serialization() throws IOException, ClassNotFoundException {
-        Tag tag = new Tag(1, "test", new HashSet<>());
+        Tag tag = new Tag(1, "test");
 
         Tag restored = (Tag) serializationRoutine(tag);
         assertThat(restored, is(tag));

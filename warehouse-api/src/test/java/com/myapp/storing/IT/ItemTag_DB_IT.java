@@ -14,7 +14,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.myapp.storing.Item.CLASS_PARAM;
@@ -53,8 +52,8 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         Date yesterdayDate = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
         Date weekAgoDate = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
 
-        Tag tag1 = new Tag(0, TEST_1, new HashSet<>());
-        Tag tag2 = new Tag(0, TEST_2, new HashSet<>());
+        Tag tag1 = new Tag(0, TEST_1);
+        Tag tag2 = new Tag(0, TEST_2);
         Item item1_private = new Item(0, TEST_1, TEST_1, TEST_1, new Date(), false, new ArrayList<>());
         Item item2 = new Item(0, TEST_2, TEST_2, TEST_3, weekAgoDate, true, new ArrayList<>());
         Item item3 = new Item(0, TEST_3, TEST_3, TEST_3, yesterdayDate, true, new ArrayList<>());
@@ -70,6 +69,9 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         item1_private.getTags().add(tag1);
         item1_private.getTags().add(tag2);
         item2.getTags().add(tag2);
+
+        tag1.updateLazyItemCounter();
+        tag2.updateLazyItemCounter();
 
         ArrayList<Item> items = new ArrayList<>();
         items.add(item1_private);
@@ -113,10 +115,10 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 NATIVE_NAME, CONTENT_TYPE, FileItem.MAX_SIZE_BYTE, ""));
 
-        tags.add(new Tag(0, null, null));
-        tags.add(new Tag(0, "", null));
-        tags.add(new Tag(0, repeat("1", 31), null));
-        tags.add(new Tag(0, TEST_1, null));
+        tags.add(new Tag(0, null));
+        tags.add(new Tag(0, ""));
+        tags.add(new Tag(0, repeat("1", 31)));
+        tags.add(new Tag(0, TEST_1));
 
         persisted += persistNotAllowed(items);
         persisted += persistNotAllowed(tags);
@@ -189,6 +191,14 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
                 .getSingleResult();
         assertThat(tagSingleResult.getName(), is(TEST_2));
         assertThat(tagSingleResult.getItems().size(), is(2));
+        assertThat(tagSingleResult.getLazyItemCounter(), is(2));
+
+        tagSingleResult = em.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)
+                .setMaxResults(1)
+                .getSingleResult();
+        assertThat(tagSingleResult.getName(), is(TEST_2));
+        assertThat(tagSingleResult.getItems().size(), is(2));
+        assertThat(tagSingleResult.getLazyItemCounter(), is(2));
 
         List<Tag> tagResultList = em.createNamedQuery(Tag.GET_ALL, Tag.class).getResultList();
         assertThat(tagResultList.size(), is(2));
@@ -239,6 +249,9 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
 
         List<Tag> tagResultList = em.createNamedQuery(Tag.GET_ALL, Tag.class).getResultList();
         assertThat(tagResultList.size(), is(2));
+        Tag tag = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class).setParameter(Tag.NAME_PARAM, TEST_1).getSingleResult();
+        assertThat(tag.getLazyItemCounter(), is(0));
+
         tagResultList.forEach(em::remove);
     }
 

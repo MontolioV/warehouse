@@ -36,6 +36,7 @@ public class TagStoreDB implements TagStore{
             em.find(Item.class, item.getId()).getTags().add(tag);
             tag.getItems().add(item);
         }
+        tag.updateLazyItemCounter();
     }
 
     @Override

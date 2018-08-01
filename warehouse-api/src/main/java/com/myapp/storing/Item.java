@@ -49,6 +49,7 @@ public class Item implements Serializable {
     public static final String CLASS_PARAM = "CLASS_PARAM";
 
     private long id;
+    private int version;
     private String dType;
     private String name;
     private String description;
@@ -78,6 +79,15 @@ public class Item implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Version
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Column(name = "dType", insertable = false, updatable = false)

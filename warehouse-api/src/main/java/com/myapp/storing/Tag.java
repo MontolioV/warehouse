@@ -35,6 +35,7 @@ public class Tag implements Serializable {
     public static final String NAME_PARAM = "NAME_PARAM";
 
     private long id;
+    private int version;
     private String name;
     private Set<Item> items = new HashSet<>();
     private int lazyItemCounter = 0;
@@ -55,6 +56,15 @@ public class Tag implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Version
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @NotBlank

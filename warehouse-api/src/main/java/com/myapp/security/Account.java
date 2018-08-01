@@ -40,6 +40,7 @@ public class Account implements Serializable {
     public static final String EMAIL_PARAM = "EMAIL_PARAM";
 
     private long id;
+    private int version;
     private String login;
     private String passHash;
     private String email;
@@ -75,6 +76,15 @@ public class Account implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Version
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @NotNull

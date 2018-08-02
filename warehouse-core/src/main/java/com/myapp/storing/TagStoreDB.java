@@ -4,6 +4,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.validation.constraints.Positive;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.myapp.storing.Tag.NAME_PARAM;
@@ -42,5 +44,14 @@ public class TagStoreDB implements TagStore{
     @Override
     public List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery) {
         return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public List<Tag> fetchMostPopularTags(@Positive int amount) {
+        List<Tag> resultList = em.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)
+                .setMaxResults(amount)
+                .getResultList();
+        resultList.sort(Comparator.comparing(Tag::getName));
+        return resultList;
     }
 }

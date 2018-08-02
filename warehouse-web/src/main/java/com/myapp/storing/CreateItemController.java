@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -75,7 +77,8 @@ public class CreateItemController {
         if (principal != null) {
             item.setOwner(principal.getName());
         }
-        item.setCreationDate(new Date());
+        Date date = Date.from(Instant.now().minus(1, ChronoUnit.SECONDS));
+        item.setCreationDate(date);
 
         itemStore.saveItems(item);
         for (String tag : parseTags()) {

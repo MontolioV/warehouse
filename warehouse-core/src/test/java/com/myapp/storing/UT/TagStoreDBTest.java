@@ -49,6 +49,7 @@ public class TagStoreDBTest {
         when(emMock.find(Item.class, item1.getId())).thenReturn(item1);
         when(emMock.find(Item.class, item2.getId())).thenReturn(item2);
         when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
+        when(emMock.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)).thenReturn(queryMock);
         when(queryMock.setParameter(NAME_PARAM, tagString)).thenReturn(queryMock);
     }
 
@@ -98,4 +99,17 @@ public class TagStoreDBTest {
         MatcherAssert.assertThat(result, sameInstance(tags));
     }
 
+    @Test
+    public void fetchMostPopularTags() {
+        TypedQuery<Tag> maxQueryMock = mock(TypedQuery.class);
+        ArrayList<Tag> tags = new ArrayList<>();
+        tags.add(new Tag(0, "bce"));
+        tags.add(new Tag(0, "abc"));
+        when(queryMock.setMaxResults(7)).thenReturn(maxQueryMock);
+        when(maxQueryMock.getResultList()).thenReturn(tags);
+
+        List<Tag> result = tagStoreDB.fetchMostPopularTags(7);
+        assertThat(result, sameInstance(tags));
+        assertThat(result.get(0).getName(), is("abc"));
+    }
 }

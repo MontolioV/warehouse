@@ -64,6 +64,13 @@ public abstract class AbstractITArquillianWithEM {
         em.clear();
     }
 
+    protected void handleTransactionRollback() throws Exception {
+        try {
+            commitTransaction();
+        } catch (RollbackException e) {
+            beginTransaction();
+        }
+    }
 
     /**
      *

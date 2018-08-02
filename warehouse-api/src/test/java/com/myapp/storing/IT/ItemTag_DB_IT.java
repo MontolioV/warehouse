@@ -10,11 +10,14 @@ import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 
+import javax.persistence.OptimisticLockException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Phaser;
+import java.util.function.Consumer;
 
 import static com.myapp.storing.Item.CLASS_PARAM;
 import static com.myapp.storing.Item.OWNER_PARAM;
@@ -243,7 +246,7 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
 
     @Test
     @InSequence(5)
-    public void removeTags() {
+    public void concurrency() throws Throwable {
         List<Item> itemResultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
         assertThat(itemResultList.size(), is(7));
 
@@ -252,14 +255,59 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         Tag tag = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class).setParameter(Tag.NAME_PARAM, TEST_1).getSingleResult();
         assertThat(tag.getLazyItemCounter(), is(0));
 
-        tagResultList.forEach(em::remove);
+        Phaser phaser = new Phaser(2);
+        Consumer<String> concurentUpdate = itemName -> {
+            Tag otherTag = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class).setParameter(Tag.NAME_PARAM, TEST_1).getSingleResult();
+            phaser.arriveAndAwaitAdvance();
+            Item otherItem = new Item();
+            otherItem.setName(itemName);
+            otherItem.setCreationDate(new Date());
+            otherItem.getTags().add(otherTag);
+            otherTag.getItems().add(otherItem);
+            otherTag.updateLazyItemCounter();
+
+            em.persist(otherItem);
+            em.merge(otherTag);
+        };
+        Thread otherThread = new Thread(() -> {
+            try {
+                setUp();
+                concurentUpdate.accept("Item_other");
+                tearDown();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+        otherThread.start();
+        concurentUpdate.accept("Item");
+        otherThread.join();
+
+        try {
+            em.flush();
+        } catch (OptimisticLockException e) {
+            handleTransactionRollback();
+        }
     }
 
     @Test
     @InSequence(6)
+    public void removeTags() {
+        Tag tag = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class).setParameter(Tag.NAME_PARAM, TEST_1).getSingleResult();
+        assertThat(tag.getItems().size(), is(1));
+        assertThat(tag.getItems().iterator().next().getName(), is("Item_other"));
+        assertThat(tag.getLazyItemCounter(), is(1));
+
+
+        List<Tag> tagResultList = em.createNamedQuery(Tag.GET_ALL, Tag.class).getResultList();
+        tagResultList.forEach(em::remove);
+    }
+
+    @Test
+    @InSequence(7)
     public void noTagsInDB() {
         List<Item> itemResultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
-        assertThat(itemResultList.size(), is(7));
+        assertThat(itemResultList.size(), is(8));
         List<Tag> tagResultList = em.createNamedQuery(Tag.GET_ALL, Tag.class).getResultList();
         assertThat(tagResultList.size(), is(0));
     }

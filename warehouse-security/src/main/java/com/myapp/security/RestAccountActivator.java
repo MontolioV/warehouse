@@ -59,7 +59,6 @@ public class RestAccountActivator implements AccountActivator {
             Token token = tokenStore.createToken(account, TokenType.EMAIL_VERIFICATION, 1, ChronoUnit.DAYS);
             String uriActivation = uriInfo.getBaseUriBuilder().path(RestAccountActivator.class)
                     .queryParam(QP_TOKEN, token.getTokenHash()).build().toString();
-            System.out.println("!@# " + uriActivation);
             String htmlText = String.format(MAIL_TEXT, account.getLogin(), uriActivation);
             mailManager.sendEmail(account.getEmail(), MAIL_SUBJECT, htmlText);
             return redirectHome();

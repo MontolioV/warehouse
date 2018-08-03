@@ -168,6 +168,15 @@ textarea, input[type="text"], input[type="password"] {
     background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
 }
 
+.tagsContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tagsContainer * {
+    /*border: 1px solid red;*/
+    margin: 3px;
+}
+
 .textEditor, .textLabel {
     background: rgba(255, 212, 73, 0.11);
     margin: 10px 0;

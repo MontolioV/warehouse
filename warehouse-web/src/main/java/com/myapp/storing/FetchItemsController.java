@@ -4,7 +4,6 @@ import com.myapp.utils.QueryTarget;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
@@ -14,6 +13,9 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isAllBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * <p>Created by MontolioV on 18.04.18.
@@ -36,13 +38,30 @@ public class FetchItemsController {
     private List<String> itemNames;
     private List<String> itemOwners;
     private List<String> tags;
+    private String itemNameParam;
+    private String itemOwnerParam;
+    private String tagParam;
     private boolean tagsConjunction = true;
 
-    @PostConstruct
-    public void init() {
-        if (externalContext.getUserPrincipal() != null) {
-            itemOwners = new ArrayList<>();
-            itemOwners.add("'" + externalContext.getUserPrincipal().getName() + "'");
+    public void initFilterParams() {
+        if (isAllBlank(itemNameParam, itemOwnerParam, tagParam)) {
+            if (externalContext.getUserPrincipal() != null) {
+                itemOwners = new ArrayList<>();
+                itemOwners.add("'" + externalContext.getUserPrincipal().getName() + "'");
+            }
+        } else {
+            if (isNotBlank(itemNameParam)) {
+                itemNames = new ArrayList<>();
+                itemNames.add("'" + itemNameParam + "'");
+            }
+            if (isNotBlank(itemOwnerParam)) {
+                itemOwners = new ArrayList<>();
+                itemOwners.add("'" + itemOwnerParam + "'");
+            }
+            if (isNotBlank(tagParam)) {
+                tags = new ArrayList<>();
+                tags.add("'" + tagParam + "'");
+            }
         }
     }
 
@@ -213,6 +232,30 @@ public class FetchItemsController {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getItemNameParam() {
+        return itemNameParam;
+    }
+
+    public void setItemNameParam(String itemNameParam) {
+        this.itemNameParam = itemNameParam;
+    }
+
+    public String getItemOwnerParam() {
+        return itemOwnerParam;
+    }
+
+    public void setItemOwnerParam(String itemOwnerParam) {
+        this.itemOwnerParam = itemOwnerParam;
+    }
+
+    public String getTagParam() {
+        return tagParam;
+    }
+
+    public void setTagParam(String tagParam) {
+        this.tagParam = tagParam;
     }
 
     public boolean isTagsConjunction() {

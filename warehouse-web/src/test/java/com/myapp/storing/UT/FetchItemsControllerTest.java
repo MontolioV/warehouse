@@ -69,9 +69,28 @@ public class FetchItemsControllerTest {
     }
 
     @Test
-    public void init() {
-        controller.init();
+    public void initFilterParamsNoParams() {
+        controller.initFilterParams();
         assertTrue(controller.getItemOwners().contains("'" + LOGIN_VALID + "'"));
+    }
+
+    @Test
+    public void initFilterParamsWithParams() {
+        controller.setItemNameParam("name");
+        controller.initFilterParams();
+        assertThat(controller.getItemNames().size(), is(1));
+        assertThat(controller.getItemOwners(), nullValue());
+        assertThat(controller.getTags(), nullValue());
+
+        controller.setItemOwnerParam("owner");
+        controller.setTagParam("tag");
+        controller.initFilterParams();
+        assertThat(controller.getItemNames().size(), is(1));
+        assertThat(controller.getItemOwners().size(), is(1));
+        assertThat(controller.getTags().size(), is(1));
+        assertThat(controller.getItemNames().get(0), is("'name'"));
+        assertThat(controller.getItemOwners().get(0), is("'owner'"));
+        assertThat(controller.getTags().get(0), is("'tag'"));
     }
 
     @Test

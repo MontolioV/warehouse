@@ -19,7 +19,10 @@ public class FetchTagsController {
     public void init() {
         List<Tag> tags = tagStore.fetchMostPopularTags(30);
         tagCloudModel = new DefaultTagCloudModel();
-        tags.forEach(tag -> tagCloudModel.addTag(new DefaultTagCloudItem(tag.getName(), "public/items-search.jsf", tag.getLazyItemCounter())));
+        tags.forEach(tag -> tagCloudModel.addTag(new DefaultTagCloudItem(
+                tag.getName(),
+                "public/items-search.jsf?tag=" + tag.getName(),
+                tag.getLazyItemCounter())));
     }
 
     public TagCloudModel getTagCloudModel() {

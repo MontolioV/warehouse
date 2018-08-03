@@ -152,7 +152,7 @@ public class CreateItemControllerTest {
 
     @Test
     public void tagCreation() throws IOException {
-        String[] tags = {"tag","\rtag","tag\n\r","tag\n","ta\tg","!@#tag\n\r%^@#tag*/-"};
+        String[] tags = {"tag","\rtag","tag\n\r","tag\n","ta\tg","!@#tag\n\r%^@#tag*/-"," tag tag "};
         TextItem textItem = new TextItem();
         for (String tag : tags) {
             controller.setTextItem(textItem);
@@ -161,5 +161,6 @@ public class CreateItemControllerTest {
         }
 
         verify(tsMock, times(7)).saveTag("tag", textItem);
+        verify(tsMock).saveTag("tag tag", textItem);
     }
 }

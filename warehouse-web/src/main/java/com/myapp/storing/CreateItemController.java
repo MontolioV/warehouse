@@ -87,7 +87,7 @@ public class CreateItemController {
     }
 
     private String[] parseTags() {
-        String cleanStr = tagsString.replaceAll("[^\\w\\n]", "");
+        String cleanStr = tagsString.trim().replaceAll("[^ \\w\\n]", "");
         return Arrays.stream(cleanStr.split("\n"))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);

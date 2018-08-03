@@ -35,6 +35,6 @@ public class FetchTagsControllerTest {
         TagCloudItem tagCloudItem = controller.getTagCloudModel().getTags().get(0);
         assertThat(tagCloudItem.getLabel(), is(tag.getName()));
         assertThat(tagCloudItem.getStrength(), is(tag.getLazyItemCounter()));
-        assertThat(tagCloudItem.getUrl(), is("public/items-search.jsf"));
+        assertThat(tagCloudItem.getUrl(), is("public/items-search.jsf?tag=tag"));
     }
 }

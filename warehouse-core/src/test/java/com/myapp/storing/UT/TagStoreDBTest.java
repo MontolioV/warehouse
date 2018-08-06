@@ -35,8 +35,13 @@ public class TagStoreDBTest {
     @Mock
     private EntityManager emMock;
     @Mock
-    private TypedQuery<Tag> queryMock;
-    private String tagString = "tagString";
+    private TypedQuery<Tag> nameQMock;
+    @Mock
+    private TypedQuery<Tag> likeNameQMock;
+    @Mock
+    private TypedQuery<Tag> popularQMock;
+    private String tagStringRaw = " tagString ";
+    private String tagStringFormatted = "tagString";
     private Item item1;
     private Item item2;
 
@@ -48,9 +53,8 @@ public class TagStoreDBTest {
         item2.setId(2);
         when(emMock.find(Item.class, item1.getId())).thenReturn(item1);
         when(emMock.find(Item.class, item2.getId())).thenReturn(item2);
-        when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(queryMock);
-        when(emMock.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)).thenReturn(queryMock);
-        when(queryMock.setParameter(NAME_PARAM, tagString)).thenReturn(queryMock);
+        when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(nameQMock);
+        when(nameQMock.setParameter(NAME_PARAM, tagStringFormatted)).thenReturn(nameQMock);
     }
 
     @Test
@@ -59,9 +63,9 @@ public class TagStoreDBTest {
         Tag existingTag = new Tag();
         existingTag.setName("existing");
         tags.add(existingTag);
-        when(queryMock.getResultList()).thenReturn(tags);
+        when(nameQMock.getResultList()).thenReturn(tags);
 
-        tagStoreDB.saveTag(tagString, item1, item2);
+        tagStoreDB.saveTag(tagStringRaw, item1, item2);
 
         verify(emMock, never()).persist(any(Tag.class));
         existingTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
@@ -71,14 +75,14 @@ public class TagStoreDBTest {
     @Test
     public void saveTagNew() {
         ArrayList<Tag> tags = new ArrayList<>();
-        when(queryMock.getResultList()).thenReturn(tags);
+        when(nameQMock.getResultList()).thenReturn(tags);
 
-        tagStoreDB.saveTag(tagString, item1, item2);
+        tagStoreDB.saveTag(tagStringRaw, item1, item2);
 
         ArgumentCaptor<Tag> tagArgumentCaptor = ArgumentCaptor.forClass(Tag.class);
         verify(emMock).persist(tagArgumentCaptor.capture());
         Tag capturedTag = tagArgumentCaptor.getValue();
-        assertThat(capturedTag.getName(), is(tagString));
+        assertThat(capturedTag.getName(), is(tagStringFormatted));
         assertTrue(item1.getTags().contains(capturedTag));
         assertTrue(item2.getTags().contains(capturedTag));
         capturedTag.getItems().forEach(item -> assertThat(item, anyOf(sameInstance(item1), sameInstance(item2))));
@@ -91,9 +95,9 @@ public class TagStoreDBTest {
         tags.add(new Tag());
         tags.add(new Tag());
         CriteriaQuery<Tag> cqMock = mock(CriteriaQuery.class);
-        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
-        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
-        when(queryMock.getResultList()).thenReturn(tags);
+        when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
+        when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
+        when(nameQMock.getResultList()).thenReturn(tags);
 
         List<Tag> result = tagStoreDB.executeCustomSelectQuery(cqMock);
         MatcherAssert.assertThat(result, sameInstance(tags));
@@ -105,11 +109,24 @@ public class TagStoreDBTest {
         ArrayList<Tag> tags = new ArrayList<>();
         tags.add(new Tag(0, "bce"));
         tags.add(new Tag(0, "abc"));
-        when(queryMock.setMaxResults(7)).thenReturn(maxQueryMock);
+        when(emMock.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)).thenReturn(popularQMock);
+        when(popularQMock.setMaxResults(7)).thenReturn(maxQueryMock);
         when(maxQueryMock.getResultList()).thenReturn(tags);
 
         List<Tag> result = tagStoreDB.fetchMostPopularTags(7);
         assertThat(result, sameInstance(tags));
         assertThat(result.get(0).getName(), is("abc"));
+    }
+
+    @Test
+    public void fetchTagsLikeName() {
+        TypedQuery<Tag> paramQueryMock = mock(TypedQuery.class);
+        ArrayList<Tag> tags = new ArrayList<>();
+        when(emMock.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)).thenReturn(likeNameQMock);
+        when(likeNameQMock.setParameter(Tag.NAME_PARAM, "name")).thenReturn(paramQueryMock);
+        when(paramQueryMock.getResultList()).thenReturn(tags);
+
+        List<Tag> tagList = tagStoreDB.fetchTagsLikeName("name");
+        assertThat(tagList, sameInstance(tags));
     }
 }

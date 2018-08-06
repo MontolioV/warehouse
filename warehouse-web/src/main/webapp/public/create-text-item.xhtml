@@ -17,7 +17,7 @@
             <h:form styleClass="mirrorLayout">
                 <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
                     <h:outputLabel value="Create text item"/>
-                    <compc:itemInput item="#{createItemController.textItem}" tagsString="#{createItemController.tagsString}"/>
+                    <compc:itemInput item="#{createItemController.textItem}" createController="#{createItemController}"/>
 
                     <h:panelGroup layout="block" styleClass="mirror">
                         <h:outputLabel for="text" value="Text"/>

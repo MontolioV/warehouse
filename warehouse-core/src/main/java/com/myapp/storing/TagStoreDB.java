@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.Comparator;
 import java.util.List;
@@ -20,12 +21,13 @@ public class TagStoreDB implements TagStore{
 
     @Override
     public void saveTag(String tagName, Item... items) {
+        String tagNameFormatted = tagName.trim();
         List<Tag> resultList = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class)
-                .setParameter(NAME_PARAM, tagName)
+                .setParameter(NAME_PARAM, tagNameFormatted)
                 .getResultList();
         if (resultList.isEmpty()) {
             Tag tag = new Tag();
-            tag.setName(tagName);
+            tag.setName(tagNameFormatted);
             bind(tag, items);
             em.persist(tag);
         } else {
@@ -53,5 +55,12 @@ public class TagStoreDB implements TagStore{
                 .getResultList();
         resultList.sort(Comparator.comparing(Tag::getName));
         return resultList;
+    }
+
+    @Override
+    public List<Tag> fetchTagsLikeName(@NotBlank String name) {
+        return em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)
+                .setParameter(Tag.NAME_PARAM, name)
+                .getResultList();
     }
 }

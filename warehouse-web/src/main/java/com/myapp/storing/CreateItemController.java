@@ -11,8 +11,11 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p>Created by MontolioV on 17.04.18.
@@ -32,8 +35,7 @@ public class CreateItemController {
     private TextItem textItem = new TextItem();
     private FileItem fileItem = new FileItem();
     private Part tmpFile;
-    private String tagsString;
-
+    private List<String> tagsNames;
 
     @PostConstruct
     public void init() {
@@ -79,19 +81,19 @@ public class CreateItemController {
         }
         Date date = Date.from(Instant.now().minus(1, ChronoUnit.SECONDS));
         item.setCreationDate(date);
+        Set<String> tagNamesSet = new HashSet<>(tagsNames);
 
         itemStore.saveItems(item);
-        for (String tag : parseTags()) {
+        for (String tag : tagNamesSet) {
             tagStore.saveTag(tag, item);
         }
     }
 
-    private String[] parseTags() {
-        String cleanStr = tagsString.trim().replaceAll("[^ \\w\\n]", "");
-        return Arrays.stream(cleanStr.split("\n"))
-                .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
+    public List<String> autocompleteTags(String query) {
+        return tagStore.fetchTagsLikeName(query).stream().map(Tag::getName).collect(Collectors.toList());
     }
+
+    //Getters & Setters
 
     public Principal getPrincipal() {
         return principal;
@@ -133,14 +135,6 @@ public class CreateItemController {
         this.textItem = textItem;
     }
 
-    public String getTagsString() {
-        return tagsString;
-    }
-
-    public void setTagsString(String tagsString) {
-        this.tagsString = tagsString;
-    }
-
     public FacesContext getFacesContext() {
         return facesContext;
     }
@@ -163,5 +157,21 @@ public class CreateItemController {
 
     public void setTmpFile(Part tmpFile) {
         this.tmpFile = tmpFile;
+    }
+
+    public FileStore getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(FileStore fileStore) {
+        this.fileStore = fileStore;
+    }
+
+    public List<String> getTagsNames() {
+        return tagsNames;
+    }
+
+    public void setTagsNames(List<String> tagsNames) {
+        this.tagsNames = tagsNames;
     }
 }

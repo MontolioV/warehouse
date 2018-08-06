@@ -21,7 +21,8 @@ import static com.myapp.storing.Tag.NAME_PARAM;
         @NamedQuery(name = Tag.GET_ALL, query = "select t from Tag t"),
         @NamedQuery(name = Tag.GET_BY_NAME, query = "select t from Tag t where t.name=:" + NAME_PARAM),
         @NamedQuery(name = Tag.GET_MOST_POPULAR, query = "select t from Tag t order by t.lazyItemCounter desc"),
-        @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:" + NAME_PARAM + ",'%')"),
+        @NamedQuery(name = Tag.GET_LIKE_NAME, query = "select t from Tag t where t.name like concat('%',:" + NAME_PARAM + ",'%') " +
+                                                      "order by t.name desc"),
 })
 @Table(indexes = {
         @Index(columnList = "name", unique = true),

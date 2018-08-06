@@ -14,7 +14,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static com.myapp.utils.TestSecurityConstants.PASS_HASH_VALID;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,7 +49,7 @@ public class CreateItemControllerTest {
     private Principal principalMock;
     @Mock
     private Part partMock;
-    private String tagsString;
+    private ArrayList<String> tags;
     private String tag1 = "tag1";
     private String tag2 = "tag2";
     private String tag3 = "tag3";
@@ -56,7 +59,7 @@ public class CreateItemControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        tagsString = tag1 + "\n" + tag2 + "\n" + tag3;
+        tags = newArrayList(tag1, tag2, tag3);
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
@@ -69,7 +72,7 @@ public class CreateItemControllerTest {
     public void createTextItem() throws IOException {
         TextItem textItem = new TextItem();
         controller.setTextItem(textItem);
-        controller.setTagsString(tagsString);
+        controller.setTagsNames(tags);
 
         controller.createTextItem();
 
@@ -93,7 +96,7 @@ public class CreateItemControllerTest {
         controller.setTmpFile(partMock);
         FileItem fileItem = new FileItem();
         controller.setFileItem(fileItem);
-        controller.setTagsString(tagsString);
+        controller.setTagsNames(tags);
 
         controller.createFileItem();
 
@@ -142,7 +145,7 @@ public class CreateItemControllerTest {
         controller.setTmpFile(partMock);
         FileItem fileItem = new FileItem();
         controller.setFileItem(fileItem);
-        controller.setTagsString(tagsString);
+        controller.setTagsNames(tags);
         controller.createFileItem();
 
         verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
@@ -152,15 +155,27 @@ public class CreateItemControllerTest {
 
     @Test
     public void tagCreation() throws IOException {
-        String[] tags = {"tag","\rtag","tag\n\r","tag\n","ta\tg","!@#tag\n\r%^@#tag*/-"," tag tag "};
+        tags = newArrayList("tag", "tag", "tag");
         TextItem textItem = new TextItem();
-        for (String tag : tags) {
-            controller.setTextItem(textItem);
-            controller.setTagsString(tag);
-            controller.createTextItem();
-        }
+        controller.setTextItem(textItem);
+        controller.setTagsNames(tags);
+        controller.createTextItem();
 
-        verify(tsMock, times(7)).saveTag("tag", textItem);
-        verify(tsMock).saveTag("tag tag", textItem);
+        verify(tsMock).saveTag("tag", textItem);
+    }
+
+    @Test
+    public void autocompleteTags() {
+        Tag tag1Mock = mock(Tag.class);
+        Tag tag2Mock = mock(Tag.class);
+        ArrayList<Tag> tags = newArrayList(tag1Mock, tag2Mock);
+        when(tag1Mock.getName()).thenReturn(tag1);
+        when(tag2Mock.getName()).thenReturn(tag2);
+        when(tsMock.fetchTagsLikeName("name")).thenReturn(tags);
+
+        List<String> names = controller.autocompleteTags("name");
+        assertThat(names.size(), is(2));
+        assertThat(names.get(0), is(tag1));
+        assertThat(names.get(1), is(tag2));
     }
 }

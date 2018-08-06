@@ -18,7 +18,7 @@
                 <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
                     <h:outputLabel value="Create file item"/>
 
-                    <compc:itemInput item="#{createItemController.fileItem}" tagsString="#{createItemController.tagsString}"/>
+                    <compc:itemInput item="#{createItemController.fileItem}" createController="#{createItemController}"/>
 
                     <h:panelGroup layout="block" styleClass="mirror">
                         <h:outputLabel for="fileInput" value="File"/>

@@ -1,6 +1,7 @@
 package com.myapp.storing;
 
 import javax.persistence.criteria.CriteriaQuery;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface TagStore {
     List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery);
 
     List<Tag> fetchMostPopularTags(@Positive int amount);
+
+    List<Tag> fetchTagsLikeName(@NotBlank String name);
 }

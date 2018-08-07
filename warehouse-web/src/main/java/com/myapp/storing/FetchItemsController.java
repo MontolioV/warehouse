@@ -41,7 +41,7 @@ public class FetchItemsController {
     private String itemNameParam;
     private String itemOwnerParam;
     private String tagParam;
-    private boolean tagsConjunction = true;
+    private boolean tagsConjunction = false;
 
     public void initFilterParams() {
         if (isAllBlank(itemNameParam, itemOwnerParam, tagParam)) {

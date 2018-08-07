@@ -197,14 +197,16 @@ public class FetchItemsControllerTest {
         List<Tag> tagsItem2 = new ArrayList<>();
         Item itemMock1 = mock(Item.class);
         Item itemMock2 = mock(Item.class);
-        Tag tag1 = mock(Tag.class);
-        Tag tag2 = mock(Tag.class);
+        Tag tag1 = new Tag(0, "5a");
+        Tag tag2 = new Tag(0, "a65a");
+        Tag tagOther = new Tag(0, "abc");
         itemsGet.add(itemMock1);
         itemsGet.add(itemMock2);
         tagsGet.add(tag2);
         tagsGet.add(tag2);
         tagsItem1.add(tag1);
         tagsItem1.add(tag2);
+        tagsItem1.add(tagOther);
         tagsItem2.add(tag2);
         when(isMock.executeCustomSelectQuery(icqMock)).thenReturn(itemsGet);
         when(tsMock.executeCustomSelectQuery(tcqMock)).thenReturn(tagsGet);

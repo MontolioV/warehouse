@@ -6,6 +6,7 @@ import com.myapp.storing.ItemStoreDB;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -13,7 +14,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -149,5 +153,23 @@ public class ItemStoreDBTest {
 
         List<Item> result = itemStoreDB.executeCustomSelectQuery(cqMock);
         assertThat(result, sameInstance(items));
+    }
+
+    @Test
+    public void deleteOldItemsWithNoOwner() {
+        Item itemMock = mock(Item.class);
+        TypedQuery<Item> expQueryMock = mock(TypedQuery.class);
+        items.add(itemMock);
+        when(emMock.createNamedQuery(Item.GET_EXPIRED, Item.class)).thenReturn(expQueryMock);
+        when(expQueryMock.setParameter(eq(Item.MINIMAL_CREATION_DATE_PARAM), any(Date.class))).thenReturn(queryMock);
+
+        Instant instant = Instant.now().minus(1, ChronoUnit.DAYS);
+        Date date = Date.from(instant);
+        itemStoreDB.deleteOldItemsWithNoOwner(instant);
+
+        ArgumentCaptor<Date> dateArgumentCaptor = ArgumentCaptor.forClass(Date.class);
+        verify(expQueryMock).setParameter(eq(Item.MINIMAL_CREATION_DATE_PARAM), dateArgumentCaptor.capture());
+        assertThat(dateArgumentCaptor.getValue(), is(date));
+        verify(emMock).remove(itemMock);
     }
 }

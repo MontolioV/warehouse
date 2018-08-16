@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,6 +71,14 @@ public class ItemStoreDB implements ItemStore{
         if (userName.equals(item.getOwner())) {
             deleteItem(id);
         }
+    }
+
+    @Override
+    public void deleteOldItemsWithNoOwner(Instant cutoffInstant) {
+        List<Item> resultList = em.createNamedQuery(Item.GET_EXPIRED, Item.class)
+                .setParameter(Item.MINIMAL_CREATION_DATE_PARAM, Date.from(cutoffInstant))
+                .getResultList();
+        resultList.forEach(em::remove);
     }
 
     private void deleteItem(long id) {

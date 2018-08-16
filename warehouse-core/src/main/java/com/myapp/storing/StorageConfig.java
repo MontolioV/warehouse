@@ -1,6 +1,7 @@
 package com.myapp.storing;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -12,20 +13,18 @@ import java.nio.file.Paths;
  */
 @ApplicationScoped
 public class StorageConfig {
+    @Resource(lookup = "java:/strings/storageAddress")
+    private String injectedRootString;
     private Path root;
     private Path storageRoot;
     private Path previewRoot;
 
     @PostConstruct
-    public void init() throws FileNotFoundException, StoragePropertyNotFoundException {
-        String rootStr = System.getProperty("warehouse.storage");
-        if (rootStr == null) {
-            throw new StoragePropertyNotFoundException();
-        }
+    public void init() {
+        root = Paths.get(injectedRootString);
 
-        root = Paths.get(rootStr);
         if (!root.toFile().exists()) {
-            throw new FileNotFoundException(root.toString());
+            throw new IllegalStateException(new FileNotFoundException(root.toString()));
         }
 
         storageRoot = root.resolve("files");
@@ -45,5 +44,9 @@ public class StorageConfig {
 
     public Path getPreviewRoot() {
         return previewRoot;
+    }
+
+    public void setInjectedRootString(String injectedRootString) {
+        this.injectedRootString = injectedRootString;
     }
 }

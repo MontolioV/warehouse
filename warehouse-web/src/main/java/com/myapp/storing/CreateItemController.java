@@ -81,11 +81,13 @@ public class CreateItemController {
         }
         Date date = Date.from(Instant.now().minus(1, ChronoUnit.SECONDS));
         item.setCreationDate(date);
-        Set<String> tagNamesSet = new HashSet<>(tagsNames);
 
         itemStore.saveItems(item);
-        for (String tag : tagNamesSet) {
-            tagStore.saveTag(tag, item);
+        if (tagsNames != null) {
+            Set<String> tagNamesSet = new HashSet<>(tagsNames);
+            for (String tag : tagNamesSet) {
+                tagStore.saveTag(tag, item);
+            }
         }
     }
 

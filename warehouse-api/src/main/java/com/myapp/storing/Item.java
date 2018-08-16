@@ -11,8 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.myapp.storing.Item.CLASS_PARAM;
-import static com.myapp.storing.Item.OWNER_PARAM;
+import static com.myapp.storing.Item.*;
 
 /**
  * <p>Created by MontolioV on 16.04.18.
@@ -31,6 +30,8 @@ import static com.myapp.storing.Item.OWNER_PARAM;
         @NamedQuery(name = Item.GET_BY_OWNER, query = "select i from Item i where i.owner=:" + OWNER_PARAM),
         @NamedQuery(name = Item.GET_BY_OWNER_OF_CLASS, query = "select i from Item i where i.owner=:" + OWNER_PARAM
                                                          + " and type(i)=:" + CLASS_PARAM),
+        @NamedQuery(name = Item.GET_EXPIRED, query = "select i from Item i where i.owner is null and i.creationDate<:" + MINIMAL_CREATION_DATE_PARAM),
+
 })
 @Table(indexes = {
         @Index(columnList = "name"),
@@ -38,6 +39,7 @@ import static com.myapp.storing.Item.OWNER_PARAM;
 })
 public class Item implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Item.";
+
     public static final String GET_ALL = PREFIX + "GET_ALL";
     public static final String GET_ALL_BY_OWNER = PREFIX + "GET_ALL_BY_OWNER";
     public static final String GET_ALL_OF_CLASS = PREFIX + "GET_ALL_OF_CLASS";
@@ -45,8 +47,11 @@ public class Item implements Serializable {
     public static final String GET_LAST_OF_CLASS = PREFIX + "GET_LAST_OF_CLASS";
     public static final String GET_BY_OWNER = PREFIX + "GET_BY_OWNER";
     public static final String GET_BY_OWNER_OF_CLASS = PREFIX + "GET_BY_OWNER_OF_CLASS";
+    public static final String GET_EXPIRED = PREFIX + "GET_EXPIRED";
+
     public static final String OWNER_PARAM = "OWNER_PARAM";
     public static final String CLASS_PARAM = "CLASS_PARAM";
+    public static final String MINIMAL_CREATION_DATE_PARAM = "MINIMAL_CREATION_DATE_PARAM";
 
     private long id;
     private int version;

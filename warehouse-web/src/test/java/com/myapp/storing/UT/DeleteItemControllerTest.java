@@ -15,7 +15,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.security.Principal;
 
-import static com.myapp.security.Roles.Const.ADMIN;
 import static com.myapp.security.Roles.Const.MODERATOR;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.mockito.Matchers.any;
@@ -68,14 +67,6 @@ public class DeleteItemControllerTest {
     @Test
     public void deleteByIDNoRedirectModer() {
         when(ecMock.isUserInRole(MODERATOR)).thenReturn(true);
-        controller.deleteByIDNoRedirect();
-        verify(isMock).deleteAnyItem(1L);
-        verify(isMock, never()).deleteItemByOwner(anyLong(), anyString());
-    }
-
-    @Test
-    public void deleteByIDNoRedirectAdmin() {
-        when(ecMock.isUserInRole(ADMIN)).thenReturn(true);
         controller.deleteByIDNoRedirect();
         verify(isMock).deleteAnyItem(1L);
         verify(isMock, never()).deleteItemByOwner(anyLong(), anyString());

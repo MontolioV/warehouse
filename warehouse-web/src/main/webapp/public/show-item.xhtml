@@ -35,7 +35,7 @@
             </h:panelGrid>
 
             <h:panelGrid>
-                <c:if test="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsAdmin() or roleCheckerController.checkIsModerator()}">
+                <c:if test="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsModerator()}">
                     <h:form>
                         <h:button value="Delete" outcome="delete-item.jsf?id=#{param['id']}"
                                   styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>

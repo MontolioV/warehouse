@@ -8,7 +8,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.IOException;
 
-import static com.myapp.security.Roles.Const.ADMIN;
 import static com.myapp.security.Roles.Const.MODERATOR;
 
 /**
@@ -28,7 +27,7 @@ public class DeleteItemController {
         ExternalContext externalContext = facesContext.getExternalContext();
         if (id == null || externalContext.getUserPrincipal() == null) {
             return;
-        } else if (externalContext.isUserInRole(ADMIN) || externalContext.isUserInRole(MODERATOR)) {
+        } else if (externalContext.isUserInRole(MODERATOR)) {
             itemStore.deleteAnyItem(id);
         } else {
             String userName = externalContext.getUserPrincipal().getName();

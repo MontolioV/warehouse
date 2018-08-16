@@ -1,7 +1,6 @@
 package com.myapp.storing.UT;
 
 import com.myapp.storing.StorageConfig;
-import com.myapp.storing.StoragePropertyNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +9,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -23,8 +21,9 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
  * <p>Created by MontolioV on 15.05.18.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({StorageConfigTest.SystemPropertyUser.class, Paths.class, StorageConfig.class})
+@PrepareForTest({Paths.class, StorageConfig.class})
 public class StorageConfigTest {
+    private StorageConfig storageConfig;
     @Mock
     private Path rootMock;
     @Mock
@@ -33,14 +32,13 @@ public class StorageConfigTest {
     private Path previewMock;
     @Mock
     private File fileMock;
-    private String rootProp = "warehouse.storage";
     private String root = "/";
 
     @Before
-    public void setUp() throws Exception {
-        mockStatic(System.class);
+    public void setUp() {
+        storageConfig = new StorageConfig();
+        storageConfig.setInjectedRootString(root);
         mockStatic(Paths.class);
-        when(System.getProperty(rootProp)).thenReturn(root);
         when(Paths.get(root)).thenReturn(rootMock);
         when(rootMock.toFile()).thenReturn(fileMock);
         when(storageMock.toFile()).thenReturn(fileMock);
@@ -50,30 +48,18 @@ public class StorageConfigTest {
     }
 
     @Test
-    public void allExists() throws FileNotFoundException, StoragePropertyNotFoundException {
+    public void allExists() {
         when(fileMock.exists()).thenReturn(true);
-        StorageConfig storageConfig = new StorageConfig();
+
         storageConfig.init();
         assertThat(storageConfig.getStorageRoot(), is(storageMock));
         assertThat(storageConfig.getPreviewRoot(), is(previewMock));
         verify(fileMock, never()).mkdir();
     }
 
-    @Test(expected = StoragePropertyNotFoundException.class)
-    public void propertyDoesntExist() throws FileNotFoundException, StoragePropertyNotFoundException {
-        when(System.getProperty(rootProp)).thenReturn(null);
-        new StorageConfig().init();
-    }
-
-    @Test(expected = FileNotFoundException.class)
-    public void dirDoesntExist() throws FileNotFoundException, StoragePropertyNotFoundException {
+    @Test(expected = IllegalStateException.class)
+    public void dirDoesntExist() {
         when(fileMock.exists()).thenReturn(false);
-        new StorageConfig().init();
-    }
-
-    class SystemPropertyUser {
-        public String getRootProp() {
-            return System.getProperty(rootProp);
-        }
+        storageConfig.init();
     }
 }

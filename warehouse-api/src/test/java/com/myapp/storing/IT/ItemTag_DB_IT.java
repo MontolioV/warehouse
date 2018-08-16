@@ -19,13 +19,14 @@ import java.util.List;
 import java.util.concurrent.Phaser;
 import java.util.function.Consumer;
 
-import static com.myapp.storing.Item.CLASS_PARAM;
-import static com.myapp.storing.Item.OWNER_PARAM;
+import static com.myapp.storing.Item.*;
 import static com.myapp.storing.Tag.NAME_PARAM;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * <p>Created by MontolioV on 16.04.18.
@@ -52,8 +53,8 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
     @InSequence(1)
     public void persistAcceptable() throws Exception {
         Date minuteAgoDate = Date.from(Instant.now().minus(1, ChronoUnit.MINUTES));
-        Date yesterdayDate = Date.from(Instant.now().minus(1, ChronoUnit.DAYS));
-        Date weekAgoDate = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
+        Date yesterdayDate = Date.from(Instant.now().minus(1, DAYS));
+        Date weekAgoDate = Date.from(Instant.now().minus(7, DAYS));
 
         Tag tag1 = new Tag(0, TEST_1);
         Tag tag2 = new Tag(0, TEST_2);
@@ -182,6 +183,16 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         assertThat(itemSingleResult.getName(), is(TEST_1));
         assertThat(itemSingleResult.getOwner(), is(TEST_1));
         assertThat(itemSingleResult.getdType(), is(Item.class.getSimpleName()));
+
+        Date date = Date.from(Instant.now().minus(5, DAYS));
+        itemSingleResult = em.createNamedQuery(Item.GET_EXPIRED, Item.class)
+                .setParameter(MINIMAL_CREATION_DATE_PARAM, date)
+                .getSingleResult();
+        assertThat(itemSingleResult.getName(), is(TEST_1));
+        assertThat(itemSingleResult.getOwner(), nullValue());
+        assertThat(itemSingleResult.getDescription(), nullValue());
+        assertThat(itemSingleResult.getCreationDate(), lessThan(date));
+        assertFalse(itemSingleResult.isShared());
 
         Tag tagSingleResult = em.createNamedQuery(Tag.GET_BY_NAME, Tag.class)
                 .setParameter(NAME_PARAM, TEST_1)

@@ -155,6 +155,10 @@ public class CreateItemControllerTest {
 
     @Test
     public void tagCreation() throws IOException {
+        controller.setTagsNames(null);
+        controller.createTextItem();
+        verify(tsMock, never()).saveTag(anyString(), any());
+
         tags = newArrayList("tag", "tag", "tag");
         TextItem textItem = new TextItem();
         controller.setTextItem(textItem);

@@ -44,7 +44,7 @@ public class ItemStoreDB implements ItemStore{
     }
 
     @Override
-    public void saveItems(Item... items) {
+    public void persistItems(Item... items) {
         for (Item item : items) {
             em.persist(item);
         }

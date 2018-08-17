@@ -7,12 +7,15 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
+import static com.myapp.storing.Item.OWNER_PARAM;
+
 /**
  * <p>Created by MontolioV on 29.04.18.
  */
 @Entity
 @NamedQueries({
         @NamedQuery(name = FileItem.GET_ALL_HASHES, query = "select distinct fi.hash from FileItem fi"),
+        @NamedQuery(name = FileItem.GET_TOTAL_SIZE_BY_OWNER, query = "select sum(fi.size) from FileItem fi where fi.owner=:" + OWNER_PARAM),
 })
 @Access(value = AccessType.PROPERTY)
 @Table(indexes = {
@@ -21,6 +24,7 @@ import java.util.List;
 public class FileItem extends Item {
     private static final String PREFIX = "com.myapp.storing.FileItem.";
     public static final String GET_ALL_HASHES = PREFIX + "GET_ALL_HASHES";
+    public static final String GET_TOTAL_SIZE_BY_OWNER = PREFIX + "GET_TOTAL_SIZE_BY_OWNER";
     public static final int MAX_SIZE_BYTE = (int) 1_000_000_000;
 
     private String nativeName;

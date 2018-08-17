@@ -42,20 +42,20 @@ public class CreateItemController {
         principal = facesContext.getExternalContext().getUserPrincipal();
     }
 
-    // TODO: 15.05.18 change redirects
-    public void createTextItem() throws IOException {
+    public String createTextItem() throws IOException {
         createItem(textItem);
-        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
+        return "show-item.jsf?faces-redirect=true&id=" + textItem.getId();
     }
 
-    public void createFileItem() throws IOException {
+    // TODO: 17.08.18 Check if user has available space to save item
+    public String createFileItem() throws IOException {
         if (tmpFile == null) {
-            return;
+            return null;
         }
 
         if (tmpFile.getSize() > FileItem.MAX_SIZE_BYTE) {
             facesContext.addMessage("fileInput", new FacesMessage("File is too large!"));
-            return;
+            return null;
         }
 
         try {
@@ -64,7 +64,7 @@ public class CreateItemController {
         } catch (IOException e) {
             e.printStackTrace();
             facesContext.addMessage("fileInput", new FacesMessage("File download fail. Try again."));
-            return;
+            return null;
         }
 
         fileItem.setContentType(tmpFile.getContentType());
@@ -72,7 +72,7 @@ public class CreateItemController {
         fileItem.setSize(tmpFile.getSize());
 
         createItem(fileItem);
-        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
+        return "show-item.jsf?faces-redirect=true&id=" + fileItem.getId();
     }
 
     private void createItem(Item item) {
@@ -82,7 +82,7 @@ public class CreateItemController {
         Date date = Date.from(Instant.now().minus(1, ChronoUnit.SECONDS));
         item.setCreationDate(date);
 
-        itemStore.saveItems(item);
+        itemStore.persistItems(item);
         if (tagsNames != null) {
             Set<String> tagNamesSet = new HashSet<>(tagsNames);
             for (String tag : tagNamesSet) {

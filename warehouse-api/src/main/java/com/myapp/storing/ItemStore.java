@@ -17,7 +17,7 @@ public interface ItemStore {
 
     Set<String> getHashesOfFileItems();
 
-    void saveItems(Item... items);
+    void persistItems(Item... items);
 
     void deleteAnyItem(long id);
 

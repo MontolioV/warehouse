@@ -76,7 +76,7 @@ public class CreateItemControllerTest {
 
         controller.createTextItem();
 
-        verify(isMock).saveItems(textItem);
+        verify(isMock).persistItems(textItem);
         verify(tsMock).saveTag(tag1, textItem);
         verify(tsMock).saveTag(tag2, textItem);
         verify(tsMock).saveTag(tag3, textItem);
@@ -105,7 +105,7 @@ public class CreateItemControllerTest {
         assertThat(fileItem.getSize(), is(fSize));
         assertThat(fileItem.getHash(), is(PASS_HASH_VALID));
 
-        verify(isMock).saveItems(fileItem);
+        verify(isMock).persistItems(fileItem);
         verify(tsMock).saveTag(tag1, fileItem);
         verify(tsMock).saveTag(tag2, fileItem);
         verify(tsMock).saveTag(tag3, fileItem);
@@ -125,7 +125,7 @@ public class CreateItemControllerTest {
         controller.createFileItem();
 
         verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
-        verify(isMock, never()).saveItems(any());
+        verify(isMock, never()).persistItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }
 
@@ -134,7 +134,7 @@ public class CreateItemControllerTest {
         controller.setTmpFile(null);
         controller.createFileItem();
 
-        verify(isMock, never()).saveItems(any());
+        verify(isMock, never()).persistItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }
 
@@ -149,7 +149,7 @@ public class CreateItemControllerTest {
         controller.createFileItem();
 
         verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
-        verify(isMock, never()).saveItems(any());
+        verify(isMock, never()).persistItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }
 

@@ -108,7 +108,7 @@ public class ItemStoreDBTest {
 
     @Test
     public void saveItems() {
-        itemStoreDB.saveItems(new Item(), new Item());
+        itemStoreDB.persistItems(new Item(), new Item());
         verify(emMock, times(2)).persist(any(Item.class));
     }
 

@@ -1,7 +1,31 @@
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
+}
+.flex-horizontal {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+.flex-horizontal>* {
+    margin: 10px;
+    flex: 1 1;
+}
+
+.ui-button {
+    margin: 3px;
+}
+/*.ui-panel {*/
+/*display: inline-block;*/
+/*height: 100%;*/
+
+/*}*/
+
+/*
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css?family=Muli');
-/*main color 56ACFF*/
-/*
+!*main color 56ACFF*!
+!*
 
 @media only screen and (max-width: 1000px){
     body {
@@ -37,13 +61,13 @@
         margin-right: 15%;
     }
 }
+*!
 */
-
 html, body {
     margin: 0;
     height: 100%;
 }
-
+/*
 body {
     background: #d0f0ff;
 }
@@ -53,7 +77,7 @@ body, input {
 }
 
 table {
-    /*border: 1px solid black;*/
+    !*border: 1px solid black;*!
     width: 70%;
     margin-left: 15%;
     margin-right: 15%;
@@ -135,9 +159,9 @@ textarea, input[type="text"], input[type="password"] {
     border-collapse: separate;
     border-spacing: 0;
     box-shadow: 3px 3px lightgray;
-    /*border-radius: 4px;*/
+    !*border-radius: 4px;*!
 }
-/*
+!*
 .dataTable th:first-child {
     border-radius: 4px 0 0 0;
 }
@@ -151,7 +175,7 @@ textarea, input[type="text"], input[type="password"] {
 .dataTable tbody tr:last-child td:last-child {
     border-radius: 0 0 4px 0;
 }
-*/
+*!
 .dataTable td, .dataTable th {
     padding: 10px;
 }
@@ -173,7 +197,7 @@ textarea, input[type="text"], input[type="password"] {
     flex-wrap: wrap;
 }
 .tagsContainer * {
-    /*border: 1px solid red;*/
+    !*border: 1px solid red;*!
     margin: 3px;
 }
 
@@ -198,7 +222,7 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     height: 100px;
     margin: 10%;
 }
-
+*/
 #mainDiv {
     min-height: 100vh;
     height: 100%;
@@ -218,7 +242,7 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     color: white;
     text-align: center;
 }
-
+/*
 .mediumForm{
     width: 50%;
 }
@@ -259,4 +283,4 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     color: red;
     overflow-wrap: break-word;
     border-radius: 100px;
-}
+}*/

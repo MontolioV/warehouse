@@ -3,7 +3,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:body>
@@ -13,29 +13,24 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGrid>
-                <h:outputLabel value="You are Admin!"/>
-                <h:panelGrid columns="2">
-                    <h:panelGrid>
-                        <h:outputLabel value="Services:"/>
-                        <h:outputLink value="user-management.jsf">User management</h:outputLink>
-                    </h:panelGrid>
-                    <h:panelGrid>
-                        <h:outputLabel value="Actions:"/>
-                        <h:form>
-                            <h:commandLink value="Delete all items!" action="#{deleteItemController.deleteAll()}">
-                                <f:ajax render="messages"/>
-                            </h:commandLink>
-                        </h:form>
-                        <h:form>
-                            <h:commandLink value="Clean up file store!" action="#{deleteItemController.cleanupFileStorage()}">
-                                <f:ajax render="messages"/>
-                            </h:commandLink>
-                        </h:form>
-                        <h:messages id="messages"/>
-                    </h:panelGrid>
-                </h:panelGrid>
-            </h:panelGrid>
+            <h:form>
+                <h:panelGroup layout="block" styleClass="flex-vertical">
+                    <h:panelGroup layout="block" styleClass="flex-horizontal">
+                        <p:panel header="Services">
+                            <p:link value="User management" outcome="user-management"/>
+                        </p:panel>
+                        <p:panel header="Actions">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <p:commandButton value="Delete all items!" action="#{deleteItemController.deleteAll()}"
+                                                 update="messages" process=""/>
+                                <p:commandButton value="Clean up file store!" action="#{deleteItemController.cleanupFileStorage()}"
+                                                 update="messages"/>
+                            </h:panelGroup>
+                        </p:panel>
+                    </h:panelGroup>
+                    <p:messages id="messages"/>
+                </h:panelGroup>
+            </h:form>
         </ui:define>
     </ui:composition>
 </h:body>

@@ -15,52 +15,53 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGrid columns="1">
-                <h:panelGrid columns="2">
+            <h:panelGroup layout="block" styleClass="flex-vertical">
+                <p:messages id="messages"/>
+                <h:panelGroup layout="block" styleClass="flex-horizontal">
                     <h:form  id="usersListForm">
-                        <h:panelGrid columns="1">
-                            <h:panelGrid id="loginGrid" columns="3">
-                                <h:outputLabel for="login" value="Login"/>
-                                <h:inputText id="login" value="#{userManagementController.login}"/>
-                                <h:message for="login"/>
-                            </h:panelGrid>
-
-                            <h:panelGrid columns="2">
+                        <h:panelGroup layout="block" styleClass="flex-vertical">
+                            <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                <p:outputLabel for="login" value="Login"/>
+                                <p:inputText id="login" value="#{userManagementController.login}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="flex-horizontal">
                                 <p:commandButton id="singleFind" value="Find user"
                                                  action="#{userManagementController.fetchSingleAccount()}"
-                                                 process="@this loginGrid" update="loginGrid editGroup tableContainer"
-                                                 styleClass="decoratedButton"/>
+                                                 process="@this login"
+                                                 update="login editGroup tableContainer messages"/>
                                 <p:commandButton id="allFind" value="Show all users"
                                                  action="#{userManagementController.fetchAccounts()}"
-                                                 update="loginGrid editGroup tableContainer"
+                                                 update="login editGroup tableContainer messages"/>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:form>
+
+                    <h:panelGroup id="editGroup" layout="block"
+                                  rendered="#{not empty userManagementController.singleAccount}">
+                        <o:importConstants type="com.myapp.security.Roles"/>
+                        <h:form id="editForm">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+
+                            </h:panelGroup>
+                            <h:panelGrid columns="1">
+                                <h:panelGrid columns="2">
+                                    <p:selectBooleanCheckbox id="isActive" value="#{userManagementController.active}"/>
+                                    <p:outputLabel for="isActive" value="Is active"/>
+                                </h:panelGrid>
+                                <p:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
+                                    <f:selectItems value="#{Roles}"/>
+                                </p:selectManyCheckbox>
+
+                                <p:commandButton value="Save"
+                                                 action="#{userManagementController.updateAccount()}"
+                                                 process="@form" update="@form tableContainer messages"
                                                  styleClass="decoratedButton"/>
                             </h:panelGrid>
-                        </h:panelGrid>
-                    </h:form>
-                </h:panelGrid>
-
-                <h:panelGroup id="editGroup" rendered="#{not empty userManagementController.singleAccount}">
-                    <o:importConstants type="com.myapp.security.Roles"/>
-                    <h:form id="editForm">
-                        <h:panelGrid columns="1">
-                            <h:outputLabel value="#{userManagementController.singleAccount.login}"/>
-                            <h:panelGrid columns="2">
-                                <h:outputLabel value="Is active"/>
-                                <h:selectBooleanCheckbox value="#{userManagementController.active}"/>
-                            </h:panelGrid>
-                            <h:selectManyCheckbox layout="lineDirection" label="Roles" value="#{userManagementController.roles}">
-                                <f:selectItems value="#{Roles}"/>
-                            </h:selectManyCheckbox>
-
-                            <p:commandButton value="Save"
-                                             action="#{userManagementController.updateAccount()}"
-                                             process="@form" update="@form tableContainer"
-                                             styleClass="decoratedButton"/>
-                        </h:panelGrid>
-                    </h:form>
+                        </h:form>
+                    </h:panelGroup>
                 </h:panelGroup>
 
-                <h:panelGroup id="tableContainer">
+                <h:panelGroup id="tableContainer" layout="block">
                     <h:dataTable id="usersTable"
                                  rendered="#{not empty userManagementController.accountList}"
                                  styleClass="dataTable"
@@ -92,7 +93,7 @@
                         </h:column>
                     </h:dataTable>
                 </h:panelGroup>
-            </h:panelGrid>
+            </h:panelGroup>
         </ui:define>
     </ui:composition>
 </h:body>

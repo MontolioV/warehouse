@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 <h:body>
@@ -11,30 +12,30 @@
         <h:outputLabel value="WAREHOUSE" id="nameBoard"/>
 
         <h:form id="topBar">
-            <h:button value="Home" outcome="/index"
-                      styleClass="decoratedButton topBarButton"/>
-            <h:button value="Search" outcome="/public/items-search"
-                      styleClass="decoratedButton topBarButton"/>
-            <h:button value="Private" outcome="/private/index" rendered="#{roleCheckerController.checkIsUser()}"
-                      styleClass="decoratedButton topBarButton"/>
-            <h:button value="Moderation" outcome="/moderation/index" rendered="#{roleCheckerController.checkIsModerator()}"
-                      styleClass="decoratedButton topBarButton"/>
-            <h:button value="Admin" outcome="/admin/index" rendered="#{roleCheckerController.checkIsAdmin()}"
-                      styleClass="decoratedButton topBarButton"/>
+            <p:button value="Home" outcome="/index"
+                      styleClass="topBarButton"/>
+            <p:button value="Search" outcome="/public/items-search"
+                      styleClass="topBarButton"/>
+            <p:button value="Private" outcome="/private/index" rendered="#{roleCheckerController.checkIsUser()}"
+                      styleClass="topBarButton"/>
+            <p:button value="Moderation" outcome="/moderation/index" rendered="#{roleCheckerController.checkIsModerator()}"
+                      styleClass="topBarButton"/>
+            <p:button value="Admin" outcome="/admin/index" rendered="#{roleCheckerController.checkIsAdmin()}"
+                      styleClass="topBarButton"/>
 
             <c:choose>
                 <c:when test="#{empty request.userPrincipal}">
-                    <h:button value="Login" outcome="/login"
-                              styleClass="decoratedButton topBarButton authenticationFirst"/>
-                    <h:button value="Registration" outcome="/registration"
-                              styleClass="decoratedButton topBarButton"/>
+                    <p:button value="Login" outcome="/login"
+                              styleClass="topBarButton authenticationFirst"/>
+                    <p:button value="Registration" outcome="/registration"
+                              styleClass="topBarButton"/>
                 </c:when>
                 <c:otherwise>
-                    <h:button value="#{request.userPrincipal.name}" outcome="/private/personal-cabinet"
-                              styleClass="decoratedButton topBarButton authenticationFirst"/>
+                    <p:button value="#{request.userPrincipal.name}" outcome="/private/personal-cabinet"
+                              styleClass="topBarButton authenticationFirst"/>
 
-                    <h:commandButton value="Logout" action="#{redirectController.logoutRedirect}"
-                                     styleClass="decoratedButton topBarButton"/>
+                    <p:commandButton value="Logout" action="#{redirectController.logoutRedirect}" ajax="false"
+                                     styleClass="topBarButton"/>
                 </c:otherwise>
             </c:choose>
         </h:form>

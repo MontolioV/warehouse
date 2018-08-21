@@ -60,6 +60,19 @@ body {
     margin: 10px;
     flex: 1 1;
 }
+.centered {
+    align-items: center;
+    justify-content: center;
+}
+.small-box {
+    max-width: 30%;
+}
+.medium-box {
+    max-width: 50%;
+}
+.large-box {
+    max-width: 80%;
+}
 
 body, input {
     font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;

@@ -15,10 +15,10 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGroup layout="block" styleClass="flex-vertical">
+            <h:panelGroup layout="block" styleClass="flex-vertical centered">
                 <p:messages id="messages"/>
                 <h:panelGroup layout="block" styleClass="flex-horizontal">
-                    <h:form  id="usersListForm">
+                    <h:form  id="usersListForm" styleClass="small-box">
                         <h:panelGroup layout="block" styleClass="flex-vertical">
                             <h:panelGroup layout="block" styleClass="flex-horizontal">
                                 <p:outputLabel for="login" value="Login"/>
@@ -36,7 +36,7 @@
                         </h:panelGroup>
                     </h:form>
 
-                    <h:panelGroup id="editGroup" layout="block"
+                    <h:panelGroup id="editGroup" layout="block" styleClass="small-box"
                                   rendered="#{not empty userManagementController.singleAccount}">
                         <o:importConstants type="com.myapp.security.Roles"/>
                         <h:form id="editForm">

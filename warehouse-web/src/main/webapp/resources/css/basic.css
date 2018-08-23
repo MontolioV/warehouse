@@ -42,28 +42,9 @@ html, body {
 }
 body {
     background: #d0f0ff;
+    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
 }
 
-.flex-vertical {
-    display: flex;
-    flex-direction: column;
-}
-.flex-vertical>* {
-    margin: 3px;
-}
-.flex-horizontal {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-}
-.flex-horizontal>* {
-    margin: 10px;
-    flex: 1 1;
-}
-.centered {
-    align-items: center;
-    justify-content: center;
-}
 .small-box {
     max-width: 30%;
 }
@@ -74,8 +55,48 @@ body {
     max-width: 80%;
 }
 
-body, input {
-    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
+}
+.flex-vertical>* {
+    margin: 5px 0;
+}
+.flex-horizontal {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+.flex-horizontal>* {
+    margin: 0 5px;
+    flex: 1 1;
+}
+.flex-resizable>* {
+    flex: 1 1;
+}
+.flex-not-resizable>* {
+    flex: 0 0;
+}
+.flex-no-wrap {
+    flex-wrap: nowrap;
+}
+.flex-m-ax-start {
+    justify-content: start;
+}
+.flex-c-ax-start {
+    align-items: start;
+}
+.flex-m-ax-center {
+    justify-content: center;
+}
+.flex-c-ax-center {
+    align-items: center;
+}
+.flex-m-ax-end {
+    justify-content: end;
+}
+.flex-c-ax-end {
+    align-items: end;
 }
 /*
 table {

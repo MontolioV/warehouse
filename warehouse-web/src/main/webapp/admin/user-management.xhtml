@@ -15,34 +15,29 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGroup layout="block" styleClass="flex-vertical centered">
+            <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
                 <p:messages id="messages"/>
-                <h:panelGroup layout="block" styleClass="flex-horizontal">
-                    <h:form  id="usersListForm" styleClass="small-box">
-                        <h:panelGroup layout="block" styleClass="flex-vertical">
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel for="login" value="Login"/>
-                                <p:inputText id="login" value="#{userManagementController.login}"/>
-                            </h:panelGroup>
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:commandButton id="singleFind" value="Find user"
-                                                 action="#{userManagementController.fetchSingleAccount()}"
-                                                 process="@this login"
-                                                 update="login editGroup tableContainer messages"/>
-                                <p:commandButton id="allFind" value="Show all users"
-                                                 action="#{userManagementController.fetchAccounts()}"
-                                                 update="login editGroup tableContainer messages"/>
-                            </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="medium-box flex-horizontal">
+                    <h:form  id="usersListForm" styleClass="flex-vertical flex-m-ax-center flex-c-ax-center">
+                        <h:panelGroup layout="block" styleClass="flex-horizontal flex-no-wrap">
+                            <p:outputLabel for="login" value="Login"/>
+                            <p:inputText id="login" value="#{userManagementController.login}"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:commandButton id="singleFind" value="Find user"
+                                             action="#{userManagementController.fetchSingleAccount()}"
+                                             process="@this login"
+                                             update="login editGroup tableContainer messages"/>
+                            <p:commandButton id="allFind" value="Show all users"
+                                             action="#{userManagementController.fetchAccounts()}"
+                                             update="login editGroup tableContainer messages"/>
                         </h:panelGroup>
                     </h:form>
 
-                    <h:panelGroup id="editGroup" layout="block" styleClass="small-box"
+                    <h:panelGroup id="editGroup" layout="block"
                                   rendered="#{not empty userManagementController.singleAccount}">
                         <o:importConstants type="com.myapp.security.Roles"/>
                         <h:form id="editForm">
-                            <h:panelGroup layout="block" styleClass="flex-vertical">
-
-                            </h:panelGroup>
                             <h:panelGrid columns="1">
                                 <h:panelGrid columns="2">
                                     <p:selectBooleanCheckbox id="isActive" value="#{userManagementController.active}"/>

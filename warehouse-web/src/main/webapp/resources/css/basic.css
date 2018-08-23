@@ -321,3 +321,7 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     overflow-wrap: break-word;
     border-radius: 100px;
 }*/
+.borderless, .borderless .ui-widget-content {
+    border: none;
+}
+

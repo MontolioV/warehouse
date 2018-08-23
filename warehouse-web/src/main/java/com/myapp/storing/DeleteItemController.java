@@ -23,6 +23,7 @@ public class DeleteItemController {
     private FileStoreCleaner fileStoreCleaner;
     private Long id;
 
+    // TODO: 23.08.18 Messages
     public void deleteByIDNoRedirect() {
         ExternalContext externalContext = facesContext.getExternalContext();
         if (id == null || externalContext.getUserPrincipal() == null) {

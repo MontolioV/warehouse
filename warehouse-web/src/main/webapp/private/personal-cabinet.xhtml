@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
@@ -13,47 +14,57 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:panelGroup id="accountInfo" layout="block" styleClass="mirrorContainer mediumForm centered">
-                <h:outputLabel value="Account info"/>
-                <h:panelGroup layout="block" styleClass="mirror">
-                    <h:outputLabel value="Login" for="login"/>
-                    <h:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
-                </h:panelGroup>
-                <h:panelGroup layout="block" styleClass="mirror">
-                    <h:outputLabel value="Email" for="email"/>
-                    <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
-                </h:panelGroup>
-            </h:panelGroup>
+            <p:tooltip/>
+            <h:panelGroup layout="block" styleClass="flex-horizontal">
+                <p:panel id="accountInfo" header="Account info">
+                    <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                        <p:outputLabel value="Login" for="login"/>
+                        <p:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
 
-            <h:panelGroup layout="block">
-                <h:form>
-                    <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
-                        <h:outputLabel value="Edit password"/>
-                        <h:panelGroup layout="block" styleClass="mirror">
-                            <h:outputLabel value="New password" for="newPassword"/>
-                            <h:inputSecret id="newPassword" value="#{personalCabinetController.password}" required="true"/>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="mirror">
-                            <h:outputLabel value="New password confirm" for="confirm"/>
-                            <h:inputSecret id="confirm" value="#{personalCabinetController.confirmPassword}" required="true"/>
-                        </h:panelGroup>
-                        <p:commandButton value="Change password" action="#{personalCabinetController.changePassword()}"
-                                         process="@form" update="accountInfo messages"
+                        <h:outputLabel value="Email" for="email"/>
+                        <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
+                    </p:panelGrid>
+                </p:panel>
+
+                <h:form id="passForm">
+                    <p:panel id="passwordPanel" header="Change newPassword">
+                        <p:panelGrid columns="3" layout="grid" styleClass="borderless">
+                            <p:outputLabel for="oldPassword" value="Old password"/>
+                            <p:password id="oldPassword" required="true">
+                                <f:validator binding="#{rightPasswordValidator}"/>
+                            </p:password>
+                            <p:message for="oldPassword" display="tooltip" showDetail="true" showSummary="true"/>
+
+                            <p:outputLabel for="newPassword" value="New password"/>
+                            <p:password id="newPassword" feedback="true" required="true" match="confirm"
+                                        value="#{personalCabinetController.newPassword}"
+                                        binding="#{personalCabinetController.newPasswordInput}"/>
+                            <p:message for="newPassword" display="tooltip"/>
+
+                            <p:outputLabel for="confirm" value="Confirm"/>
+                            <p:password id="confirm" required="true"/>
+                            <p:message for="confirm" display="tooltip"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Change newPassword" action="#{personalCabinetController.changePassword()}"
+                                         process="@form" update="@form accountInfo messages"
                                          styleClass="decoratedButton"/>
-                    </h:panelGroup>
+
+                    </p:panel>
                 </h:form>
-                <h:form>
-                    <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
-                        <h:outputLabel value="Edit email"/>
-                        <h:panelGroup layout="block" styleClass="mirror">
-                            <h:outputLabel value="New email" for="newEmail"/>
-                            <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+                <h:panelGroup layout="block">
+                    <h:form>
+                        <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
+                            <h:outputLabel value="Edit email"/>
+                            <h:panelGroup layout="block" styleClass="mirror">
+                                <h:outputLabel value="New email" for="newEmail"/>
+                                <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+                            </h:panelGroup>
+                            <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
+                                             process="@form" update="accountInfo messages"
+                                             styleClass="decoratedButton"/>
                         </h:panelGroup>
-                        <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
-                                         process="@form" update="accountInfo messages"
-                                         styleClass="decoratedButton"/>
-                    </h:panelGroup>
-                </h:form>
+                    </h:form>
+                </h:panelGroup>
             </h:panelGroup>
 
             <h:messages id="messages" globalOnly="true" layout="table"/>

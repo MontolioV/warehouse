@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
@@ -18,9 +19,9 @@ public class PersonalCabinetController {
     @EJB
     private AccountStore accountStore;
     private Account selfAccount;
-    private String password;
-    private String confirmPassword;
+    private String newPassword;
     private String email;
+    private UIComponent newPasswordInput;
 
     @PostConstruct
     public void init() {
@@ -32,16 +33,12 @@ public class PersonalCabinetController {
     }
 
     public void changePassword() {
-        if (password.equals(confirmPassword)) {
-            try {
-                accountStore.changeSelfAccountPassword(password);
-                facesContext.addMessage(null, new FacesMessage("Password has been changed."));
-                fetchSelfAccount();
-            } catch (UnsecurePasswordException e) {
-                facesContext.addMessage(null, new FacesMessage("Password is not secure!"));
-            }
-        } else {
-            facesContext.addMessage(null, new FacesMessage("Password is not confirmed!"));
+        try {
+            accountStore.changeSelfAccountPassword(newPassword);
+            facesContext.addMessage(null, new FacesMessage("Password has been changed."));
+            fetchSelfAccount();
+        } catch (UnsecurePasswordException e) {
+            facesContext.addMessage(newPasswordInput.getClientId(), new FacesMessage(FacesMessage.SEVERITY_WARN, "Password is not secure!", null));
         }
     }
 
@@ -59,20 +56,12 @@ public class PersonalCabinetController {
         this.accountStore = accountStore;
     }
 
-    public String getPassword() {
-        return password;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
     public String getEmail() {
@@ -97,5 +86,13 @@ public class PersonalCabinetController {
 
     public void setSelfAccount(Account selfAccount) {
         this.selfAccount = selfAccount;
+    }
+
+    public UIComponent getNewPasswordInput() {
+        return newPasswordInput;
+    }
+
+    public void setNewPasswordInput(UIComponent newPasswordInput) {
+        this.newPasswordInput = newPasswordInput;
     }
 }

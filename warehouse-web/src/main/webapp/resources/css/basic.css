@@ -46,12 +46,15 @@ body {
 }
 
 .small-box {
+    min-width: 300px;
     max-width: 30%;
 }
 .medium-box {
+    min-width: 500px;
     max-width: 50%;
 }
 .large-box {
+    min-width: 800px;
     max-width: 80%;
 }
 
@@ -98,6 +101,11 @@ body {
 .flex-c-ax-end {
     align-items: end;
 }
+
+.flex-horizontal .ui-picklist .ui-picklist-list, .flex-vertical .ui-picklist .ui-picklist-list{
+    width: initial;
+}
+
 /*
 table {
     !*border: 1px solid black;*!
@@ -325,3 +333,6 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
     border: none;
 }
 
+textarea[id$=description] {
+    height: auto;
+}

@@ -5,7 +5,8 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:composite="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <composite:interface>
     <composite:attribute name="item" required="true" type="com.myapp.storing.Item"/>
@@ -13,32 +14,34 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:panelGroup layout="block" styleClass="mirror">
-        <h:outputLabel value="Name" for="name"/>
-        <h:inputText id="name" value="#{cc.attrs.item.name}" required="true" a:autofocus="true"/>
-        <h:message id="m_name" for="name"/>
-    </h:panelGroup>
-    <h:panelGroup layout="block" styleClass="mirror">
-        <h:outputLabel value="Description" for="description"/>
-        <h:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="3"/>
-        <h:message id="m_description" for="description"/>
-    </h:panelGroup>
-    <h:panelGroup layout="block" styleClass="mirror">
-        <h:outputLabel value="Tags" for="tags"/>
-        <p:autoComplete id="tags" multiple="true" queryDelay="700"
-                        value="#{cc.attrs.createController.tagsNames}"
-                        completeMethod="#{cc.attrs.createController.autocompleteTags}"
-                        var="tagName" itemValue="#{tagName}" itemLabel="#{tagName}">
-            <p:column>
-                <h:outputText value="#{tagName}" />
-            </p:column>
-        </p:autoComplete>
-        <h:message id="m_tags" for="tags"/>
-    </h:panelGroup>
-    <h:panelGroup layout="block" styleClass="mirror">
-        <h:outputLabel value="Shared" for="shared" rendered="#{not empty request.userPrincipal}"/>
-        <h:selectBooleanCheckbox id="shared" value="#{cc.attrs.item.shared}" rendered="#{not empty request.userPrincipal}"/>
-        <h:message id="m_shared" for="shared"/>
+    <h:panelGroup layout="block" styleClass="flex-horizontal">
+        <h:panelGroup layout="block" styleClass="flex-vertical">
+            <p:outputLabel value="Name" for="name"/>
+            <p:inputText id="name" value="#{cc.attrs.item.name}" required="true" a:autofocus="true"/>
+            <p:message id="m_name" for="name"/>
+
+            <p:outputLabel value="Description" for="description"/>
+            <p:inputTextarea id="description" value="#{cc.attrs.item.description}" autoResize="false" rows="11"/>
+            <p:message id="m_description" for="description"/>
+        </h:panelGroup>
+        <h:panelGroup layout="block" styleClass="flex-vertical">
+            <p:outputLabel for="existingTags" value="Tags"/>
+            <p:pickList id="existingTags" value="#{cc.attrs.createController.existingTagNamesDualListModel}"
+                        var="tagName" itemLabel="#{tagName}" itemValue="#{tagName}"
+                        showCheckbox="true" showSourceFilter="true" showTargetFilter="true">
+                <f:facet name="sourceCaption">Available tags</f:facet>
+                <f:facet name="targetCaption">Tags for item</f:facet>
+            </p:pickList>
+            <p:outputLabel for="newTags" value="Create tags"/>
+            <p:autoComplete id="newTags" multiple="true" queryDelay="700"
+                            value="#{cc.attrs.createController.newTagNames}"
+                            completeMethod="#{cc.attrs.createController.autocompleteTags}"
+                            var="tagName" itemValue="#{tagName}" itemLabel="#{tagName}">
+                <p:column>
+                    <h:outputText value="#{tagName}" />
+                </p:column>
+            </p:autoComplete>
+        </h:panelGroup>
     </h:panelGroup>
 </composite:implementation>
 </html>

@@ -18,8 +18,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.storing.Tag.NAME_PARAM;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -128,5 +130,19 @@ public class TagStoreDBTest {
 
         List<Tag> tagList = tagStoreDB.fetchTagsLikeName("name");
         assertThat(tagList, sameInstance(tags));
+    }
+
+    @Test
+    public void fetchTagNames() {
+        Tag tag1 = mock(Tag.class);
+        Tag tag2 = mock(Tag.class);
+        List<Tag> tagList = newArrayList(tag1, tag2);
+        when(tag1.getName()).thenReturn("1");
+        when(tag2.getName()).thenReturn("2");
+        when(emMock.createNamedQuery(Tag.GET_ALL, Tag.class)).thenReturn(nameQMock);
+        when(nameQMock.getResultList()).thenReturn(tagList);
+
+        List<String> names = tagStoreDB.fetchTagNames();
+        assertThat(names, containsInAnyOrder("1", "2"));
     }
 }

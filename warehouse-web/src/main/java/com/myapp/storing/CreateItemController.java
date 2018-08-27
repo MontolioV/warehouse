@@ -1,5 +1,7 @@
 package com.myapp.storing;
 
+import org.primefaces.model.DualListModel;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
@@ -11,10 +13,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,11 +34,18 @@ public class CreateItemController {
     private TextItem textItem = new TextItem();
     private FileItem fileItem = new FileItem();
     private Part tmpFile;
-    private List<String> tagsNames;
+    private List<String> newTagNames;
+    private DualListModel<String> existingTagNamesDualListModel;
+
 
     @PostConstruct
     public void init() {
         principal = facesContext.getExternalContext().getUserPrincipal();
+        existingTagNamesDualListModel = new DualListModel<>(fetchExistingTagNames(), new ArrayList<>());
+    }
+
+    private List<String> fetchExistingTagNames() {
+        return tagStore.fetchTagNames();
     }
 
     // TODO: 15.05.18 change redirects
@@ -83,8 +89,10 @@ public class CreateItemController {
         item.setCreationDate(date);
 
         itemStore.saveItems(item);
-        if (tagsNames != null) {
-            Set<String> tagNamesSet = new HashSet<>(tagsNames);
+        if (newTagNames != null) {
+            Set<String> tagNamesSet = new HashSet<>(newTagNames);
+            tagNamesSet.addAll(existingTagNamesDualListModel.getTarget());
+
             for (String tag : tagNamesSet) {
                 tagStore.saveTag(tag, item);
             }
@@ -169,11 +177,19 @@ public class CreateItemController {
         this.fileStore = fileStore;
     }
 
-    public List<String> getTagsNames() {
-        return tagsNames;
+    public List<String> getNewTagNames() {
+        return newTagNames;
     }
 
-    public void setTagsNames(List<String> tagsNames) {
-        this.tagsNames = tagsNames;
+    public void setNewTagNames(List<String> newTagNames) {
+        this.newTagNames = newTagNames;
+    }
+
+    public DualListModel<String> getExistingTagNamesDualListModel() {
+        return existingTagNamesDualListModel;
+    }
+
+    public void setExistingTagNamesDualListModel(DualListModel<String> existingTagNamesDualListModel) {
+        this.existingTagNamesDualListModel = existingTagNamesDualListModel;
     }
 }

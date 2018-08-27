@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.myapp.storing.Tag.NAME_PARAM;
 
@@ -62,5 +63,10 @@ public class TagStoreDB implements TagStore{
         return em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)
                 .setParameter(Tag.NAME_PARAM, name)
                 .getResultList();
+    }
+
+    @Override
+    public List<String> fetchTagNames() {
+        return em.createNamedQuery(Tag.GET_ALL, Tag.class).getResultList().stream().map(Tag::getName).collect(Collectors.toList());
     }
 }

@@ -17,4 +17,6 @@ public interface TagStore {
     List<Tag> fetchMostPopularTags(@Positive int amount);
 
     List<Tag> fetchTagsLikeName(@NotBlank String name);
+
+    List<String> fetchTagNames();
 }

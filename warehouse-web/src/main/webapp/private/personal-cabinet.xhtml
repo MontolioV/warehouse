@@ -14,60 +14,61 @@
         </ui:define>
 
         <ui:define name="body">
-            <p:tooltip/>
-            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                <p:panel id="accountInfo" header="Account info">
-                    <p:panelGrid columns="2" layout="grid" styleClass="borderless">
-                        <p:outputLabel value="Login" for="login"/>
-                        <p:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
+            <p:messages id="messages"/>
+            <h:panelGroup layout="block" styleClass="flex-horizontal flex-m-ax-center">
+                <h:panelGroup layout="block" styleClass="medium-box flex-vertical">
+                    <p:panel id="accountInfo" header="Account info">
+                        <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
+                            <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                                <p:outputLabel value="Login" for="login"/>
+                                <p:outputLabel id="login" value="#{personalCabinetController.selfAccount.login}"/>
 
-                        <h:outputLabel value="Email" for="email"/>
-                        <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
-                    </p:panelGrid>
-                </p:panel>
-
-                <h:form id="passForm">
-                    <p:panel id="passwordPanel" header="Change newPassword">
-                        <p:panelGrid columns="3" layout="grid" styleClass="borderless">
-                            <p:outputLabel for="oldPassword" value="Old password"/>
-                            <p:password id="oldPassword" required="true">
-                                <f:validator binding="#{rightPasswordValidator}"/>
-                            </p:password>
-                            <p:message for="oldPassword" display="tooltip" showDetail="true" showSummary="true"/>
-
-                            <p:outputLabel for="newPassword" value="New password"/>
-                            <p:password id="newPassword" feedback="true" required="true" match="confirm"
-                                        value="#{personalCabinetController.newPassword}"
-                                        binding="#{personalCabinetController.newPasswordInput}"/>
-                            <p:message for="newPassword" display="tooltip"/>
-
-                            <p:outputLabel for="confirm" value="Confirm"/>
-                            <p:password id="confirm" required="true"/>
-                            <p:message for="confirm" display="tooltip"/>
-                        </p:panelGrid>
-                        <p:commandButton value="Change newPassword" action="#{personalCabinetController.changePassword()}"
-                                         process="@form" update="@form accountInfo messages"
-                                         styleClass="decoratedButton"/>
-
-                    </p:panel>
-                </h:form>
-                <h:panelGroup layout="block">
-                    <h:form>
-                        <h:panelGroup layout="block" styleClass="mirrorContainer smallForm">
-                            <h:outputLabel value="Edit email"/>
-                            <h:panelGroup layout="block" styleClass="mirror">
-                                <h:outputLabel value="New email" for="newEmail"/>
-                                <h:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
-                            </h:panelGroup>
-                            <p:commandButton value="Change email" action="#{personalCabinetController.changeEmail()}"
-                                             process="@form" update="accountInfo messages"
-                                             styleClass="decoratedButton"/>
+                                <h:outputLabel value="Email" for="email"/>
+                                <h:outputLabel id="email" value="#{personalCabinetController.selfAccount.email}"/>
+                            </p:panelGrid>
                         </h:panelGroup>
+                    </p:panel>
+
+                    <h:form>
+                        <p:panel header="Change password">
+                            <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
+                                <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                                    <p:outputLabel for="oldPassword" value="Old password"/>
+                                    <p:password id="oldPassword" required="true">
+                                        <f:validator binding="#{rightPasswordValidator}"/>
+                                    </p:password>
+
+                                    <p:outputLabel for="newPassword" value="New password"/>
+                                    <p:password id="newPassword" feedback="true" required="true" match="confirm"
+                                                value="#{personalCabinetController.newPassword}"
+                                                binding="#{personalCabinetController.newPasswordInput}"
+                                                validatorMessage="You must confirm new password!"/>
+
+                                    <p:outputLabel for="confirm" value="Confirm"/>
+                                    <p:password id="confirm" required="true"/>
+                                </p:panelGrid>
+                                <p:commandButton value="Submit" action="#{personalCabinetController.changePassword()}"
+                                                 process="@form" update="@form accountInfo messages"
+                                                 styleClass="decoratedButton"/>
+                            </h:panelGroup>
+                        </p:panel>
+                    </h:form>
+
+                    <h:form>
+                        <p:panel header="Change email">
+                            <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
+                                <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                                    <p:outputLabel for="newEmail" value="New email"/>
+                                    <p:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
+                                </p:panelGrid>
+                                <p:commandButton value="Submit" action="#{personalCabinetController.changeEmail()}"
+                                                 process="@form" update="accountInfo messages"
+                                                 styleClass="decoratedButton"/>
+                            </h:panelGroup>
+                        </p:panel>
                     </h:form>
                 </h:panelGroup>
             </h:panelGroup>
-
-            <h:messages id="messages" globalOnly="true" layout="table"/>
         </ui:define>
     </ui:composition>
 </h:body>

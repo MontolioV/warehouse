@@ -59,9 +59,23 @@ public class TagStoreDB implements TagStore{
     }
 
     @Override
-    public List<Tag> fetchTagsLikeName(@NotBlank String name) {
+    public List<Tag> fetchTagsNameContains(@NotBlank String string) {
         return em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)
-                .setParameter(Tag.NAME_PARAM, name)
+                .setParameter(Tag.NAME_PARAM, "%" + string + "%")
+                .getResultList();
+    }
+
+    @Override
+    public List<Tag> fetchTagsNameStartsWith(@NotBlank String string) {
+        return em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)
+                .setParameter(Tag.NAME_PARAM, "%" + string)
+                .getResultList();
+    }
+
+    @Override
+    public List<Tag> fetchTagsNameEndsWith(@NotBlank String string) {
+        return em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)
+                .setParameter(Tag.NAME_PARAM, string + "%")
                 .getResultList();
     }
 

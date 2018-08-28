@@ -16,7 +16,11 @@ public interface TagStore {
 
     List<Tag> fetchMostPopularTags(@Positive int amount);
 
-    List<Tag> fetchTagsLikeName(@NotBlank String name);
+    List<Tag> fetchTagsNameContains(@NotBlank String string);
+
+    List<Tag> fetchTagsNameStartsWith(@NotBlank String string);
+
+    List<Tag> fetchTagsNameEndsWith(@NotBlank String string);
 
     List<String> fetchTagNames();
 }

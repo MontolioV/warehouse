@@ -46,6 +46,7 @@ public class TagStoreDBTest {
     private String tagStringFormatted = "tagString";
     private Item item1;
     private Item item2;
+    private ArrayList<Tag> tags = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -57,6 +58,7 @@ public class TagStoreDBTest {
         when(emMock.find(Item.class, item2.getId())).thenReturn(item2);
         when(emMock.createNamedQuery(Tag.GET_BY_NAME, Tag.class)).thenReturn(nameQMock);
         when(nameQMock.setParameter(NAME_PARAM, tagStringFormatted)).thenReturn(nameQMock);
+        when(emMock.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)).thenReturn(likeNameQMock);
     }
 
     @Test
@@ -123,12 +125,30 @@ public class TagStoreDBTest {
     @Test
     public void fetchTagsLikeName() {
         TypedQuery<Tag> paramQueryMock = mock(TypedQuery.class);
-        ArrayList<Tag> tags = new ArrayList<>();
-        when(emMock.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class)).thenReturn(likeNameQMock);
-        when(likeNameQMock.setParameter(Tag.NAME_PARAM, "name")).thenReturn(paramQueryMock);
+        when(likeNameQMock.setParameter(Tag.NAME_PARAM, "%" + tagStringFormatted + "%")).thenReturn(paramQueryMock);
         when(paramQueryMock.getResultList()).thenReturn(tags);
 
-        List<Tag> tagList = tagStoreDB.fetchTagsLikeName("name");
+        List<Tag> tagList = tagStoreDB.fetchTagsNameContains(tagStringFormatted);
+        assertThat(tagList, sameInstance(tags));
+    }
+
+    @Test
+    public void fetchTagsStartsWithName() {
+        TypedQuery<Tag> paramQueryMock = mock(TypedQuery.class);
+        when(likeNameQMock.setParameter(Tag.NAME_PARAM, "%" + tagStringFormatted)).thenReturn(paramQueryMock);
+        when(paramQueryMock.getResultList()).thenReturn(tags);
+
+        List<Tag> tagList = tagStoreDB.fetchTagsNameStartsWith(tagStringFormatted);
+        assertThat(tagList, sameInstance(tags));
+    }
+
+    @Test
+    public void fetchTagsNameEndsWith() {
+        TypedQuery<Tag> paramQueryMock = mock(TypedQuery.class);
+        when(likeNameQMock.setParameter(Tag.NAME_PARAM, tagStringFormatted + "%")).thenReturn(paramQueryMock);
+        when(paramQueryMock.getResultList()).thenReturn(tags);
+
+        List<Tag> tagList = tagStoreDB.fetchTagsNameEndsWith(tagStringFormatted);
         assertThat(tagList, sameInstance(tags));
     }
 

@@ -227,9 +227,9 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         int sumOfTaggedItems = tagResultList.stream().mapToInt(value -> value.getItems().size()).sum();
         assertThat(sumOfTaggedItems, is(3));
 
-        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, "TEST").getResultList();
+        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, TEST_1.substring(0, 4)).getResultList();
         assertThat(tagResultList.size(), is(2));
-        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, "test_1").getResultList();
+        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, TEST_1).getResultList();
         assertThat(tagResultList.size(), is(1));
 
         List<String> hashesList = em.createNamedQuery(FileItem.GET_ALL_HASHES, String.class).getResultList();

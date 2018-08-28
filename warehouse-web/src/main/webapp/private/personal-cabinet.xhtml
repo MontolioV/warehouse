@@ -62,7 +62,7 @@
                                     <p:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
                                 </p:panelGrid>
                                 <p:commandButton value="Submit" action="#{personalCabinetController.changeEmail()}"
-                                                 process="@form" update="accountInfo messages"
+                                                 process="@form" update="@form accountInfo messages"
                                                  styleClass="decoratedButton"/>
                             </h:panelGroup>
                         </p:panel>

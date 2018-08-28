@@ -62,8 +62,8 @@ body {
     display: flex;
     flex-direction: column;
 }
-.flex-vertical>* {
-    margin: 5px 0;
+.flex-vertical>*, .flex-vertical>.ui-inputfield {
+    margin: 0 0 5px 0;
 }
 .flex-horizontal {
     display: flex;
@@ -71,7 +71,7 @@ body {
     justify-content: space-between;
 }
 .flex-horizontal>* {
-    margin: 0 5px;
+    margin: 0 5px 0 0;
     flex: 1 1;
 }
 .flex-resizable>* {
@@ -102,6 +102,9 @@ body {
     align-items: end;
 }
 
+.flex-horizontal .ui-picklist, .flex-vertical .ui-picklist {
+    min-width: 530px;
+}
 .flex-horizontal .ui-picklist .ui-picklist-list, .flex-vertical .ui-picklist .ui-picklist-list{
     width: initial;
 }
@@ -335,4 +338,9 @@ button.largeButton, input[type="button"].largeButton, input[type="submit"].large
 
 textarea[id$=description] {
     height: auto;
+}
+
+div[id$=newTags]>ul {
+    width: auto;
+    max-width: 530px;
 }

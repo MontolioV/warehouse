@@ -100,7 +100,7 @@ public class CreateItemController {
     }
 
     public List<String> autocompleteTags(String query) {
-        return tagStore.fetchTagsLikeName(query).stream().map(Tag::getName).collect(Collectors.toList());
+        return tagStore.fetchTagsNameStartsWith(query).stream().map(Tag::getName).collect(Collectors.toList());
     }
 
     //Getters & Setters

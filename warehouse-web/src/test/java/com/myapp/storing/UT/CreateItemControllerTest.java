@@ -192,7 +192,7 @@ public class CreateItemControllerTest {
         ArrayList<Tag> tags = newArrayList(tag1Mock, tag2Mock);
         when(tag1Mock.getName()).thenReturn(tag1);
         when(tag2Mock.getName()).thenReturn(tag2);
-        when(tsMock.fetchTagsLikeName("name")).thenReturn(tags);
+        when(tsMock.fetchTagsNameStartsWith("name")).thenReturn(tags);
 
         List<String> names = controller.autocompleteTags("name");
         assertThat(names.size(), is(2));

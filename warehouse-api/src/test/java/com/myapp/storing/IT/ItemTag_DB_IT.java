@@ -33,11 +33,11 @@ import static org.junit.Assert.*;
  */
 
 public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
-    private final String TEST_1 = "TEST_1";
-    private final String TEST_2 = "TEST_2";
-    private final String TEST_3 = "TEST_3";
-    private final String TEST_4 = "TEST_4";
-    private final String TEST_5 = "TEST_5";
+    private final String TEST_1 = "test_1";
+    private final String TEST_2 = "test_2";
+    private final String TEST_3 = "test_3";
+    private final String TEST_4 = "test_4";
+    private final String TEST_5 = "test_5";
     private final String NATIVE_NAME = "NATIVE_NAME";
     private final String CONTENT_TYPE = "CONTENT_TYPE";
     private final String HASH_1 = "HASH_1";
@@ -97,23 +97,31 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         ArrayList<Item> items = new ArrayList<>();
         ArrayList<Tag> tags = new ArrayList<>();
 
+        //name
         items.add(new Item(0, null, null, null, new Date(), true, null));
         items.add(new Item(0, "", null, null, new Date(), true, null));
         items.add(new Item(0, repeat("1", 31), null, null, new Date(), true, null));
         items.add(new Item(0, TEST_1, null, repeat("1", 31), new Date(), true, null));
+        //date
         items.add(new Item(0, TEST_1, null, null, null, true, null));
         items.add(new Item(0, TEST_1, null, null, Date.from(Instant.now().plus(1, ChronoUnit.MINUTES)), true, null));
+        //text item
         items.add(new TextItem(0, TEST_1, null, null, new Date(), true, null,repeat("1", 100_001)));
+        //file item
+        //native name
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 null, CONTENT_TYPE, FileItem.MAX_SIZE_BYTE, HASH_1));
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 "", CONTENT_TYPE, FileItem.MAX_SIZE_BYTE, HASH_1));
+        //content type
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 NATIVE_NAME, null, FileItem.MAX_SIZE_BYTE, HASH_1));
         items.add(new FileItem( 0, TEST_1, null, null, new Date(), true, null,
                 NATIVE_NAME, "", FileItem.MAX_SIZE_BYTE, HASH_1));
+        //max size
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 NATIVE_NAME, CONTENT_TYPE, FileItem.MAX_SIZE_BYTE + 1, HASH_1));
+        //hash
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
                 NATIVE_NAME, CONTENT_TYPE, FileItem.MAX_SIZE_BYTE, null));
         items.add(new FileItem(0, TEST_1, null, null, new Date(), true, null,
@@ -221,7 +229,7 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
 
         tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, "TEST").getResultList();
         assertThat(tagResultList.size(), is(2));
-        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, "TEST_1").getResultList();
+        tagResultList = em.createNamedQuery(Tag.GET_LIKE_NAME, Tag.class).setParameter(NAME_PARAM, "test_1").getResultList();
         assertThat(tagResultList.size(), is(1));
 
         List<String> hashesList = em.createNamedQuery(FileItem.GET_ALL_HASHES, String.class).getResultList();

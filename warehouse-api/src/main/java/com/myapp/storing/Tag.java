@@ -1,10 +1,7 @@
 package com.myapp.storing;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -70,6 +67,7 @@ public class Tag implements Serializable {
 
     @NotBlank
     @Size(max = 30)
+    @Pattern(regexp = "[\\d\\p{javaLowerCase}\\p{Punct}]*")
     @Column(unique = true, nullable = false, length = 30)
     public String getName() {
         return name;

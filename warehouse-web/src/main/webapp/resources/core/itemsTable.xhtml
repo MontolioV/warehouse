@@ -3,8 +3,10 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:composite="http://xmlns.jcp.org/jsf/composite" xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <composite:interface>
     <composite:attribute name="items" required="true"/>
@@ -28,9 +30,9 @@
             </h:column>
             <h:column>
                 <f:facet name="header">name</f:facet>
-                <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/show-item.jsf?id=#{item.id}">
-                    #{item.name}
-                </h:outputLink>
+                <p:link value="#{item.name}" outcome="/public/show-item">
+                    <f:param name="id" value="#{item.id}"/>
+                </p:link>
             </h:column>
             <h:column>
                 <f:facet name="header">description</f:facet>
@@ -38,9 +40,9 @@
             </h:column>
             <h:column>
                 <f:facet name="header">owner</f:facet>
-                <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/items-search.jsf?owner=#{item.owner}">
-                    #{item.owner}
-                </h:outputLink>
+                <p:link value="#{item.owner}" outcome="/public/items-search">
+                    <f:param name="owner" value="#{item.owner}"/>
+                </p:link>
             </h:column>
             <h:column>
                 <f:facet name="header">creationDate</f:facet>
@@ -54,9 +56,9 @@
                 <f:facet name="header">tags</f:facet>
                 <h:panelGroup styleClass="tagsContainer">
                     <ui:repeat value="#{item.tags}" var="tag">
-                        <h:outputLink value="#{facesContext.externalContext.applicationContextPath}/public/items-search.jsf?tag=#{tag.name}">
-                            #{tag.name}
-                        </h:outputLink>
+                        <p:link value="#{tag.name}" outcome="/public/items-search">
+                            <f:param name="tag" value="#{tag.name}"/>
+                        </p:link>
                     </ui:repeat>
                 </h:panelGroup>
             </h:column>

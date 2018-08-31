@@ -4,6 +4,7 @@ import com.myapp.storing.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -12,19 +13,21 @@ import org.primefaces.model.DualListModel;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static com.myapp.utils.TestSecurityConstants.PASS_HASH_VALID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -40,15 +43,13 @@ public class CreateItemControllerTest {
     @Mock
     private ItemStore isMock;
     @Mock
-    private FileStore fsMock;
-    @Mock
     private TagStore tsMock;
+    @Mock
+    private UploadFilesCollector ufCollectorMock;
     @Mock
     private FacesContext fcMock;
     @Mock
     private ExternalContext ecMock;
-    @Mock
-    private Part partMock;
     private Principal principalMock;
     private ArrayList<String> tags;
     private String tag1 = "tag1";
@@ -67,10 +68,16 @@ public class CreateItemControllerTest {
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
-        when(partMock.getContentType()).thenReturn(cType);
-        when(partMock.getSubmittedFileName()).thenReturn(fName);
-        when(partMock.getSize()).thenReturn(fSize);
         when(tsMock.fetchTagNames()).thenReturn(tagNamesSource);
+
+        FileItem temporalFileItem = new FileItem();
+        temporalFileItem.setContentType(cType);
+        temporalFileItem.setHash(PASS_HASH_VALID);
+        temporalFileItem.setNativeName(fName);
+        temporalFileItem.setSize(fSize);
+        LinkedList<FileItem> linkedList = new LinkedList<>();
+        linkedList.add(temporalFileItem);
+        when(ufCollectorMock.getTemporalFileItems()).thenReturn(linkedList);
 
         controller.init();
     }
@@ -106,66 +113,84 @@ public class CreateItemControllerTest {
 
     @Test
     public void createFileItem() throws IOException {
-        when(fsMock.persistFile(partMock)).thenReturn(PASS_HASH_VALID);
-
-        controller.setTmpFile(partMock);
         FileItem fileItem = new FileItem();
         controller.setFileItem(fileItem);
         controller.setNewTagNames(tags);
         selectAllExistingTags();
 
-        controller.createFileItem();
+        controller.createFileItems();
 
-        assertThat(fileItem.getContentType(), is(cType));
-        assertThat(fileItem.getNativeName(), is(fName));
-        assertThat(fileItem.getSize(), is(fSize));
-        assertThat(fileItem.getHash(), is(PASS_HASH_VALID));
+        ArgumentCaptor<FileItem> captor = ArgumentCaptor.forClass(FileItem.class);
+        verify(isMock).saveItems(captor.capture());
+        verify(isMock, never()).saveItems(fileItem);
+        
+        FileItem captorValue = captor.getValue();
+        verify(tsMock).saveTag(tag1, captorValue);
+        verify(tsMock).saveTag(tag2, captorValue);
+        verify(tsMock).saveTag(tag3, captorValue);
+        verify(tsMock).saveTag(tagExisting, captorValue);
+        verify(fcMock).addMessage(eq(null), any(FacesMessage.class));
 
-        verify(isMock).saveItems(fileItem);
-        verify(tsMock).saveTag(tag1, fileItem);
-        verify(tsMock).saveTag(tag2, fileItem);
-        verify(tsMock).saveTag(tag3, fileItem);
-        verify(tsMock).saveTag(tagExisting, fileItem);
-        assertNotNull(fileItem.getCreationDate());
-        assertThat(fileItem.getOwner(), is(LOGIN_VALID));
+        assertThat(captorValue, not(sameInstance(fileItem)));
+        assertThat(captorValue.getContentType(), is(cType));
+        assertThat(captorValue.getNativeName(), is(fName));
+        assertThat(captorValue.getSize(), is(fSize));
+        assertThat(captorValue.getHash(), is(PASS_HASH_VALID));
+        assertNotNull(captorValue.getCreationDate());
+        assertThat(captorValue.getOwner(), is(LOGIN_VALID));
 
         fileItem = new FileItem();
         controller.setPrincipal(null);
-        controller.createFileItem();
+        controller.createFileItems();
         assertNull(fileItem.getOwner());
     }
 
     @Test
-    public void createFileItemTooLarge() throws IOException {
-        when(partMock.getSize()).thenReturn((long) FileItem.MAX_SIZE_BYTE + 1);
-        controller.setTmpFile(partMock);
-        controller.createFileItem();
+    public void createFileItems() {
+        LinkedList<FileItem> linkedList = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            FileItem temporalFileItem = new FileItem();
+            temporalFileItem.setContentType(cType);
+            temporalFileItem.setHash(PASS_HASH_VALID);
+            temporalFileItem.setNativeName(fName);
+            temporalFileItem.setSize(fSize);
+            linkedList.add(temporalFileItem);
+        }
+        when(ufCollectorMock.getTemporalFileItems()).thenReturn(linkedList);
 
-        verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
-        verify(isMock, never()).saveItems(any());
-        verify(tsMock, never()).saveTag(any(), any());
+        FileItem fileItem = new FileItem();
+        controller.setFileItem(fileItem);
+        controller.setNewTagNames(tags);
+        selectAllExistingTags();
+
+        controller.createFileItems();
+
+        ArgumentCaptor<FileItem> captor = ArgumentCaptor.forClass(FileItem.class);
+        verify(isMock, times(2)).saveItems(captor.capture());
+        verify(isMock, never()).saveItems(fileItem);
+
+        List<FileItem> allValues = captor.getAllValues();
+        for (FileItem value : allValues) {
+            verify(tsMock).saveTag(tag1, value);
+            verify(tsMock).saveTag(tag2, value);
+            verify(tsMock).saveTag(tag3, value);
+            verify(tsMock).saveTag(tagExisting, value);
+
+            assertThat(fileItem, not(sameInstance(value)));
+            assertThat(value.getName(), is(fileItem.getName()));
+            assertThat(value.getDescription(), is(fileItem.getDescription()));
+            assertTrue(value.isShared());
+            assertTrue(fileItem.isShared());
+        }
+        assertThat(allValues.get(0), not(sameInstance(allValues.get(1))));
     }
 
     @Test
     public void createFileItemNoFile() throws IOException {
-        controller.setTmpFile(null);
-        controller.createFileItem();
+        when(ufCollectorMock.getTemporalFileItems()).thenReturn(newLinkedList());
 
-        verify(isMock, never()).saveItems(any());
-        verify(tsMock, never()).saveTag(any(), any());
-    }
+        controller.createFileItems();
 
-    @Test
-    public void createFileItemIOException() throws IOException {
-        when(fsMock.persistFile(partMock)).thenThrow(new IOException());
-
-        controller.setTmpFile(partMock);
-        FileItem fileItem = new FileItem();
-        controller.setFileItem(fileItem);
-        controller.setNewTagNames(tags);
-        controller.createFileItem();
-
-        verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
         verify(isMock, never()).saveItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }

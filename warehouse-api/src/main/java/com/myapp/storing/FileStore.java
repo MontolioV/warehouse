@@ -1,6 +1,6 @@
 package com.myapp.storing;
 
-import javax.servlet.http.Part;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public interface FileStore {
 
-    String persistFile(Part part) throws IOException;
+    String persistFile(TemporaryFileInput temporaryFileInput, @NotNull String contentType) throws IOException;
 
     void uploadFile(String fileHash, OutputStream outputStream) throws IOException;
 

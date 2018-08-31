@@ -2,6 +2,7 @@ package com.myapp.storing.UT;
 
 import com.myapp.storing.FileStoreFS;
 import com.myapp.storing.StorageConfig;
+import com.myapp.storing.TemporaryFileInput;
 import com.myapp.utils.Hasher;
 import com.myapp.utils.ImagePreviewMaker;
 import org.junit.Before;
@@ -12,7 +13,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +47,7 @@ public class FileStoreFSTest {
     @Mock
     private ImagePreviewMaker ipmMock;
     @Mock
-    private Part partMock;
+    private TemporaryFileInput temporaryFileInputMock;
     @Mock
     private Path storageRootPathMock;
     @Mock
@@ -67,7 +67,7 @@ public class FileStoreFSTest {
     @Before
     public void setUp() throws Exception {
         mockStatic(Files.class);
-        when(partMock.getInputStream()).thenReturn(isMock);
+        when(temporaryFileInputMock.getInputStream()).thenReturn(isMock);
         when(hasherMock.makeHash(isMock)).thenReturn(hash);
         when(scMock.getStorageRoot()).thenReturn(storageRootPathMock);
         when(scMock.getPreviewRoot()).thenReturn(previewRootPathMock);
@@ -80,8 +80,7 @@ public class FileStoreFSTest {
     @Test
     public void persistFileNew() throws IOException {
         when(Files.exists(pathMock)).thenReturn(false);
-        when(partMock.getContentType()).thenReturn("image");
-        String s = fileStoreFS.persistFile(partMock);
+        String s = fileStoreFS.persistFile(temporaryFileInputMock, "image");
 
         assertThat(s, is(hash));
         verifyStatic(Files.class);
@@ -92,15 +91,14 @@ public class FileStoreFSTest {
     @Test
     public void persistFileNotImage() throws IOException {
         when(Files.exists(pathMock)).thenReturn(false);
-        when(partMock.getContentType()).thenReturn("text");
-        fileStoreFS.persistFile(partMock);
+        fileStoreFS.persistFile(temporaryFileInputMock, "text");
         verify(ipmMock, never()).makePreview(isMock, fileMock);
     }
 
     @Test
     public void persistFileExisting() throws IOException {
         when(Files.exists(pathMock)).thenReturn(true);
-        String s = fileStoreFS.persistFile(partMock);
+        String s = fileStoreFS.persistFile(temporaryFileInputMock, "");
 
         assertThat(s, is(hash));
         verifyStatic(Files.class, never());

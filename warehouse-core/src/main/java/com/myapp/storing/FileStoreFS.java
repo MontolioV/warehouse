@@ -6,7 +6,7 @@ import com.myapp.utils.MD5;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.servlet.http.Part;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,14 +33,14 @@ public class FileStoreFS implements FileStore {
     private ImagePreviewMaker imagePreviewMaker;
 
     @Override
-    public String persistFile(Part part) throws IOException {
-        String hash = hasher.makeHash(part.getInputStream());
+    public String persistFile(TemporaryFileInput temporaryFileInput, @NotNull String contentType) throws IOException {
+        String hash = hasher.makeHash(temporaryFileInput.getInputStream());
         Path resolvedPath = storageConfig.getStorageRoot().resolve(hash);
         if (!Files.exists(resolvedPath)) {
-            Files.copy(part.getInputStream(), resolvedPath, StandardCopyOption.REPLACE_EXISTING);
-            if (part.getContentType().startsWith("image")) {
+            Files.copy(temporaryFileInput.getInputStream(), resolvedPath, StandardCopyOption.REPLACE_EXISTING);
+            if (contentType.startsWith("image")) {
                 File previewFile = storageConfig.getPreviewRoot().resolve(hash + PREVIEW_FILENAME_EXTENSION).toFile();
-                imagePreviewMaker.makePreview(part.getInputStream(), previewFile);
+                imagePreviewMaker.makePreview(temporaryFileInput.getInputStream(), previewFile);
             }
         }
         return hash;

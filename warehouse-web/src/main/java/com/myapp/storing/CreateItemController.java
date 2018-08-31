@@ -8,7 +8,6 @@ import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
@@ -26,17 +25,15 @@ public class CreateItemController {
     @EJB
     private ItemStore itemStore;
     @EJB
-    private FileStore fileStore;
-    @EJB
     private TagStore tagStore;
+    @Inject
+    private UploadFilesCollector uploadFilesCollector;
     private Principal principal;
     private Item item = new Item();
     private TextItem textItem = new TextItem();
     private FileItem fileItem = new FileItem();
-    private Part tmpFile;
     private List<String> newTagNames;
     private DualListModel<String> existingTagNamesDualListModel;
-
 
     @PostConstruct
     public void init() {
@@ -54,31 +51,21 @@ public class CreateItemController {
         facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
     }
 
-    public void createFileItem() throws IOException {
-        if (tmpFile == null) {
-            return;
+    public void createFileItems() {
+        while (!uploadFilesCollector.getTemporalFileItems().isEmpty()) {
+            FileItem temporalFileItem = uploadFilesCollector.getTemporalFileItems().poll();
+            if (temporalFileItem == null) {
+                continue;
+            }
+
+            temporalFileItem.setName(fileItem.getName());
+            temporalFileItem.setDescription(fileItem.getDescription());
+            temporalFileItem.setShared(fileItem.isShared());
+
+            createItem(temporalFileItem);
+
+            facesContext.addMessage(null, new FacesMessage("FileItem \"" + temporalFileItem.getName() + "\" created successfully!"));
         }
-
-        if (tmpFile.getSize() > FileItem.MAX_SIZE_BYTE) {
-            facesContext.addMessage("fileInput", new FacesMessage("File is too large!"));
-            return;
-        }
-
-        try {
-            String hash = fileStore.persistFile(tmpFile);
-            fileItem.setHash(hash);
-        } catch (IOException e) {
-            e.printStackTrace();
-            facesContext.addMessage("fileInput", new FacesMessage("File download fail. Try again."));
-            return;
-        }
-
-        fileItem.setContentType(tmpFile.getContentType());
-        fileItem.setNativeName(tmpFile.getSubmittedFileName());
-        fileItem.setSize(tmpFile.getSize());
-
-        createItem(fileItem);
-        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
     }
 
     private void createItem(Item item) {
@@ -159,22 +146,6 @@ public class CreateItemController {
 
     public void setFileItem(FileItem fileItem) {
         this.fileItem = fileItem;
-    }
-
-    public Part getTmpFile() {
-        return tmpFile;
-    }
-
-    public void setTmpFile(Part tmpFile) {
-        this.tmpFile = tmpFile;
-    }
-
-    public FileStore getFileStore() {
-        return fileStore;
-    }
-
-    public void setFileStore(FileStore fileStore) {
-        this.fileStore = fileStore;
     }
 
     public List<String> getNewTagNames() {

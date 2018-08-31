@@ -13,6 +13,8 @@ public interface ItemStore {
 
     List<Item> getTenLastSharedItems();
 
+    List<Item> getAllAccessibleItems();
+
     Item getItemById(long id, String userName);
 
     Set<String> getHashesOfFileItems();

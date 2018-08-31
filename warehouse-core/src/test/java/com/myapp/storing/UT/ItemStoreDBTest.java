@@ -11,9 +11,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
+import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static com.myapp.storing.Item.OWNER_PARAM;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.hamcrest.CoreMatchers.*;
@@ -40,6 +43,10 @@ public class ItemStoreDBTest {
     @Mock
     private EntityManager emMock;
     @Mock
+    private SessionContext scMock;
+    @Mock
+    private Principal principalMock;
+    @Mock
     private TypedQuery<Item> queryMock;
     private Item itemMock;
     private List<Item> items;
@@ -50,6 +57,8 @@ public class ItemStoreDBTest {
         items = new ArrayList<>();
         when(emMock.find(eq(Item.class), anyLong())).thenReturn(itemMock);
         when(queryMock.getResultList()).thenReturn(items);
+        when(scMock.getCallerPrincipal()).thenReturn(principalMock);
+        when(principalMock.getName()).thenReturn(LOGIN_VALID);
     }
 
     @Test
@@ -60,6 +69,17 @@ public class ItemStoreDBTest {
 
         List<Item> tenLastItems = itemStoreDB.getTenLastSharedItems();
         assertThat(tenLastItems, sameInstance(items));
+    }
+
+    @Test
+    public void getAllAccessibleItems() {
+        TypedQuery<Item> ownerQueryMock = mock(TypedQuery.class);
+        when(emMock.createNamedQuery(Item.GET_ALL_ACCESSIBLE, Item.class)).thenReturn(queryMock);
+        when(queryMock.setParameter(OWNER_PARAM,LOGIN_VALID)).thenReturn(ownerQueryMock);
+        when(ownerQueryMock.getResultList()).thenReturn(items);
+
+        List<Item> allAccessibleItems = itemStoreDB.getAllAccessibleItems();
+        assertThat(allAccessibleItems, sameInstance(items));
     }
 
     @Test

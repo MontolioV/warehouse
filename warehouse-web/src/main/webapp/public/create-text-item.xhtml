@@ -15,23 +15,20 @@
 
         <ui:define name="body">
             <h:form styleClass="mirrorLayout">
-                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
-                    <h:outputLabel value="Create text item"/>
-                    <compc:itemInput item="#{createItemController.textItem}" createController="#{createItemController}"/>
+                <p:panel header="Create text item">
+                    <h:panelGroup layout="block" styleClass="flex-vertical">
+                        <p:commandButton value="Create" action="#{createItemController.createTextItem()}"
+                                         process="@form" update="@form"
+                                         styleClass="decoratedButton"/>
 
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel for="text" value="Text"/>
+                        <p:message id="m_text" for="text"/>
                         <p:textEditor id="text" value="#{createItemController.textItem.text}" height="300" styleClass="textEditor"/>
-                        <h:message id="m_text" for="text"/>
+
+                        <compc:itemInput item="#{createItemController.textItem}" createController="#{createItemController}"/>
                     </h:panelGroup>
 
-                    <p:commandButton value="Create" action="#{createItemController.createTextItem()}"
-                                     process="@form" update="@form"
-                                     styleClass="decoratedButton"/>
-                </h:panelGroup>
+                </p:panel>
             </h:form>
-            <h:panelGrid columns="1">
-            </h:panelGrid>
         </ui:define>
     </ui:composition>
 </h:body>

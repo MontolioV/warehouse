@@ -25,6 +25,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -144,11 +145,11 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         List<Item> itemResultList = em.createNamedQuery(Item.GET_ALL, Item.class).getResultList();
         assertThat(itemResultList.size(), is(8));
 
-        itemResultList = em.createNamedQuery(Item.GET_ALL_BY_OWNER, Item.class)
+        itemResultList = em.createNamedQuery(Item.GET_ALL_ACCESSIBLE, Item.class)
                 .setParameter(OWNER_PARAM, TEST_3)
                 .getResultList();
-        assertThat(itemResultList.size(), is(2));
-        itemResultList.forEach(item -> assertThat(item.getOwner(), is(TEST_3)));
+        assertThat(itemResultList.size(), is(6));
+        itemResultList.forEach(item -> assertThat(item.getOwner(), not(TEST_1)));
 
         itemResultList = em.createNamedQuery(Item.GET_ALL_OF_CLASS, Item.class)
                 .setParameter(CLASS_PARAM, Item.class)

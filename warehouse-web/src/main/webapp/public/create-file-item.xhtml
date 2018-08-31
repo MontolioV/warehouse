@@ -28,7 +28,7 @@
                 </h:form>
                 <h:form>
                     <p:remoteCommand name="createFileItems" action="#{createItemController.createFileItems}"
-                                     process="@form" update="growl"/>
+                                     process="@form" update="@form growl"/>
                     <compc:itemInput item="#{createItemController.fileItem}" createController="#{createItemController}"/>
                 </h:form>
             </p:panel>

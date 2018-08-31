@@ -45,10 +45,9 @@ public class CreateItemController {
         return tagStore.fetchTagNames();
     }
 
-    // TODO: 15.05.18 change redirects
-    public void createTextItem() throws IOException {
+    public String createTextItem() throws IOException {
         createItem(textItem);
-        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
+        return "/public/show-item?id=" + textItem.getId() + "&faces-redirect=true";
     }
 
     public void createFileItems() {
@@ -64,7 +63,9 @@ public class CreateItemController {
 
             createItem(temporalFileItem);
 
-            facesContext.addMessage(null, new FacesMessage("FileItem \"" + temporalFileItem.getName() + "\" created successfully!"));
+            facesContext.addMessage(null, new FacesMessage("FileItem \"" +
+                    temporalFileItem.getName() + "\" id:" + temporalFileItem.getId() +
+                    " was created successfully!"));
         }
     }
 

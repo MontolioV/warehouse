@@ -22,7 +22,7 @@ import static com.myapp.storing.Item.*;
 @DiscriminatorColumn(name = "dType")
 @NamedQueries({
         @NamedQuery(name = Item.GET_ALL, query = "select i from Item i"),
-        @NamedQuery(name = Item.GET_ALL_BY_OWNER, query = "select i from Item i where i.owner=:" + OWNER_PARAM),
+        @NamedQuery(name = Item.GET_ALL_ACCESSIBLE, query = "select i from Item i where i.shared=true or i.owner=:" + OWNER_PARAM),
         @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM),
         @NamedQuery(name = Item.GET_LAST_SHARED, query = "select i from Item i where i.shared=true order by i.creationDate desc"),
         @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM
@@ -41,7 +41,7 @@ public class Item implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Item.";
 
     public static final String GET_ALL = PREFIX + "GET_ALL";
-    public static final String GET_ALL_BY_OWNER = PREFIX + "GET_ALL_BY_OWNER";
+    public static final String GET_ALL_ACCESSIBLE = PREFIX + "GET_ALL_ACCESSIBLE";
     public static final String GET_ALL_OF_CLASS = PREFIX + "GET_ALL_OF_CLASS";
     public static final String GET_LAST_SHARED = PREFIX + "GET_LAST_SHARED";
     public static final String GET_LAST_OF_CLASS = PREFIX + "GET_LAST_OF_CLASS";

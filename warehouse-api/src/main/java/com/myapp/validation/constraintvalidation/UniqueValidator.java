@@ -11,6 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * <p>Created by MontolioV on 18.07.18.
  */
+// TODO: 30.08.18 Move validation to view level. DB column constraints is enough.
 public class UniqueValidator implements ConstraintValidator<Unique, String> {
     public static final String MESSAGE = "Value isn't unique, but must be unique!";
 

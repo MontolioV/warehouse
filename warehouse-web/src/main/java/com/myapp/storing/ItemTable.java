@@ -46,7 +46,7 @@ public class ItemTable implements Serializable {
         if (toDate == null) {
             toDate = new Date(Long.MAX_VALUE);
         }
-        return fromDate.before(date) && toDate.after(date);
+        return (fromDate.before(date) || fromDate.equals(date)) && (toDate.after(date) || toDate.equals(date));
     }
 
     //Setters & Getters

@@ -14,56 +14,72 @@
         </ui:define>
 
         <ui:define name="body">
-            <p:dataTable value="#{itemTable.items}" var="item" widgetVar="itemTable"
-                         filteredValue="#{itemTable.filteredItems}"
-                         emptyMessage="No items found!"
-                         paginator="true" rowsPerPageTemplate="20,50,100"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-                <f:facet name="header">
-                    Accessible items
-                </f:facet>
-                <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" filterMatchMode="equals">
-                    <h:outputText value="#{item.id}"/>
-                </p:column>
-                <p:column headerText="Item type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact">
-                    <f:facet name="filter">
-                        <p:selectOneMenu onchange="PF(itemTable).filter()">
-                            <f:selectItem itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{itemTable.itemTypes}"/>
-                        </p:selectOneMenu>
+            <h:form>
+                <p:dataTable value="#{itemTable.items}" var="item" widgetVar="itemTable"
+                             filteredValue="#{itemTable.filteredItems}"
+                             emptyMessage="No items found!"
+                             paginator="true" rowsPerPageTemplate="20,50,100"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <f:facet name="header">
+                        Accessible items
                     </f:facet>
-                    <h:outputText value="#{item.dType}"/>
-                </p:column>
-                <p:column headerText="Visibility" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals">
-                    <f:facet name="filter">
-                        <p:selectOneButton onchange="PF(itemTable).filter()">
-                            <f:converter converterId="javax.faces.Boolean"/>
-                            <f:selectItem itemValue="" itemLabel="All"/>
-                            <f:selectItem itemValue="true" itemLabel="Shared"/>
-                            <f:selectItem itemValue="false" itemLabel="Private"/>
-                        </p:selectOneButton>
-                    </f:facet>
-                    <h:outputText value="#{item.shared}"/>
-                </p:column>
-                <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains">
-                    <h:outputText value="#{item.name}"/>
-                </p:column>
-                <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains">
-                    <h:outputText value="#{item.owner}"/>
-                </p:column>
-                <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
-                          filterFunction="#{itemTable.filterByDate}">
-                    <f:facet name="filter">
-                        <h:form>
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:calendar value="#{itemTable.fromDate}" onchange="PF(itemTable).filter()"/>
-                                <p:calendar value="#{itemTable.toDate}" onchange="PF(itemTable).filter()"/>
+                    <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" filterMatchMode="exact">
+                        <h:outputText value="#{item.id}"/>
+                    </p:column>
+                    <p:column headerText="Item type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('itemTable').filter()">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{itemTable.itemTypes}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.dType}"/>
+                    </p:column>
+                    <p:column headerText="Visibility" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals">
+                        <f:facet name="filter">
+                            <p:selectOneButton onchange="PF('itemTable').filter()">
+                                <f:converter converterId="javax.faces.Boolean"/>
+                                <f:selectItem itemValue="" itemLabel="All"/>
+                                <f:selectItem itemValue="true" itemLabel="Shared"/>
+                                <f:selectItem itemValue="false" itemLabel="Private"/>
+                            </p:selectOneButton>
+                        </f:facet>
+                        <h:outputText value="#{item.shared ? 'Shared' : 'Private'}"/>
+                    </p:column>
+                    <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains">
+                        <h:outputText value="#{item.name}"/>
+                    </p:column>
+                    <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains">
+                        <h:outputText value="#{item.owner}"/>
+                    </p:column>
+                    <p:column sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
+                              filterFunction="#{itemTable.filterByDate}">
+                        <f:facet name="filter">
+                            <p:inputText rendered="false"/>
+                        </f:facet>
+                        <f:facet name="header">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <p:outputLabel value="Creation date"/>
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel value="From"/>
+                                    <p:calendar value="#{itemTable.fromDate}" pattern="MM/dd/yyyy HH:mm:ss">
+                                        <p:ajax event="dateSelect" onsuccess="PF('itemTable').filter()"/>
+                                    </p:calendar>
+
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel value="To"/>
+                                    <p:calendar value="#{itemTable.toDate}" pattern="MM/dd/yyyy HH:mm:ss">
+                                        <p:ajax event="dateSelect" onsuccess="PF('itemTable').filter()"/>
+                                    </p:calendar>
+
+                                </h:panelGroup>
                             </h:panelGroup>
-                        </h:form>
-                    </f:facet>
-                    <h:outputText value="#{item.creationDate}"/>
-                </p:column>
-            </p:dataTable>
+                        </f:facet>
+                        <h:outputText value="#{item.creationDate}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
         </ui:define>
     </ui:composition>
 </h:body>

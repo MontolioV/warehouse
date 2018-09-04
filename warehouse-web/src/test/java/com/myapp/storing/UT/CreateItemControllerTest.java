@@ -121,8 +121,8 @@ public class CreateItemControllerTest {
         controller.createFileItems();
 
         ArgumentCaptor<FileItem> captor = ArgumentCaptor.forClass(FileItem.class);
-        verify(isMock).saveItems(captor.capture());
-        verify(isMock, never()).saveItems(fileItem);
+        verify(isMock).persistItems(captor.capture());
+        verify(isMock, never()).persistItems(fileItem);
 
         FileItem captorValue = captor.getValue();
         verify(tsMock).saveTag(tag1, captorValue);
@@ -166,8 +166,8 @@ public class CreateItemControllerTest {
         controller.createFileItems();
 
         ArgumentCaptor<FileItem> captor = ArgumentCaptor.forClass(FileItem.class);
-        verify(isMock, times(2)).saveItems(captor.capture());
-        verify(isMock, never()).saveItems(fileItem);
+        verify(isMock, times(2)).persistItems(captor.capture());
+        verify(isMock, never()).persistItems(fileItem);
 
         List<FileItem> allValues = captor.getAllValues();
         for (FileItem value : allValues) {

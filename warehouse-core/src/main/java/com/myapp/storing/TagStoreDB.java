@@ -1,9 +1,12 @@
 package com.myapp.storing;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.Comparator;
@@ -19,6 +22,8 @@ import static com.myapp.storing.Tag.NAME_PARAM;
 public class TagStoreDB implements TagStore{
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
+    @Resource
+    private SessionContext sessionContext;
 
     @Override
     public void saveTag(String tagName, Item... items) {
@@ -47,6 +52,12 @@ public class TagStoreDB implements TagStore{
     @Override
     public List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery) {
         return em.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public List<Tag> executeCustomSelectQuery(Predicate predicate) {
+        CriteriaQuery<Tag> criteriaQuery = em.getCriteriaBuilder().createQuery(Tag.class).where(predicate);
+        return executeCustomSelectQuery(criteriaQuery);
     }
 
     @Override

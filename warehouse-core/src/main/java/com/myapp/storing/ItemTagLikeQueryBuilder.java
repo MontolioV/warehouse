@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 /**
  * <p>Created by MontolioV on 25.04.18.
  */
+@Deprecated
 @Stateless
 public class ItemTagLikeQueryBuilder extends ItemTagQueryBuilder<String> {
 

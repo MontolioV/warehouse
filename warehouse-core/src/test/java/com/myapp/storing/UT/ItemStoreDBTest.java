@@ -14,7 +14,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import java.security.Principal;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,10 +27,12 @@ import java.util.List;
 import java.util.Set;
 
 import static com.myapp.storing.Item.OWNER_PARAM;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -50,6 +55,8 @@ public class ItemStoreDBTest {
     private TypedQuery<Item> queryMock;
     private Item itemMock;
     private List<Item> items;
+    private Item expectedItem1;
+    private Item expectedItem2;
 
     @Before
     public void setUp() throws Exception {
@@ -128,7 +135,7 @@ public class ItemStoreDBTest {
 
     @Test
     public void saveItems() {
-        itemStoreDB.saveItems(new Item(), new Item());
+        itemStoreDB.persistItems(new Item(), new Item());
         verify(emMock, times(2)).persist(any(Item.class));
     }
 
@@ -166,13 +173,45 @@ public class ItemStoreDBTest {
         verify(emMock).remove(itemMock);
     }
 
+    private void populateList() {
+        expectedItem1 = mock(Item.class);
+        when(expectedItem1.isShared()).thenReturn(false);
+        when(expectedItem1.getOwner()).thenReturn(LOGIN_VALID);
+        expectedItem2 = mock(Item.class);
+        when(expectedItem2.isShared()).thenReturn(true);
+        when(expectedItem2.getOwner()).thenReturn(LOGIN_INVALID);
+        Item unexpectedItem = mock(Item.class);
+        when(unexpectedItem.isShared()).thenReturn(false);
+        when(unexpectedItem.getOwner()).thenReturn(LOGIN_INVALID);
+
+        items = newArrayList(expectedItem1, expectedItem2, unexpectedItem);
+        when(queryMock.getResultList()).thenReturn(items);
+    }
+
     @Test
     public void executeCustomSelectQuery() {
+        populateList();
         CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
         when(emMock.createQuery(cqMock)).thenReturn(queryMock);
 
         List<Item> result = itemStoreDB.executeCustomSelectQuery(cqMock);
-        assertThat(result, sameInstance(items));
+        assertThat(result, containsInAnyOrder(expectedItem1, expectedItem2));
+    }
+
+    @Test
+    public void executeCustomSelectQueryPredicate() {
+        populateList();
+        Predicate predicateMock = mock(Predicate.class);
+        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
+        CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
+        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
+        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
+        when(cqMock.where(predicateMock)).thenReturn(cqMock);
+        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
+
+        List<Item> result = itemStoreDB.executeCustomSelectQuery(predicateMock);
+        verify(cqMock).where(predicateMock);
+        assertThat(result, containsInAnyOrder(expectedItem1, expectedItem2));
     }
 
     @Test

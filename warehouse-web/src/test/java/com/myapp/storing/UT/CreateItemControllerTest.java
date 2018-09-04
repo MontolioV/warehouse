@@ -97,7 +97,7 @@ public class CreateItemControllerTest {
 
         controller.createTextItem();
 
-        verify(isMock).saveItems(textItem);
+        verify(isMock).persistItems(textItem);
         verify(tsMock).saveTag(tag1, textItem);
         verify(tsMock).saveTag(tag2, textItem);
         verify(tsMock).saveTag(tag3, textItem);
@@ -123,7 +123,7 @@ public class CreateItemControllerTest {
         ArgumentCaptor<FileItem> captor = ArgumentCaptor.forClass(FileItem.class);
         verify(isMock).saveItems(captor.capture());
         verify(isMock, never()).saveItems(fileItem);
-        
+
         FileItem captorValue = captor.getValue();
         verify(tsMock).saveTag(tag1, captorValue);
         verify(tsMock).saveTag(tag2, captorValue);
@@ -191,7 +191,7 @@ public class CreateItemControllerTest {
 
         controller.createFileItems();
 
-        verify(isMock, never()).saveItems(any());
+        verify(isMock, never()).persistItems(any());
         verify(tsMock, never()).saveTag(any(), any());
     }
 

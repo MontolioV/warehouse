@@ -50,6 +50,7 @@ public class CreateItemController {
         return "/public/show-item?id=" + textItem.getId() + "&faces-redirect=true";
     }
 
+    // TODO: 17.08.18 Check if user has available space to save item
     public void createFileItems() {
         while (!uploadFilesCollector.getTemporalFileItems().isEmpty()) {
             FileItem temporalFileItem = uploadFilesCollector.getTemporalFileItems().poll();
@@ -76,11 +77,10 @@ public class CreateItemController {
         Date date = Date.from(Instant.now().minus(1, ChronoUnit.SECONDS));
         item.setCreationDate(date);
 
-        itemStore.saveItems(item);
+        itemStore.persistItems(item);
         if (newTagNames != null) {
             Set<String> tagNamesSet = new HashSet<>(newTagNames);
             tagNamesSet.addAll(existingTagNamesDualListModel.getTarget());
-
             for (String tag : tagNamesSet) {
                 tagStore.saveTag(tag, item);
             }

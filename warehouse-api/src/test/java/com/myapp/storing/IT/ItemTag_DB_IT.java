@@ -239,6 +239,11 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         assertThat(hashesList.size(), is(2));
         assertTrue(hashesList.contains(HASH_1));
         assertTrue(hashesList.contains(HASH_2));
+
+        long totalSize = em.createNamedQuery(FileItem.GET_TOTAL_SIZE_BY_OWNER, Long.class)
+                .setParameter(Item.OWNER_PARAM, "TEST_5")
+                .getSingleResult();
+        assertThat(totalSize, is(3L));
     }
 
     @Test

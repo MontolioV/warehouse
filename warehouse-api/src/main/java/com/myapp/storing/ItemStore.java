@@ -1,6 +1,7 @@
 package com.myapp.storing;
 
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ItemStore {
 
     Set<String> getHashesOfFileItems();
 
-    void saveItems(Item... items);
+    void persistItems(Item... items);
 
     void deleteAnyItem(long id);
 
@@ -30,4 +31,6 @@ public interface ItemStore {
     void deleteOldItemsWithNoOwner(Instant cutoffInstant);
 
     List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery);
+
+    List<Item> executeCustomSelectQuery(Predicate predicate);
 }

@@ -14,6 +14,7 @@ import java.util.List;
  * This query builder can
  * <p>Created by MontolioV on 24.04.18.
  */
+@Deprecated
 @Stateless
 public class ItemTagQueryBuilder<T> {
     @PersistenceContext(unitName = "warehouse-api-pu")

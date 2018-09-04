@@ -1,16 +1,21 @@
 package com.myapp.storing;
+// TODO: 03.09.18 Must change packages structure to provide isolation
 
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.myapp.security.Roles.Const.*;
 
@@ -21,6 +26,8 @@ import static com.myapp.security.Roles.Const.*;
 public class ItemStoreDB implements ItemStore{
     @PersistenceContext(unitName = "warehouse-api-pu")
     private EntityManager em;
+    @Resource
+    private SessionContext sessionContext;
 
     @Override
     public List<Item> getTenLastSharedItems() {
@@ -92,6 +99,16 @@ public class ItemStoreDB implements ItemStore{
 
     @Override
     public List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery) {
-        return em.createQuery(criteriaQuery).getResultList();
+        String principalName = sessionContext.getCallerPrincipal().getName();
+        List<Item> resultList = em.createQuery(criteriaQuery).getResultList();
+        return resultList.stream()
+                .filter(item -> item.isShared() || item.getOwner().equals(principalName))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> executeCustomSelectQuery(Predicate predicate) {
+        CriteriaQuery<Item> criteriaQuery = em.getCriteriaBuilder().createQuery(Item.class).where(predicate);
+        return executeCustomSelectQuery(criteriaQuery);
     }
 }

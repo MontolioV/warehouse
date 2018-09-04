@@ -14,10 +14,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.storing.Tag.NAME_PARAM;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -44,6 +47,7 @@ public class TagStoreDBTest {
     private String tagStringFormatted = "tagString";
     private Item item1;
     private Item item2;
+    private List<Tag> tags = newArrayList(new Tag(), new Tag());
 
     @Before
     public void setUp() {
@@ -91,15 +95,27 @@ public class TagStoreDBTest {
 
     @Test
     public void executeCustomSelectQuery() {
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag());
-        tags.add(new Tag());
         CriteriaQuery<Tag> cqMock = mock(CriteriaQuery.class);
-        when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
         when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
         when(nameQMock.getResultList()).thenReturn(tags);
 
         List<Tag> result = tagStoreDB.executeCustomSelectQuery(cqMock);
+        MatcherAssert.assertThat(result, sameInstance(tags));
+    }
+
+    @Test
+    public void executeCustomSelectQueryPredicate() {
+        Predicate predicateMock = mock(Predicate.class);
+        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
+        CriteriaQuery<Tag> cqMock = mock(CriteriaQuery.class);
+        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
+        when(cbMock.createQuery(Tag.class)).thenReturn(cqMock);
+        when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
+        when(cqMock.where(predicateMock)).thenReturn(cqMock);
+        when(nameQMock.getResultList()).thenReturn(tags);
+
+        List<Tag> result = tagStoreDB.executeCustomSelectQuery(predicateMock);
+        verify(cqMock).where(predicateMock);
         MatcherAssert.assertThat(result, sameInstance(tags));
     }
 

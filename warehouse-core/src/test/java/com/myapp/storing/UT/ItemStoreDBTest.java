@@ -18,7 +18,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import java.security.Principal;
-import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static com.myapp.storing.Item.OWNER_PARAM;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.myapp.storing.Item.OWNER_PARAM;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_INVALID;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static org.hamcrest.CoreMatchers.*;

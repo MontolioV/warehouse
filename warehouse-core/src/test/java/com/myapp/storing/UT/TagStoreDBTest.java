@@ -106,22 +106,6 @@ public class TagStoreDBTest {
     }
 
     @Test
-    public void executeCustomSelectQueryPredicate() {
-        Predicate predicateMock = mock(Predicate.class);
-        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
-        CriteriaQuery<Tag> cqMock = mock(CriteriaQuery.class);
-        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery(Tag.class)).thenReturn(cqMock);
-        when(emMock.createQuery(cqMock)).thenReturn(nameQMock);
-        when(cqMock.where(predicateMock)).thenReturn(cqMock);
-        when(nameQMock.getResultList()).thenReturn(tags);
-
-        List<Tag> result = tagStoreDB.executeCustomSelectQuery(predicateMock);
-        verify(cqMock).where(predicateMock);
-        MatcherAssert.assertThat(result, sameInstance(tags));
-    }
-
-    @Test
     public void fetchMostPopularTags() {
         TypedQuery<Tag> maxQueryMock = mock(TypedQuery.class);
         ArrayList<Tag> tags = new ArrayList<>();

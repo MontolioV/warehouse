@@ -23,7 +23,7 @@
 
         <ui:define name="body">
             <h:panelGroup layout="block" styleClass="flex-vertical">
-                <h:form>
+                <h:form id="queryForm">
                     <p:outputLabel value="#{itemSearch.showOrganigramTree()}"/>
                     <p:organigram id="organigram"
                                   value="#{itemSearch.rootNode}"
@@ -54,7 +54,10 @@
                     <p:contextMenu for="organigram" nodeType="#{itemSearch.LEAF}">
                         <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeNode()}"/>
                     </p:contextMenu>
-                    <p:commandButton value="Submit" process="@form" update="@form"/>
+                    <p:commandButton value="Submit" process="@form" update="@form tableForm"
+                                     action="#{itemSearch.parseAndRunQuery()}"/>
+                    <p:commandButton value="test"
+                                     action="#{itemSearch.test()}"/>
 
                     <p:dialog id="createCondition" widgetVar="createCondition" header="New condition">
                         <h:panelGroup layout="block" styleClass="flex-vertical">
@@ -85,7 +88,7 @@
                         </h:panelGroup>
                     </p:dialog>
                 </h:form>
-                <h:form>
+                <h:form id="tableForm">
                     <p:dataTable value="#{itemSearch.items}" var="item" widgetVar="itemTable"
                                  filteredValue="#{itemSearch.filteredItems}"
                                  emptyMessage="No items found!"
@@ -123,31 +126,16 @@
                         <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains">
                             <h:outputText value="#{item.owner}"/>
                         </p:column>
-                        <p:column sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
+                        <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
                                   filterFunction="#{itemSearch.filterByDate}">
                             <f:facet name="filter">
-                                <p:inputText rendered="false"/>
+                                <p:calendar pattern="yyyy.MM.dd">
+                                    <p:ajax event="dateSelect" onstart="PF('itemTable').filter();return false;" global="false"/>
+                                </p:calendar>
                             </f:facet>
-                            <f:facet name="header">
-                                <h:panelGroup layout="block" styleClass="flex-vertical">
-                                    <p:outputLabel value="Creation date"/>
-                                    <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                        <p:outputLabel value="From"/>
-                                        <p:calendar value="#{itemSearch.fromDate}" pattern="MM/dd/yyyy HH:mm:ss">
-                                            <p:ajax event="dateSelect" onsuccess="PF('itemTable').filter()"/>
-                                        </p:calendar>
-
-                                    </h:panelGroup>
-                                    <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                        <p:outputLabel value="To"/>
-                                        <p:calendar value="#{itemSearch.toDate}" pattern="MM/dd/yyyy HH:mm:ss">
-                                            <p:ajax event="dateSelect" onsuccess="PF('itemTable').filter()"/>
-                                        </p:calendar>
-
-                                    </h:panelGroup>
-                                </h:panelGroup>
-                            </f:facet>
-                            <h:outputText value="#{item.creationDate}"/>
+                            <h:outputText value="#{item.creationDate}">
+                                <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss"/>
+                            </h:outputText>
                         </p:column>
                     </p:dataTable>
                 </h:form>

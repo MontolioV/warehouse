@@ -134,8 +134,7 @@ public class FetchItemsControllerTest {
         verify(qbMock, never()).constructLikePredicates(anyVararg());
         verify(qbMock, never()).generateWherePredicates(anyBoolean());
         verify(qbMock).constructItemQuery();
-        verify(isMock, never()).executeCustomSelectQuery(any(Predicate.class));
-        verify(isMock, never()).executeCustomSelectQuery(any(CriteriaQuery.class));
+        verify(tsMock, never()).executeCustomSelectQuery(any());
     }
 
     @Test
@@ -179,8 +178,7 @@ public class FetchItemsControllerTest {
         inOrder.verify(qbMock).constructItemQuery();
         inOrder.verify(isMock).executeCustomSelectQuery(icqMock);
         inOrder.verifyNoMoreInteractions();
-        verify(tsMock, never()).executeCustomSelectQuery(any(Predicate.class));
-        verify(tsMock, never()).executeCustomSelectQuery(any(CriteriaQuery.class));
+        verify(tsMock, never()).executeCustomSelectQuery(any());
     }
 
     @Test
@@ -189,8 +187,7 @@ public class FetchItemsControllerTest {
         controller.setTags(null);
         controller.filteredFetch();
 
-        verify(tsMock, never()).executeCustomSelectQuery(any(Predicate.class));
-        verify(tsMock, never()).executeCustomSelectQuery(any(CriteriaQuery.class));
+        verify(tsMock, never()).executeCustomSelectQuery(any());
     }
 
     @Test

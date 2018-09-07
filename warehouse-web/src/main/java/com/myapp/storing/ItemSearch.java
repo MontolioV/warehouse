@@ -10,8 +10,16 @@ import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.storing.ConditionType.*;
@@ -40,8 +48,6 @@ public class ItemSearch implements Serializable {
     private List<Item> items;
     private List<Item> filteredItems;
     private List<String> itemTypes;
-    private Date fromDate;
-    private Date toDate;
 
     private String itemNameParam;
     private String itemOwnerParam;
@@ -55,7 +61,7 @@ public class ItemSearch implements Serializable {
 
     @PostConstruct
     public void init(){
-        items = itemStore.getAllAccessibleItems();
+//        items = itemStore.getAllAccessibleItems();
         itemTypes = newArrayList(TextItem.class.getSimpleName(), FileItem.class.getSimpleName());
     }
 
@@ -140,6 +146,71 @@ public class ItemSearch implements Serializable {
         }
     }
 
+    public void parseAndRunQuery() {
+        Predicate rootPredicate = makePredicate(rootNode);
+        CriteriaQuery<Item> query = predicateFactory.makeItemCriteriaQuery(rootPredicate);
+        items = itemStore.executeCustomSelectQuery(query);
+    }
+
+    private Predicate makePredicate(OrganigramNode node) {
+        Predicate result = null;
+        Condition condition = (Condition) node.getData();
+        List<OrganigramNode> children = node.getChildren();
+        if (children.isEmpty()) {
+            switch (condition.getConditionType()) {
+
+                case NAME:
+                    if (condition.isLike()) {
+                        result = predicateFactory.makeItemNameLikePredicate(((String) condition.getObject()));
+                    } else {
+                        result = predicateFactory.makeItemNameEqualPredicate(((String) condition.getObject()));
+                    }
+                    break;
+                case OWNER:
+                    if (condition.isLike()) {
+                        result = predicateFactory.makeItemOwnerLikePredicate(((String) condition.getObject()));
+                    } else {
+                        result = predicateFactory.makeItemOwnerEqualPredicate(((String) condition.getObject()));
+                    }
+                    break;
+                case TAG:
+                    if (condition.isLike()) {
+
+                        result = predicateFactory.makeItemTagLikePredicate((String) condition.getObject());
+                    } else {
+                        result = predicateFactory.makeItemTagEqualPredicate((String) condition.getObject());
+                    }
+                    break;
+                case DATE:
+                    Date[] dates = (Date[]) condition.getObject();
+                    result = predicateFactory.makeItemCreationDateBetweenPredicate(dates[0], dates[1]);
+                    break;
+
+            }
+        } else {
+            List<Predicate> subPredicates = children.stream()
+                    .map(this::makePredicate)
+                    .collect(Collectors.toList());
+            switch (condition.getConditionType()) {
+
+                case AND:
+                    result = predicateFactory.makeConjunctionPredicate(subPredicates);
+                    break;
+                case OR:
+                    result = predicateFactory.makeDisjunctionPredicate(subPredicates);
+                    break;
+                case NOT:
+                    List<Predicate> invertedSubPredicates = subPredicates.stream()
+                            .map(predicateFactory::makeInversionPredicate)
+                            .collect(Collectors.toList());
+                    result = predicateFactory.makeConjunctionPredicate(invertedSubPredicates);
+                    break;
+            }
+        }
+
+        return result;
+    }
+
     public String showOrganigramTree() {
         return printNode(rootNode);
     }
@@ -157,14 +228,12 @@ public class ItemSearch implements Serializable {
     }
 
     public boolean filterByDate(Object value, Object filter, Locale locale) {
-        Date date = (Date) value;
-        if (fromDate == null) {
-            fromDate = new Date(Long.MIN_VALUE);
-        }
-        if (toDate == null) {
-            toDate = new Date(Long.MAX_VALUE);
-        }
-        return (fromDate.before(date) || fromDate.equals(date)) && (toDate.after(date) || toDate.equals(date));
+//        LocalDate valueLocalDate = LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneOffset.UTC).toLocalDate();
+//        LocalDate filterLocalDate = LocalDateTime.ofInstant(((Date) filter).toInstant(), ZoneOffset.UTC).toLocalDate();
+//        return filterLocalDate.equals(valueLocalDate);
+    }
+
+    public void test() {
     }
 
     //Setters & Getters
@@ -239,22 +308,6 @@ public class ItemSearch implements Serializable {
 
     public void setItemTypes(List<String> itemTypes) {
         this.itemTypes = itemTypes;
-    }
-
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
     }
 
     public String getItemNameParam() {

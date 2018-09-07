@@ -113,10 +113,4 @@ public class ItemStoreDB implements ItemStore{
                 .filter(item -> item.isShared() || item.getOwner().equals(principalName))
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public List<Item> executeCustomSelectQuery(Predicate predicate) {
-        CriteriaQuery<Item> criteriaQuery = em.getCriteriaBuilder().createQuery(Item.class).where(predicate);
-        return executeCustomSelectQuery(criteriaQuery);
-    }
 }

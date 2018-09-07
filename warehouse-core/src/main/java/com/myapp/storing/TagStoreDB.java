@@ -55,12 +55,6 @@ public class TagStoreDB implements TagStore{
     }
 
     @Override
-    public List<Tag> executeCustomSelectQuery(Predicate predicate) {
-        CriteriaQuery<Tag> criteriaQuery = em.getCriteriaBuilder().createQuery(Tag.class).where(predicate);
-        return executeCustomSelectQuery(criteriaQuery);
-    }
-
-    @Override
     public List<Tag> fetchMostPopularTags(@Positive int amount) {
         List<Tag> resultList = em.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)
                 .setMaxResults(amount)

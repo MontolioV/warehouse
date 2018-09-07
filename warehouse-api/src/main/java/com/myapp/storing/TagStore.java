@@ -15,8 +15,6 @@ public interface TagStore {
 
     List<Tag> executeCustomSelectQuery(CriteriaQuery<Tag> criteriaQuery);
 
-    List<Tag> executeCustomSelectQuery(Predicate predicate);
-
     List<Tag> fetchMostPopularTags(@Positive int amount);
 
     List<Tag> fetchTagsNameContains(@NotBlank String string);

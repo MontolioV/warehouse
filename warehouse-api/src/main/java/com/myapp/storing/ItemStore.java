@@ -31,6 +31,4 @@ public interface ItemStore {
     void deleteOldItemsWithNoOwner(Instant cutoffInstant);
 
     List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery);
-
-    List<Item> executeCustomSelectQuery(Predicate predicate);
 }

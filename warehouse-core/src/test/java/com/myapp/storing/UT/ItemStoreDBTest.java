@@ -198,22 +198,6 @@ public class ItemStoreDBTest {
     }
 
     @Test
-    public void executeCustomSelectQueryPredicate() {
-        populateList();
-        Predicate predicateMock = mock(Predicate.class);
-        CriteriaBuilder cbMock = mock(CriteriaBuilder.class);
-        CriteriaQuery<Item> cqMock = mock(CriteriaQuery.class);
-        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
-        when(cqMock.where(predicateMock)).thenReturn(cqMock);
-        when(emMock.createQuery(cqMock)).thenReturn(queryMock);
-
-        List<Item> result = itemStoreDB.executeCustomSelectQuery(predicateMock);
-        verify(cqMock).where(predicateMock);
-        assertThat(result, containsInAnyOrder(expectedItem1, expectedItem2));
-    }
-
-    @Test
     public void deleteOldItemsWithNoOwner() {
         Item itemMock = mock(Item.class);
         TypedQuery<Item> expQueryMock = mock(TypedQuery.class);

@@ -2,6 +2,7 @@ package com.myapp.storing.UT;
 
 import com.myapp.storing.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -11,6 +12,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.ListAttribute;
+import javax.persistence.metamodel.SingularAttribute;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +33,31 @@ public class DefaultQueryPredicateFactoryTest {
     @Mock
     private EntityManager emMock;
     @Mock
+    private CriteriaQuery cqMock;
+    @Mock
     private Predicate expectedPredMock;
+    @Mock
+    private Predicate intermediatePredMock1;
+    @Mock
+    private Predicate intermediatePredMock2;
+    @Mock
+    private Predicate notNullPredMock;
+    @Mock
+    private Path ii_namePath;
+    @Mock
+    private Path ii_ownerPath;
+    @Mock
+    private Path tt_namePath;
+    @Mock
+    private ListJoin<Item, Tag> ii_tagsJoin;
+    @Mock
+    private Path it_namePath;
+    @Mock
+    private Path ii_datePath;
+    @Mock
+    private Path ii_sharedPath;
+    @Mock
+    private Path ii_typePath;
     private CriteriaBuilder cbMock;
     private Root<Item> itemRootMock;
     private Root<Tag> tagRootMock;
@@ -38,19 +65,41 @@ public class DefaultQueryPredicateFactoryTest {
     private Path pathMock;
     private List<String> values = newArrayList("value1", "value2");
 
+    @BeforeClass
+    public static void beforeClass() {
+        Item_.name = mock(SingularAttribute.class);
+        Item_.owner = mock(SingularAttribute.class);
+        Tag_.name = mock(SingularAttribute.class);
+        Item_.creationDate = mock(SingularAttribute.class);
+        Item_.shared = mock(SingularAttribute.class);
+        Item_.dType = mock(SingularAttribute.class);
+        Item_.tags = mock(ListAttribute.class);
+    }
+
     @Before
     public void setUp() throws Exception {
-        CriteriaQuery cqMock = mock(CriteriaQuery.class);
+
+
         cbMock = mock(CriteriaBuilder.class);
         pathMock = mock(Path.class);
         itemRootMock = (Root<Item>) mock(Root.class);
         tagRootMock = (Root<Tag>) mock(Root.class);
         tagJoinMock = (ListJoin<Item, Tag>) mock(ListJoin.class);
         when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery()).thenReturn(cqMock);
+        when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
+        when(cbMock.createQuery(Tag.class)).thenReturn(cqMock);
         when(cqMock.from(Item.class)).thenReturn(itemRootMock);
         when(cqMock.from(Tag.class)).thenReturn(tagRootMock);
         when(itemRootMock.join(Item_.tags, JoinType.LEFT)).thenReturn(tagJoinMock);
+        when(cbMock.and(intermediatePredMock1, notNullPredMock)).thenReturn(expectedPredMock);
+        when(itemRootMock.get(Item_.name)).thenReturn(ii_namePath);
+        when(itemRootMock.get(Item_.owner)).thenReturn(ii_ownerPath);
+        when(tagRootMock.get(Tag_.name)).thenReturn(tt_namePath);
+        when(itemRootMock.get(Item_.creationDate)).thenReturn(ii_datePath);
+        when(itemRootMock.get(Item_.shared)).thenReturn(ii_sharedPath);
+        when(itemRootMock.get(Item_.dType)).thenReturn(ii_typePath);
+        when(itemRootMock.join(Item_.tags)).thenReturn(ii_tagsJoin);
+        when(ii_tagsJoin.get(Tag_.name)).thenReturn(it_namePath);
 
         factory.init();
     }
@@ -74,8 +123,25 @@ public class DefaultQueryPredicateFactoryTest {
     }
 
     @Test
+    public void makeItemCriteriaQueryItem() {
+        CriteriaQuery<Item> query = factory.makeItemCriteriaQuery(expectedPredMock);
+        verify(cqMock).distinct(true);
+        verify(cqMock).where(expectedPredMock);
+        assertThat(query, sameInstance(cqMock));
+    }
+
+    @Test
+    public void makeItemCriteriaQueryTag() {
+        CriteriaQuery<Tag> query = factory.makeTagCriteriaQuery(expectedPredMock);
+        verify(cqMock).distinct(true);
+        verify(cqMock).where(expectedPredMock);
+        assertThat(query, sameInstance(cqMock));
+    }
+
+    @Test
     public void makeItemNameLikePredicate() {
-        when(cbMock.like(itemRootMock.get(Item_.name), "val%")).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_namePath)).thenReturn(notNullPredMock);
+        when(cbMock.like(ii_namePath, "val%")).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemNameLikePredicate("'val");
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -83,7 +149,8 @@ public class DefaultQueryPredicateFactoryTest {
 
     @Test
     public void makeItemOwnerLikePredicate() {
-        when(cbMock.like(itemRootMock.get(Item_.owner), "val%")).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_ownerPath)).thenReturn(notNullPredMock);
+        when(cbMock.like(ii_ownerPath, "val%")).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemOwnerLikePredicate("'val");
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -91,24 +158,88 @@ public class DefaultQueryPredicateFactoryTest {
 
     @Test
     public void makeTagNameLikePredicate() {
-        when(cbMock.like(tagRootMock.get(Tag_.name), "val%")).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(tt_namePath)).thenReturn(notNullPredMock);
+        when(cbMock.like(tt_namePath, "val%")).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeTagNameLikePredicate("'val");
         assertThat(predicate, sameInstance(expectedPredMock));
     }
 
     @Test
-    public void makeItemJoinTagNameLikePredicate() {
-        when(cbMock.like(tagJoinMock.get(Tag_.name), "val%")).thenReturn(expectedPredMock);
+    public void makeItemTagLikePredicateOne() {
+        when(cbMock.like(it_namePath, "val1%")).thenReturn(expectedPredMock);
 
-        Predicate predicate = factory.makeItemJoinTagNameLikePredicate("'val");
+        Predicate predicate = factory.makeItemTagLikePredicate("'val1");
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeItemTagLikePredicateMultiple() {
+        when(cbMock.like(it_namePath, "val1%")).thenReturn(intermediatePredMock1);
+        when(cbMock.like(it_namePath, "val2%")).thenReturn(intermediatePredMock2);
+        when(cbMock.and(anyVararg())).thenReturn(expectedPredMock);
+
+        Predicate predicate = factory.makeItemTagLikePredicate(newArrayList("'val1", "'val2"));
+        verify(itemRootMock, times(2)).join(Item_.tags);
+        ArgumentCaptor<Predicate> captor = ArgumentCaptor.forClass(Predicate.class);
+        verify(cbMock).and(captor.capture());
+        assertThat(captor.getAllValues(), containsInAnyOrder(intermediatePredMock1, intermediatePredMock2));
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeItemNameEqualPredicate() {
+        when(cbMock.isNotNull(ii_namePath)).thenReturn(notNullPredMock);
+        when(cbMock.equal(ii_namePath, "value")).thenReturn(intermediatePredMock1);
+
+        Predicate predicate = factory.makeItemNameEqualPredicate("value");
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeItemOwnerEqualPredicate() {
+        when(cbMock.isNotNull(ii_ownerPath)).thenReturn(notNullPredMock);
+        when(cbMock.equal(ii_ownerPath, "value")).thenReturn(intermediatePredMock1);
+
+        Predicate predicate = factory.makeItemOwnerEqualPredicate("value");
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeTagNameEqualPredicate() {
+        when(cbMock.isNotNull(tt_namePath)).thenReturn(notNullPredMock);
+        when(cbMock.equal(tt_namePath, "value")).thenReturn(intermediatePredMock1);
+
+        Predicate predicate = factory.makeTagNameEqualPredicate("value");
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeItemTagEqualPredicateOne() {
+        when(cbMock.equal(it_namePath, "val1")).thenReturn(expectedPredMock);
+
+        Predicate predicate = factory.makeItemTagEqualPredicate("val1");
+        assertThat(predicate, sameInstance(expectedPredMock));
+    }
+
+    @Test
+    public void makeItemTagEqualPredicateMultiple() {
+        when(cbMock.equal(it_namePath, "val1")).thenReturn(intermediatePredMock1);
+        when(cbMock.equal(it_namePath, "val2")).thenReturn(intermediatePredMock2);
+        when(cbMock.and(anyVararg())).thenReturn(expectedPredMock);
+
+        Predicate predicate = factory.makeItemTagEqualPredicate(newArrayList("val1", "val2"));
+        verify(itemRootMock, times(2)).join(Item_.tags);
+        ArgumentCaptor<Predicate> captor = ArgumentCaptor.forClass(Predicate.class);
+        verify(cbMock).and(captor.capture());
+        assertThat(captor.getAllValues(), containsInAnyOrder(intermediatePredMock1, intermediatePredMock2));
         assertThat(predicate, sameInstance(expectedPredMock));
     }
 
     @Test
     public void makeItemOwnerInPredicate() {
-        when(itemRootMock.get(Item_.owner)).thenReturn(pathMock);
-        when(pathMock.in(values)).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_ownerPath)).thenReturn(notNullPredMock);
+        when(ii_ownerPath.in(values)).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemOwnerInPredicate(values);
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -116,26 +247,18 @@ public class DefaultQueryPredicateFactoryTest {
 
     @Test
     public void makeItemNameInPredicate() {
-        when(itemRootMock.get(Item_.name)).thenReturn(pathMock);
-        when(pathMock.in(values)).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_namePath)).thenReturn(notNullPredMock);
+        when(ii_namePath.in(values)).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemNameInPredicate(values);
-        assertThat(predicate, sameInstance(expectedPredMock));
-    }
-
-    @Test
-    public void makeItemJoinTagNameInPredicate() {
-        when(tagJoinMock.get(Tag_.name)).thenReturn(pathMock);
-        when(pathMock.in(values)).thenReturn(expectedPredMock);
-
-        Predicate predicate = factory.makeItemJoinTagNameInPredicate(values);
+        verify(cbMock).and(intermediatePredMock1, notNullPredMock);
         assertThat(predicate, sameInstance(expectedPredMock));
     }
 
     @Test
     public void makeTagNameInPredicate() {
-        when(tagRootMock.get(Tag_.name)).thenReturn(pathMock);
-        when(pathMock.in(values)).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(tt_namePath)).thenReturn(notNullPredMock);
+        when(tt_namePath.in(values)).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeTagNameInPredicate(values);
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -145,7 +268,8 @@ public class DefaultQueryPredicateFactoryTest {
     public void makeItemCreationDateBetweenPredicate() {
         Date date1 = new Date();
         Date date2 = new Date();
-        when(cbMock.between(itemRootMock.get(Item_.creationDate), date1, date2)).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_datePath)).thenReturn(notNullPredMock);
+        when(cbMock.between(ii_datePath, date1, date2)).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemCreationDateBetweenPredicate(date1, date2);
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -153,7 +277,7 @@ public class DefaultQueryPredicateFactoryTest {
 
     @Test
     public void makeItemSharedIsTruePredicate() {
-        when(cbMock.isTrue(itemRootMock.get(Item_.shared))).thenReturn(expectedPredMock);
+        when(cbMock.isTrue(ii_sharedPath)).thenReturn(expectedPredMock);
 
         Predicate predicate = factory.makeItemSharedIsTruePredicate();
         assertThat(predicate, sameInstance(expectedPredMock));
@@ -161,7 +285,8 @@ public class DefaultQueryPredicateFactoryTest {
 
     @Test
     public void makeItemTypeEqualPredicate() {
-        when(cbMock.equal(itemRootMock.get(Item_.dType), "type")).thenReturn(expectedPredMock);
+        when(cbMock.isNotNull(ii_typePath)).thenReturn(notNullPredMock);
+        when(cbMock.equal(ii_typePath, "type")).thenReturn(intermediatePredMock1);
 
         Predicate predicate = factory.makeItemTypeEqualPredicate("type");
         assertThat(predicate, sameInstance(expectedPredMock));

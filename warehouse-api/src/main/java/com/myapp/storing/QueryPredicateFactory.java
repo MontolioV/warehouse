@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,19 +12,33 @@ import java.util.Date;
  */
 public interface QueryPredicateFactory {
 
+    CriteriaQuery<Item> makeItemCriteriaQuery(@NotNull Predicate predicate);
+
+    CriteriaQuery<Tag> makeTagCriteriaQuery(@NotNull Predicate predicate);
+
     Predicate makeItemNameLikePredicate(@NotBlank String itemName);
 
     Predicate makeItemOwnerLikePredicate(@NotBlank String owner);
 
     Predicate makeTagNameLikePredicate(@NotBlank String tagName);
 
-    Predicate makeItemJoinTagNameLikePredicate(@NotBlank String tagName);
+    Predicate makeItemTagLikePredicate(@NotBlank String tagName);
+
+    Predicate makeItemTagLikePredicate(@NotNull Collection<@NotBlank String> tagNames);
+
+    Predicate makeItemOwnerEqualPredicate(@NotBlank String owner);
+
+    Predicate makeItemNameEqualPredicate(@NotBlank String itemName);
+
+    Predicate makeItemTagEqualPredicate(@NotBlank String tagName);
+
+    Predicate makeItemTagEqualPredicate(@NotNull Collection<@NotBlank String> tagNames);
+
+    Predicate makeTagNameEqualPredicate(@NotBlank String tagName);
 
     Predicate makeItemOwnerInPredicate(@NotNull Collection<@NotBlank String> owners);
 
     Predicate makeItemNameInPredicate(@NotNull Collection<@NotBlank String> itemNames);
-
-    Predicate makeItemJoinTagNameInPredicate(@NotNull Collection<@NotBlank String> tagNames);
 
     Predicate makeTagNameInPredicate(@NotNull Collection<@NotBlank String> tagNames);
 

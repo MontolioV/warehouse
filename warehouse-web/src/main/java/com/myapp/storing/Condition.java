@@ -52,17 +52,20 @@ public final class Condition {
     @Override
     public String toString() {
         String result = conditionType.name();
-        if (isLike) {
-            result += "\nlike";
-        }
         switch (conditionType) {
 
             case NAME:
             case OWNER:
             case TAG:
+                if (isLike) {
+                    result += "\nlike";
+                }
                 result += "\n" + ((String) object);
                 break;
             case DATE:
+                if (isLike) {
+                    result += "\nlike";
+                }
                 Date[] dates = (Date[]) object;
                 result += "\nin interval\n" + dates[0] + "\nto\n" + dates[1];
                 break;

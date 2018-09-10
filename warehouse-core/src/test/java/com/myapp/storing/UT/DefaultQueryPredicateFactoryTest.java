@@ -61,7 +61,6 @@ public class DefaultQueryPredicateFactoryTest {
     private CriteriaBuilder cbMock;
     private Root<Item> itemRootMock;
     private Root<Tag> tagRootMock;
-    private ListJoin<Item, Tag> tagJoinMock;
     private Path pathMock;
     private List<String> values = newArrayList("value1", "value2");
 
@@ -84,13 +83,11 @@ public class DefaultQueryPredicateFactoryTest {
         pathMock = mock(Path.class);
         itemRootMock = (Root<Item>) mock(Root.class);
         tagRootMock = (Root<Tag>) mock(Root.class);
-        tagJoinMock = (ListJoin<Item, Tag>) mock(ListJoin.class);
         when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
         when(cbMock.createQuery(Item.class)).thenReturn(cqMock);
         when(cbMock.createQuery(Tag.class)).thenReturn(cqMock);
         when(cqMock.from(Item.class)).thenReturn(itemRootMock);
         when(cqMock.from(Tag.class)).thenReturn(tagRootMock);
-        when(itemRootMock.join(Item_.tags, JoinType.LEFT)).thenReturn(tagJoinMock);
         when(cbMock.and(intermediatePredMock1, notNullPredMock)).thenReturn(expectedPredMock);
         when(itemRootMock.get(Item_.name)).thenReturn(ii_namePath);
         when(itemRootMock.get(Item_.owner)).thenReturn(ii_ownerPath);
@@ -98,7 +95,7 @@ public class DefaultQueryPredicateFactoryTest {
         when(itemRootMock.get(Item_.creationDate)).thenReturn(ii_datePath);
         when(itemRootMock.get(Item_.shared)).thenReturn(ii_sharedPath);
         when(itemRootMock.get(Item_.dType)).thenReturn(ii_typePath);
-        when(itemRootMock.join(Item_.tags)).thenReturn(ii_tagsJoin);
+        when(itemRootMock.join(Item_.tags, JoinType.LEFT)).thenReturn(ii_tagsJoin);
         when(ii_tagsJoin.get(Tag_.name)).thenReturn(it_namePath);
 
         factory.init();
@@ -112,14 +109,12 @@ public class DefaultQueryPredicateFactoryTest {
         assertThat(factory.getCriteriaBuilder(), nullValue());
         assertThat(factory.getItemRoot(), nullValue());
         assertThat(factory.getTagRoot(), nullValue());
-        assertThat(factory.getTagJoin(), nullValue());
 
         factory.init();
 
         assertThat(factory.getCriteriaBuilder(), is(cbMock));
         assertThat(factory.getItemRoot(), is(itemRootMock));
         assertThat(factory.getTagRoot(), is(tagRootMock));
-        assertThat(factory.getTagJoin(), is(tagJoinMock));
     }
 
     @Test
@@ -180,7 +175,7 @@ public class DefaultQueryPredicateFactoryTest {
         when(cbMock.and(anyVararg())).thenReturn(expectedPredMock);
 
         Predicate predicate = factory.makeItemTagLikePredicate(newArrayList("'val1", "'val2"));
-        verify(itemRootMock, times(2)).join(Item_.tags);
+        verify(itemRootMock, times(2)).join(Item_.tags, JoinType.LEFT);
         ArgumentCaptor<Predicate> captor = ArgumentCaptor.forClass(Predicate.class);
         verify(cbMock).and(captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(intermediatePredMock1, intermediatePredMock2));
@@ -229,7 +224,7 @@ public class DefaultQueryPredicateFactoryTest {
         when(cbMock.and(anyVararg())).thenReturn(expectedPredMock);
 
         Predicate predicate = factory.makeItemTagEqualPredicate(newArrayList("val1", "val2"));
-        verify(itemRootMock, times(2)).join(Item_.tags);
+        verify(itemRootMock, times(2)).join(Item_.tags, JoinType.LEFT);
         ArgumentCaptor<Predicate> captor = ArgumentCaptor.forClass(Predicate.class);
         verify(cbMock).and(captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(intermediatePredMock1, intermediatePredMock2));

@@ -27,7 +27,7 @@
                     <p:outputLabel value="#{itemSearch.showOrganigramTree()}"/>
                     <p:organigram id="organigram"
                                   value="#{itemSearch.rootNode}"
-                                  selection="#{itemSearch.selectionNode}"
+                                  selection="#{itemSearch.selectedNode}"
                                   var="node">
                         <p:organigramNode type="#{itemSearch.ROOT}">
                             <h:outputText value="#{node.data}"/>
@@ -49,15 +49,18 @@
                     </p:contextMenu>
                     <p:contextMenu for="organigram" nodeType="#{itemSearch.INTERNAL}">
                         <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
-                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeNode()}"/>
+                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
                     </p:contextMenu>
                     <p:contextMenu for="organigram" nodeType="#{itemSearch.LEAF}">
-                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeNode()}"/>
+                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
                     </p:contextMenu>
                     <p:commandButton value="Submit" process="@form" update="@form tableForm"
-                                     action="#{itemSearch.parseAndRunQuery()}"/>
-                    <p:commandButton value="test"
-                                     action="#{itemSearch.test()}"/>
+                                     action="#{itemSearch.parseAndRunQuery()}"
+                                     onsuccess="PF('itemTable').clearFilters()">
+                        <p:resetInput target="tableForm"/>
+                    </p:commandButton>
+
+                    <p:commandButton value="test" action="#{itemSearch.test()}"/>
 
                     <p:dialog id="createCondition" widgetVar="createCondition" header="New condition">
                         <h:panelGroup layout="block" styleClass="flex-vertical">
@@ -97,7 +100,7 @@
                         <f:facet name="header">
                             Accessible items
                         </f:facet>
-                        <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" filterMatchMode="exact">
+                        <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" >
                             <h:outputText value="#{item.id}"/>
                         </p:column>
                         <p:column headerText="Item type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact">
@@ -131,6 +134,7 @@
                             <f:facet name="filter">
                                 <p:calendar pattern="yyyy.MM.dd">
                                     <p:ajax event="dateSelect" onstart="PF('itemTable').filter();return false;" global="false"/>
+                                    <p:ajax event="change" onstart="PF('itemTable').filter();return false;" global="false"/>
                                 </p:calendar>
                             </f:facet>
                             <h:outputText value="#{item.creationDate}">

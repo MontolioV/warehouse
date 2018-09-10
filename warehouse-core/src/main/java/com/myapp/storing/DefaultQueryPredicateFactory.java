@@ -1,9 +1,7 @@
 package com.myapp.storing;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
@@ -12,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * <p>Created by MontolioV on 04.09.18.
@@ -26,7 +23,6 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
     private CriteriaQuery<Tag> tagQuery;
     private Root<Item> itemRoot;
     private Root<Tag> tagRoot;
-    private ListJoin<Item, Tag> tagJoin;
 
     @PostConstruct
     public void init(){
@@ -35,7 +31,6 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
         tagQuery = criteriaBuilder.createQuery(Tag.class);
         itemRoot = itemQuery.from(Item.class);
         tagRoot = tagQuery.from(Tag.class);
-        tagJoin = itemRoot.join(Item_.tags, JoinType.LEFT);
     }
 
     @Override
@@ -75,7 +70,7 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
 
     @Override
     public Predicate makeItemTagLikePredicate(@NotBlank String tagName) {
-        return criteriaBuilder.like(itemRoot.join(Item_.tags).get(Tag_.name), makeLikePattern(tagName));
+        return criteriaBuilder.like(itemRoot.join(Item_.tags, JoinType.LEFT).get(Tag_.name), makeLikePattern(tagName));
     }
 
     @Override
@@ -103,7 +98,7 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
 
     @Override
     public Predicate makeItemTagEqualPredicate(@NotBlank String tagName) {
-        return criteriaBuilder.equal(itemRoot.join(Item_.tags).get(Tag_.name), tagName);
+        return criteriaBuilder.equal(itemRoot.join(Item_.tags, JoinType.LEFT).get(Tag_.name), tagName);
     }
 
     @Override
@@ -218,10 +213,6 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
         this.tagRoot = tagRoot;
     }
 
-    public void setTagJoin(ListJoin<Item, Tag> tagJoin) {
-        this.tagJoin = tagJoin;
-    }
-
     public EntityManager getEm() {
         return em;
     }
@@ -236,9 +227,5 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
 
     public Root<Tag> getTagRoot() {
         return tagRoot;
-    }
-
-    public ListJoin<Item, Tag> getTagJoin() {
-        return tagJoin;
     }
 }

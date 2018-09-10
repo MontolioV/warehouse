@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.organigram.OrganigramHelper;
 import org.primefaces.model.DefaultOrganigramNode;
@@ -13,11 +14,6 @@ import javax.inject.Named;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,17 +39,14 @@ public class ItemSearch implements Serializable {
     private QueryPredicateFactory predicateFactory;
     @EJB
     private ItemStore itemStore;
-    @EJB
-    private TagStore tagStore;
     private List<Item> items;
     private List<Item> filteredItems;
     private List<String> itemTypes;
-
     private String itemNameParam;
     private String itemOwnerParam;
     private String tagParam;
     private OrganigramNode rootNode;
-    private OrganigramNode selectionNode;
+    private OrganigramNode selectedNode;
     private Condition condition = new Condition(AND);
     private boolean isStringInputRendered;
     private boolean isDateInputRendered;
@@ -61,7 +54,6 @@ public class ItemSearch implements Serializable {
 
     @PostConstruct
     public void init(){
-//        items = itemStore.getAllAccessibleItems();
         itemTypes = newArrayList(TextItem.class.getSimpleName(), FileItem.class.getSimpleName());
     }
 
@@ -105,13 +97,13 @@ public class ItemSearch implements Serializable {
         rootNode.setChildren(new ArrayList<>());
     }
 
-    public void removeNode() {
-        OrganigramNode node = OrganigramHelper.findTreeNode(rootNode, selectionNode);
+    public void removeSelectedNode() {
+        OrganigramNode node = OrganigramHelper.findTreeNode(rootNode, selectedNode);
         node.getParent().getChildren().remove(node);
     }
 
     public void addNode() {
-        OrganigramNode node = OrganigramHelper.findTreeNode(rootNode, selectionNode);
+        OrganigramNode node = OrganigramHelper.findTreeNode(rootNode, selectedNode);
         ConditionType type = condition.getConditionType();
         if (type.equals(AND) || type.equals(OR) || type.equals(NOT)) {
             addInternalNode(condition, node);
@@ -228,9 +220,13 @@ public class ItemSearch implements Serializable {
     }
 
     public boolean filterByDate(Object value, Object filter, Locale locale) {
-//        LocalDate valueLocalDate = LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneOffset.UTC).toLocalDate();
-//        LocalDate filterLocalDate = LocalDateTime.ofInstant(((Date) filter).toInstant(), ZoneOffset.UTC).toLocalDate();
-//        return filterLocalDate.equals(valueLocalDate);
+        if (filter == null) {
+            return true;
+        }
+        if (value == null) {
+            return false;
+        }
+        return DateUtils.isSameDay(((Date) value), (Date) filter);
     }
 
     public void test() {
@@ -276,14 +272,6 @@ public class ItemSearch implements Serializable {
 
     public void setItemStore(ItemStore itemStore) {
         this.itemStore = itemStore;
-    }
-
-    public TagStore getTagStore() {
-        return tagStore;
-    }
-
-    public void setTagStore(TagStore tagStore) {
-        this.tagStore = tagStore;
     }
 
     public List<Item> getItems() {
@@ -342,12 +330,12 @@ public class ItemSearch implements Serializable {
         this.rootNode = rootNode;
     }
 
-    public OrganigramNode getSelectionNode() {
-        return selectionNode;
+    public OrganigramNode getSelectedNode() {
+        return selectedNode;
     }
 
-    public void setSelectionNode(OrganigramNode selectionNode) {
-        this.selectionNode = selectionNode;
+    public void setSelectedNode(OrganigramNode selectedNode) {
+        this.selectedNode = selectedNode;
     }
 
     public Condition getCondition() {

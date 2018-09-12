@@ -20,7 +20,7 @@ import java.util.Queue;
 @Named
 @ViewScoped
 public class UploadFilesCollector implements Serializable {
-    private static final long serialVersionUID = -4714404020536262321L;
+    private static final long serialVersionUID = -4345494309854758123L;
     @Inject
     private FacesContext facesContext;
     @EJB

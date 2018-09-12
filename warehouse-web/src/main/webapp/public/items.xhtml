@@ -11,86 +11,103 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
+            <h:outputScript name="js/core.js"/>
+            <h:outputScript library="webjars" name="momentjs/2.22.2/moment.js"/>
+            <h:outputScript library="webjars" name="moment-timezone/0.5.21/builds/moment-timezone-with-data.js"/>
             <title>Items</title>
             <f:metadata>
                 <f:viewParam name="name" value="#{itemSearch.itemNameParam}"/>
                 <f:viewParam name="owner" value="#{itemSearch.itemOwnerParam}"/>
                 <f:viewParam name="tag" value="#{itemSearch.tagParam}"/>
                 <f:viewAction action="#{itemSearch.organigramInit()}"/>
+                <f:viewAction action="#{itemSearch.parseAndRunQuery()}"/>
             </f:metadata>
             <o:importConstants type="com.myapp.storing.ConditionType" var="ConditionType"/>
         </ui:define>
 
         <ui:define name="body">
+            <p:ajaxStatus oncomplete="convertDates()"/>
+
+            <h:form prependId="false" style="display: none">
+                <h:inputText id="localTimezone" value="#{itemSearch.viewTimezone}">
+                    <f:ajax/>
+                </h:inputText>
+            </h:form>
+
             <h:panelGroup layout="block" styleClass="flex-vertical">
-                <h:form id="queryForm">
-                    <p:outputLabel value="#{itemSearch.showOrganigramTree()}"/>
-                    <p:organigram id="organigram"
-                                  value="#{itemSearch.rootNode}"
-                                  selection="#{itemSearch.selectedNode}"
-                                  var="node">
-                        <p:organigramNode type="#{itemSearch.ROOT}">
-                            <h:outputText value="#{node.data}"/>
-                        </p:organigramNode>
-                        <p:organigramNode type="#{itemSearch.INTERNAL}">
-                            <h:outputText value="#{node.data}"/>
-                        </p:organigramNode>
-                        <p:organigramNode type="#{itemSearch.LEAF}">
-                            <h:outputText value="#{node.data}"/>
-                        </p:organigramNode>
+                <p:fieldset legend="Query" toggleable="true" collapsed="true">
+                    <h:form id="queryForm">
+                        <p:organigram id="organigram"
+                                      value="#{itemSearch.rootNode}"
+                                      selection="#{itemSearch.selectedNode}"
+                                      var="node">
+                            <p:organigramNode type="#{itemSearch.ROOT}">
+                                <h:outputText value="#{node.data}"/>
+                            </p:organigramNode>
+                            <p:organigramNode type="#{itemSearch.INTERNAL}">
+                                <h:outputText value="#{node.data}"/>
+                            </p:organigramNode>
+                            <p:organigramNode type="#{itemSearch.LEAF}">
+                                <h:outputText value="#{node.data}"/>
+                            </p:organigramNode>
 
-                        <p:ajax event="contextmenu" process="@this"/>
-                        <p:ajax event="dragdrop" process="@this"/>
-                    </p:organigram>
+                            <p:ajax event="contextmenu" process="@this"/>
+                            <p:ajax event="dragdrop" process="@this"/>
+                        </p:organigram>
 
-                    <p:contextMenu for="organigram" nodeType="#{itemSearch.ROOT}">
-                        <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
-                        <p:menuitem value="Reset" update="organigram" icon="fa fa-rotate-left" actionListener="#{itemSearch.resetRoot()}"/>
-                    </p:contextMenu>
-                    <p:contextMenu for="organigram" nodeType="#{itemSearch.INTERNAL}">
-                        <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
-                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
-                    </p:contextMenu>
-                    <p:contextMenu for="organigram" nodeType="#{itemSearch.LEAF}">
-                        <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
-                    </p:contextMenu>
-                    <p:commandButton value="Submit" process="@form" update="@form tableForm"
-                                     action="#{itemSearch.parseAndRunQuery()}"
-                                     onsuccess="PF('itemTable').clearFilters()">
-                        <p:resetInput target="tableForm"/>
-                    </p:commandButton>
+                        <p:contextMenu for="organigram" nodeType="#{itemSearch.ROOT}">
+                            <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
+                            <p:menuitem value="Reset" update="organigram" icon="fa fa-rotate-left" actionListener="#{itemSearch.resetRoot()}"/>
+                        </p:contextMenu>
+                        <p:contextMenu for="organigram" nodeType="#{itemSearch.INTERNAL}">
+                            <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
+                            <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
+                        </p:contextMenu>
+                        <p:contextMenu for="organigram" nodeType="#{itemSearch.LEAF}">
+                            <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
+                        </p:contextMenu>
+                        <p:commandButton value="Submit" process="@form" update="@form tableForm"
+                                         action="#{itemSearch.parseAndRunQuery()}"
+                                         oncomplete="PF('itemTable').clearFilters();">
+                            <p:resetInput target="tableForm"/>
+                        </p:commandButton>
 
-                    <p:commandButton value="test" action="#{itemSearch.test()}"/>
+                        <p:dialog id="createCondition" widgetVar="createCondition" header="New condition">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel for="types" value="Type"/>
+                                    <p:selectOneMenu id="types" value="#{itemSearch.condition.conditionType}">
+                                        <f:selectItems value="#{ConditionType}"/>
+                                        <p:ajax event="change" process="createCondition" update="createCondition"
+                                                listener="#{itemSearch.newConditionDialogStateListener()}"
+                                                oncomplete="PF('createCondition').show()"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{itemSearch.stringInputRendered}" layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel for="conditionString" value="Value"/>
+                                    <p:inputText id="conditionString" value="#{itemSearch.condition.object}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{itemSearch.dateInputRendered}" layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel for="types" value="Between"/>
+                                    <p:calendar value="#{itemSearch.conditionDateInterval.fromDate}"
+                                                pattern="yyyy.MM.dd HH:mm:ss" timeZone="#{itemSearch.viewTimezone}"/>
+                                    <p:calendar value="#{itemSearch.conditionDateInterval.toDate}"
+                                                pattern="yyyy.MM.dd HH:mm:ss" timeZone="#{itemSearch.viewTimezone}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{itemSearch.likeInputRendered}" layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel for="conditionLike" value="Like"/>
+                                    <p:selectBooleanCheckbox id="conditionLike" value="#{itemSearch.condition.like}"/>
+                                </h:panelGroup>
 
-                    <p:dialog id="createCondition" widgetVar="createCondition" header="New condition">
-                        <h:panelGroup layout="block" styleClass="flex-vertical">
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel for="types" value="Type"/>
-                                <p:selectOneMenu id="types" value="#{itemSearch.condition.conditionType}">
-                                    <f:selectItems value="#{ConditionType}"/>
-                                    <p:ajax event="change" process="createCondition" update="createCondition"
-                                            listener="#{itemSearch.newConditionDialogStateListener()}"
-                                            oncomplete="PF('createCondition').show()"/>
-                                </p:selectOneMenu>
+                                <p:commandButton value="Add condition"
+                                                 action="#{itemSearch.addNode()}"
+                                                 process="createCondition" update="@form"
+                                                 oncomplete="PF('createCondition').hide()"/>
                             </h:panelGroup>
-                            <h:panelGroup rendered="#{itemSearch.stringInputRendered}" layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel for="conditionString" value="Value"/>
-                                <p:inputText id="conditionString" value="#{itemSearch.condition.object}"/>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{itemSearch.dateInputRendered}" layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel for="types" value="Between"/>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{itemSearch.likeInputRendered}" layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel for="conditionLike" value="Like"/>
-                                <p:selectBooleanCheckbox id="conditionLike" value="#{itemSearch.condition.like}"/>
-                            </h:panelGroup>
+                        </p:dialog>
+                    </h:form>
+                </p:fieldset>
 
-                            <p:commandButton action="#{itemSearch.addNode()}"
-                                             process="createCondition" update="organigram"
-                                             oncomplete="PF('createCondition').hide()"/>
-                        </h:panelGroup>
-                    </p:dialog>
-                </h:form>
                 <h:form id="tableForm">
                     <p:dataTable value="#{itemSearch.items}" var="item" widgetVar="itemTable"
                                  filteredValue="#{itemSearch.filteredItems}"
@@ -132,18 +149,20 @@
                         <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
                                   filterFunction="#{itemSearch.filterByDate}">
                             <f:facet name="filter">
-                                <p:calendar pattern="yyyy.MM.dd">
+                                <p:calendar pattern="yyyy.MM.dd" timeZone="#{itemSearch.viewTimezone}">
                                     <p:ajax event="dateSelect" onstart="PF('itemTable').filter();return false;" global="false"/>
                                     <p:ajax event="change" onstart="PF('itemTable').filter();return false;" global="false"/>
                                 </p:calendar>
                             </f:facet>
-                            <h:outputText value="#{item.creationDate}">
-                                <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss"/>
+                            <h:outputText value="#{item.creationDate}" styleClass="js-time-convert">
+                                <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss Z"/>
                             </h:outputText>
                         </p:column>
                     </p:dataTable>
                 </h:form>
             </h:panelGroup>
+
+            <script type="text/javascript">convertDates();</script>
         </ui:define>
     </ui:composition>
 </h:body>

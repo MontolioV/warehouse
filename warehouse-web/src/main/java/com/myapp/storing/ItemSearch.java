@@ -14,7 +14,10 @@ import javax.inject.Named;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -29,7 +32,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Named
 @ViewScoped
 public class ItemSearch implements Serializable {
-    private static final long serialVersionUID = 7736765006928225886L;
+    private static final long serialVersionUID = 6223641177146089455L;
     public static final String ROOT = "ROOT";
     public static final String INTERNAL = "INTERNAL";
     public static final String LEAF = "LEAF";
@@ -48,9 +51,11 @@ public class ItemSearch implements Serializable {
     private OrganigramNode rootNode;
     private OrganigramNode selectedNode;
     private Condition condition = new Condition(AND);
+    private DateInterval conditionDateInterval = new DateInterval();
     private boolean isStringInputRendered;
     private boolean isDateInputRendered;
     private boolean isLikeInputRendered;
+    private String viewTimezone;
 
     @PostConstruct
     public void init(){
@@ -105,6 +110,11 @@ public class ItemSearch implements Serializable {
     public void addNode() {
         OrganigramNode node = OrganigramHelper.findTreeNode(rootNode, selectedNode);
         ConditionType type = condition.getConditionType();
+        if (type.equals(DATE)) {
+            condition.setObject(conditionDateInterval);
+        }
+        conditionDateInterval = new DateInterval();
+
         if (type.equals(AND) || type.equals(OR) || type.equals(NOT)) {
             addInternalNode(condition, node);
         } else {
@@ -167,17 +177,15 @@ public class ItemSearch implements Serializable {
                     break;
                 case TAG:
                     if (condition.isLike()) {
-
                         result = predicateFactory.makeItemTagLikePredicate((String) condition.getObject());
                     } else {
                         result = predicateFactory.makeItemTagEqualPredicate((String) condition.getObject());
                     }
                     break;
                 case DATE:
-                    Date[] dates = (Date[]) condition.getObject();
-                    result = predicateFactory.makeItemCreationDateBetweenPredicate(dates[0], dates[1]);
+                    DateInterval dateInterval = (DateInterval) condition.getObject();
+                    result = predicateFactory.makeItemCreationDateBetweenPredicate(dateInterval.getFromDate(), dateInterval.getToDate());
                     break;
-
             }
         } else {
             List<Predicate> subPredicates = children.stream()
@@ -203,22 +211,6 @@ public class ItemSearch implements Serializable {
         return result;
     }
 
-    public String showOrganigramTree() {
-        return printNode(rootNode);
-    }
-
-    private String printNode(OrganigramNode node) {
-        if (node.getChildren().isEmpty()) {
-            return node.getData().toString();
-        } else {
-            StringJoiner sj = new StringJoiner(" : ", "(", ")");
-            for (OrganigramNode child : node.getChildren()) {
-                sj.add(printNode(child));
-            }
-            return node.getData().toString() + sj.toString();
-        }
-    }
-
     public boolean filterByDate(Object value, Object filter, Locale locale) {
         if (filter == null) {
             return true;
@@ -227,9 +219,6 @@ public class ItemSearch implements Serializable {
             return false;
         }
         return DateUtils.isSameDay(((Date) value), (Date) filter);
-    }
-
-    public void test() {
     }
 
     //Setters & Getters
@@ -368,5 +357,21 @@ public class ItemSearch implements Serializable {
 
     public void setLikeInputRendered(boolean likeInputRendered) {
         isLikeInputRendered = likeInputRendered;
+    }
+
+    public DateInterval getConditionDateInterval() {
+        return conditionDateInterval;
+    }
+
+    public void setConditionDateInterval(DateInterval conditionDateInterval) {
+        this.conditionDateInterval = conditionDateInterval;
+    }
+
+    public String getViewTimezone() {
+        return viewTimezone;
+    }
+
+    public void setViewTimezone(String viewTimezone) {
+        this.viewTimezone = viewTimezone;
     }
 }

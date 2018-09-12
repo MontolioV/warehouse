@@ -147,6 +147,7 @@ public class ItemSearchTest {
         addLeafNodeAssert(ConditionType.OWNER, 5);
         addLeafNodeAssert(ConditionType.TAG, 6);
         addLeafNodeAssert(ConditionType.DATE, 7);
+
     }
     private void addInternalNodeAssert(ConditionType cType, int idx) {
         addNodeAssert(cType, idx, ItemSearch.INTERNAL, true, true, true, true);
@@ -159,6 +160,7 @@ public class ItemSearchTest {
                               boolean mustBeCollapsible, boolean mustBeSelectable) {
         List<OrganigramNode> children = itemSearch.getRootNode().getChildren();
         Condition condition = new Condition(cType);
+        DateInterval initialInterval = itemSearch.getConditionDateInterval();
         itemSearch.setCondition(condition);
         itemSearch.addNode();
         OrganigramNode newNode = children.get(idx);
@@ -169,6 +171,8 @@ public class ItemSearchTest {
         assertEquals(newNode.isCollapsible(), mustBeCollapsible);
         assertEquals(newNode.isSelectable(), mustBeSelectable);
         assertThat(itemSearch.getCondition(), not(condition));
+        assertThat(itemSearch.getConditionDateInterval(), notNullValue());
+        assertThat(itemSearch.getConditionDateInterval(), not(sameInstance(initialInterval)));
     }
 
     @Test
@@ -200,6 +204,7 @@ public class ItemSearchTest {
         String tag = "tag";
         Date date1 = new Date();
         Date date2 = new Date();
+        DateInterval dateInterval = new DateInterval(date1, date2);
         Predicate andPredMock = mock(Predicate.class);
         Predicate orPredMock = mock(Predicate.class);
         Predicate notPredMock = mock(Predicate.class);
@@ -221,7 +226,7 @@ public class ItemSearchTest {
 
         itemSearch.setRootNode(new DefaultOrganigramNode(new Condition(ConditionType.AND)));
         OrganigramNode rootNode = itemSearch.getRootNode();
-        new DefaultOrganigramNode(new Condition(ConditionType.DATE, new Date[]{date1, date2}), rootNode);
+        new DefaultOrganigramNode(new Condition(ConditionType.DATE, dateInterval), rootNode);
         DefaultOrganigramNode notNode = new DefaultOrganigramNode(new Condition(ConditionType.NOT), rootNode);
         DefaultOrganigramNode orNode = new DefaultOrganigramNode(new Condition(ConditionType.OR), rootNode);
         new DefaultOrganigramNode(new Condition(ConditionType.TAG, tag), notNode);

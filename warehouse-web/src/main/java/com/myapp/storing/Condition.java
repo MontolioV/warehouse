@@ -1,7 +1,5 @@
 package com.myapp.storing;
 
-import java.util.Date;
-
 /**
  * <p>Created by MontolioV on 05.09.18.
  */
@@ -53,22 +51,14 @@ public final class Condition {
     public String toString() {
         String result = conditionType.name();
         switch (conditionType) {
-
             case NAME:
             case OWNER:
             case TAG:
-                if (isLike) {
-                    result += "\nlike";
-                }
-                result += "\n" + ((String) object);
-                break;
             case DATE:
                 if (isLike) {
                     result += "\nlike";
                 }
-                Date[] dates = (Date[]) object;
-                result += "\nin interval\n" + dates[0] + "\nto\n" + dates[1];
-                break;
+                result += "\n" + object.toString();
         }
         return result;
     }

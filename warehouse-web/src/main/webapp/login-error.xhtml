@@ -3,7 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
@@ -13,14 +14,9 @@
 
         <ui:define name="body">
             <h:panelGrid columns="1">
-                <h:outputLabel value="Authentication fail!"/>
-                <h:outputLabel value="Enshure entered credentials are valid and yor account is active."/>
-                <h:button outcome="login.xhtml" value="Try again"
-                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
-                <h:button outcome="registration.xhtml" value="Registration"
-                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
-                <h:button outcome="index.xhtml" value="Home"
-                          styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton"/>
+                <p:panel header="Authentication fail!">
+                    <p:outputLabel value="Ensure entered credentials are valid and your account was activated."/>
+                </p:panel>
             </h:panelGrid>
         </ui:define>
     </ui:composition>

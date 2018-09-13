@@ -18,31 +18,30 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:form>
-                <h:panelGroup layout="block" styleClass="mirrorContainer smallForm centered">
-                    <h:outputLabel value="Authentication"/>
+            <h:form styleClass="flex-vertical flex-c-ax-center">
+                <p:messages globalOnly="true" showDetail="true"/>
+                <p:panel header="Authentication" styleClass="medium-box">
+                    <h:panelGroup layout="block" styleClass="flex-vertical">
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel value="Login" for="login"/>
+                            <p:inputText id="login" value="#{formAuthenticationController.login}"
+                                         required="true" a:autofocus="true"/>
+                        </h:panelGroup>
 
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Login" for="login"/>
-                        <h:inputText id="login" value="#{formAuthenticationController.login}"
-                                     required="true" a:autofocus="true"/>
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel value="Password" for="password"/>
+                            <p:password id="password" value="#{formAuthenticationController.password}" required="true"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel value="Remember me" for="rememberme"/>
+                            <p:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
+                        </h:panelGroup>
+
+                        <p:commandButton value="Submit" action="#{formAuthenticationController.submit}"
+                                         process="@form" update="@form"/>
                     </h:panelGroup>
-
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Password" for="password"/>
-                        <h:inputSecret id="password" value="#{formAuthenticationController.password}" required="true"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Remember me" for="rememberme"/>
-                        <h:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
-                    </h:panelGroup>
-
-                    <p:commandButton value="Submit" action="#{formAuthenticationController.submit}"
-                                     process="@form" update="@form"
-                                     styleClass="decoratedButton"/>
-                    <h:messages globalOnly="true" layout="table"/>
-                </h:panelGroup>
+                </p:panel>
             </h:form>
         </ui:define>
     </ui:composition>

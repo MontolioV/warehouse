@@ -21,8 +21,14 @@
                 <p:inputText id="name" value="#{cc.attrs.item.name}" required="true" a:autofocus="true"/>
                 <p:message id="m_name" for="name"/>
 
+                <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-start" rendered="#{not empty p:userPrincipal()}">
+                    <p:outputLabel value="Is shared" for="share"/>
+                    <p:selectBooleanCheckbox id="share" value="#{cc.attrs.item.shared}"/>
+                    <p:message id="m_share" for="share"/>
+                </h:panelGroup>
+
                 <p:outputLabel value="Description" for="description"/>
-                <p:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="14"/>
+                <p:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="11"/>
                 <p:message id="m_description" for="description"/>
             </h:panelGroup>
             <h:panelGroup layout="block" styleClass="flex-horizontal flex-not-resizable flex-m-ax-end">
@@ -41,11 +47,6 @@
                                      converter="com.myapp.conversion.TagNamesConverter"/>
                 </h:panelGroup>
             </h:panelGroup>
-        </h:panelGroup>
-        <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-start" rendered="#{not empty p:userPrincipal()}">
-            <p:outputLabel value="Is shared" for="share"/>
-            <p:selectBooleanCheckbox id="share" value="#{cc.attrs.item.shared}"/>
-            <p:message id="m_share" for="share"/>
         </h:panelGroup>
     </h:panelGroup>
 </composite:implementation>

@@ -5,6 +5,7 @@ import com.myapp.utils.HttpUtils;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -63,7 +64,9 @@ public class FormAuthenticationController {
     public String submit() throws ServletException {
         CredentialValidationResult result = identityStore.validate(new UsernamePasswordCredential(login, password));
         if (result == null || result.equals(INVALID_RESULT) || result.equals(NOT_VALIDATED_RESULT)) {
-            return "/login-error?faces-redirect=true";
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,
+                    "Authentication fail!", "Ensure entered credentials are valid and your account was activated."));
+            return null;
         }
 
         Account account = accountStore.getAccountByLogin(login).get();

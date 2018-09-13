@@ -40,7 +40,7 @@
             </h:column>
             <h:column>
                 <f:facet name="header">owner</f:facet>
-                <p:link value="#{item.owner}" outcome="/public/items-search">
+                <p:link value="#{item.owner}" outcome="/public/items">
                     <f:param name="owner" value="#{item.owner}"/>
                 </p:link>
             </h:column>
@@ -56,7 +56,7 @@
                 <f:facet name="header">tags</f:facet>
                 <h:panelGroup styleClass="tagsContainer">
                     <ui:repeat value="#{item.tags}" var="tag">
-                        <p:link value="#{tag.name}" outcome="/public/items-search">
+                        <p:link value="#{tag.name}" outcome="/public/items">
                             <f:param name="tag" value="#{tag.name}"/>
                         </p:link>
                     </ui:repeat>

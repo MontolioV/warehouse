@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.security.enterprise.CallerPrincipal;
@@ -34,6 +35,7 @@ import static com.myapp.utils.CookiesConstants.JREMEMBERMEID;
 import static com.myapp.utils.CookiesConstants.MAX_AGE_PARAM;
 import static com.myapp.utils.TestSecurityConstants.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -134,7 +136,8 @@ public class FormAuthenticationControllerTest {
         verify(asMock, never()).getAccountByLogin(any(String.class));
         verify(requestMock, never()).logout();
         verify(requestMock, never()).login(any(String.class), any(String.class));
-        assertThat(redirect,is("/login-error?faces-redirect=true"));
+        verify(fcMock).addMessage(eq(null), any(FacesMessage.class));
+        assertThat(redirect, nullValue());
     }
 
     @Test

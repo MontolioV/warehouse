@@ -1,6 +1,5 @@
 package com.myapp.storing;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.organigram.OrganigramHelper;
 import org.primefaces.model.DefaultOrganigramNode;
@@ -14,6 +13,8 @@ import javax.inject.Named;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -225,7 +226,12 @@ public class ItemSearch implements Serializable {
         if (value == null) {
             return false;
         }
-        return DateUtils.isSameDay(((Date) value), (Date) filter);
+
+        Instant valueInstant = ((Date) value).toInstant();
+        Instant filterInstant = ((Date) filter).toInstant();
+        Instant filterInstantPlus1Day = filterInstant.plus(1, ChronoUnit.DAYS);
+        return (valueInstant.isAfter(filterInstant) && valueInstant.isBefore(filterInstantPlus1Day))
+                || valueInstant.equals(filterInstant);
     }
 
     //Setters & Getters

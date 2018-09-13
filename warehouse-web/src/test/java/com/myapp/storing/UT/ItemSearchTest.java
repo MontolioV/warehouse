@@ -16,7 +16,8 @@ import javax.faces.context.ExternalContext;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import java.security.Principal;
-import java.time.Instant;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -25,7 +26,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.myapp.utils.TestSecurityConstants.LOGIN_VALID;
 import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -263,15 +264,21 @@ public class ItemSearchTest {
     }
 
     @Test
-    public void filterByDate() {
-        Date now = Date.from(Instant.now());
-        Date nowMinus10Min = Date.from(Instant.now().minus(10, MINUTES));
-        Date nowMinus1Day = Date.from(Instant.now().minus(1, DAYS));
+    public void filterByDate() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+        Date date = sdf.parse("2018.01.01 00:00:00");
+        Date dateEq = Date.from(date.toInstant());
+        Date dateMinus1Sec = Date.from(date.toInstant().minus(1, SECONDS));
+        Date datePlus1Day = Date.from(date.toInstant().plus(1, DAYS));
+        Date datePlus1DayMinus1Sec = Date.from(date.toInstant().plus(1, DAYS).minus(1, SECONDS));
 
-        assertTrue(itemSearch.filterByDate(now, nowMinus10Min, null));
-        assertTrue(itemSearch.filterByDate(now, null, null));
+        assertFalse(itemSearch.filterByDate(dateMinus1Sec, date, null));
+        assertFalse(itemSearch.filterByDate(datePlus1Day, date, null));
+        assertFalse(itemSearch.filterByDate(null, date, null));
+
+        assertTrue(itemSearch.filterByDate(dateEq, date, null));
+        assertTrue(itemSearch.filterByDate(datePlus1DayMinus1Sec, date, null));
+        assertTrue(itemSearch.filterByDate(dateEq, null, null));
         assertTrue(itemSearch.filterByDate(null, null, null));
-        assertFalse(itemSearch.filterByDate(now, nowMinus1Day, null));
-        assertFalse(itemSearch.filterByDate(null, nowMinus10Min, null));
     }
 }

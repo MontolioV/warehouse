@@ -161,6 +161,9 @@ public class ItemSearchTest {
         List<OrganigramNode> children = itemSearch.getRootNode().getChildren();
         Condition condition = new Condition(cType);
         DateInterval initialInterval = itemSearch.getConditionDateInterval();
+        itemSearch.setDateInputRendered(true);
+        itemSearch.setLikeInputRendered(true);
+        itemSearch.setStringInputRendered(true);
         itemSearch.setCondition(condition);
         itemSearch.addNode();
         OrganigramNode newNode = children.get(idx);
@@ -170,9 +173,13 @@ public class ItemSearchTest {
         assertEquals(newNode.isDroppable(), mustBeDroppable);
         assertEquals(newNode.isCollapsible(), mustBeCollapsible);
         assertEquals(newNode.isSelectable(), mustBeSelectable);
-        assertThat(itemSearch.getCondition(), not(condition));
         assertThat(itemSearch.getConditionDateInterval(), notNullValue());
         assertThat(itemSearch.getConditionDateInterval(), not(sameInstance(initialInterval)));
+        assertThat(itemSearch.getCondition(), not(condition));
+        assertThat(itemSearch.getCondition().getConditionType(), is(ConditionType.AND));
+        assertFalse(itemSearch.isDateInputRendered());
+        assertFalse(itemSearch.isStringInputRendered());
+        assertFalse(itemSearch.isLikeInputRendered());
     }
 
     @Test
@@ -243,6 +250,16 @@ public class ItemSearchTest {
         verify(pfMock, times(2)).makeConjunctionPredicate(conjCaptor.capture());
         assertThat(conjCaptor.getAllValues().get(0), containsInAnyOrder(notPredMock));
         assertThat(conjCaptor.getAllValues().get(1), containsInAnyOrder(andPredMock, orPredMock, datePredMock));
+    }
+
+    @Test
+    public void parseAndRunQueryEmpty() {
+        ArrayList<Item> expected = newArrayList();
+        when(isMock.getAllAccessibleItems()).thenReturn(expected);
+
+        itemSearch.setRootNode(new DefaultOrganigramNode(new Condition(ConditionType.AND)));
+        itemSearch.parseAndRunQuery();
+        assertThat(itemSearch.getItems(), sameInstance(expected));
     }
 
     @Test

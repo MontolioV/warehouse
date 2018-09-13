@@ -109,6 +109,10 @@ body {
     width: initial;
 }
 
+.resizable-calendar.ui-calendar input {
+    max-width: 90%;
+}
+
 /*
 table {
     !*border: 1px solid black;*!

@@ -120,7 +120,9 @@ public class ItemSearch implements Serializable {
         } else {
             addLeafNode(condition, node);
         }
+
         condition = new Condition(AND);
+        newConditionDialogStateListener();
     }
 
     public void newConditionDialogStateListener() {
@@ -149,6 +151,11 @@ public class ItemSearch implements Serializable {
     }
 
     public void parseAndRunQuery() {
+        if (rootNode.getChildren().isEmpty()) {
+            items = itemStore.getAllAccessibleItems();
+            return;
+        }
+
         Predicate rootPredicate = makePredicate(rootNode);
         CriteriaQuery<Item> query = predicateFactory.makeItemCriteriaQuery(rootPredicate);
         items = itemStore.executeCustomSelectQuery(query);

@@ -122,7 +122,7 @@
                         </p:column>
                         <p:column headerText="Item type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact">
                             <f:facet name="filter">
-                                <p:selectOneMenu onchange="PF('itemTable').filter()">
+                                <p:selectOneMenu onchange="PF('itemTable').filter()" style="min-width: 0">
                                     <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{itemSearch.itemTypes}"/>
                                 </p:selectOneMenu>
@@ -149,7 +149,7 @@
                         <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
                                   filterFunction="#{itemSearch.filterByDate}">
                             <f:facet name="filter">
-                                <p:calendar pattern="yyyy.MM.dd" timeZone="#{itemSearch.viewTimezone}">
+                                <p:calendar pattern="yyyy.MM.dd" timeZone="#{itemSearch.viewTimezone}" styleClass="resizable-calendar">
                                     <p:ajax event="dateSelect" onstart="PF('itemTable').filter();return false;" global="false"/>
                                     <p:ajax event="change" onstart="PF('itemTable').filter();return false;" global="false"/>
                                 </p:calendar>

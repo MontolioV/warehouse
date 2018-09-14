@@ -64,9 +64,8 @@ public class CreateItemController {
 
             createItem(temporalFileItem);
 
-            facesContext.addMessage(null, new FacesMessage("FileItem \"" +
-                    temporalFileItem.getName() + "\" id:" + temporalFileItem.getId() +
-                    " was created successfully!"));
+            facesContext.addMessage(null, new FacesMessage("FileItem id:"
+                    + temporalFileItem.getId() + " was created successfully!"));
         }
     }
 

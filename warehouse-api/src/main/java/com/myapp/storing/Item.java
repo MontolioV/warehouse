@@ -1,7 +1,6 @@
 package com.myapp.storing;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
@@ -34,7 +33,6 @@ import static com.myapp.storing.Item.*;
 
 })
 @Table(indexes = {
-        @Index(columnList = "name"),
         @Index(columnList = "owner"),
 })
 public class Item implements Serializable {
@@ -104,9 +102,8 @@ public class Item implements Serializable {
         this.dType = dType;
     }
 
-    @NotBlank
     @Size(max = 30)
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     public String getName() {
         return name;
     }
@@ -181,7 +178,6 @@ public class Item implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, name, description, owner, creationDate, shared, tags);
     }
 }

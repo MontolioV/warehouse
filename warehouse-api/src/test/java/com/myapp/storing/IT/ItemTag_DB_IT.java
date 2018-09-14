@@ -99,9 +99,8 @@ public class ItemTag_DB_IT extends AbstractITArquillianWithEM {
         ArrayList<Tag> tags = new ArrayList<>();
 
         //name
-        items.add(new Item(0, null, null, null, new Date(), true, null));
-        items.add(new Item(0, "", null, null, new Date(), true, null));
         items.add(new Item(0, repeat("1", 31), null, null, new Date(), true, null));
+        //owner
         items.add(new Item(0, TEST_1, null, repeat("1", 31), new Date(), true, null));
         //date
         items.add(new Item(0, TEST_1, null, null, null, true, null));

@@ -18,7 +18,7 @@
         <h:panelGroup layout="block" styleClass="flex-horizontal">
             <h:panelGroup layout="block" styleClass="flex-vertical">
                 <p:outputLabel value="Name" for="name"/>
-                <p:inputText id="name" value="#{cc.attrs.item.name}" required="true" a:autofocus="true"/>
+                <p:inputText id="name" value="#{cc.attrs.item.name}" a:autofocus="true"/>
                 <p:message id="m_name" for="name"/>
 
                 <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-start" rendered="#{not empty p:userPrincipal()}">

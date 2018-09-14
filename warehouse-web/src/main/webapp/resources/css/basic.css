@@ -38,7 +38,6 @@
 */
 html, body {
     margin: 0;
-    height: 100%;
 }
 body {
     background: #d0f0ff;
@@ -176,7 +175,7 @@ textarea, input[type="text"], input[type="password"] {
     position: sticky;
     position: -webkit-sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 #topBar button {
     background: #56ACFF none;

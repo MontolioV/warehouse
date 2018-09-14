@@ -4,6 +4,7 @@ import com.myapp.storing.FileItem;
 import com.myapp.storing.FileStore;
 import com.myapp.storing.TemporaryFileInput;
 import com.myapp.storing.UploadFilesCollector;
+import com.myapp.utils.PrimeFacesBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -27,8 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * <p>Created by MontolioV on 29.08.18.
@@ -41,6 +42,10 @@ public class UploadFilesCollectorTest {
     private FacesContext fcMock;
     @Mock
     private FileStore fsMock;
+    @Mock
+    private PrimeFacesBean pfbMock;
+    @Mock
+    private PrimeFaces pfMock;
     @Mock
     private UploadedFile uploadedFileMock;
     @Mock
@@ -60,6 +65,7 @@ public class UploadFilesCollectorTest {
         when(uploadedFileMock.getSize()).thenReturn(fSize);
         when(uploadedFileMock.getInputstream()).thenReturn(inputStreamMock);
         when(fuEventMock.getFile()).thenReturn(uploadedFileMock);
+        when(pfbMock.getInstance()).thenReturn(pfMock);
     }
 
     @Test
@@ -78,7 +84,7 @@ public class UploadFilesCollectorTest {
         
         verify(fsMock).persistFile(tfInputCaptor.capture(), eq(cType));
         assertThat(tfInputCaptor.getValue().getInputStream(), is(inputStreamMock));
-
+        verify(pfMock).executeScript("createFileItems();");
     }
 
     @Test
@@ -89,6 +95,7 @@ public class UploadFilesCollectorTest {
 
         verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
         assertThat(collector.getTemporalFileItems(), empty());
+        verify(pfMock,never()).executeScript("createFileItems();");
     }
 
     @Test
@@ -96,16 +103,18 @@ public class UploadFilesCollectorTest {
         when(fuEventMock.getFile()).thenReturn(null);
         collector.fileUpload(fuEventMock);
         assertThat(collector.getTemporalFileItems(), empty());
+        verify(pfMock,never()).executeScript("createFileItems();");
     }
 
     @Test
-    public void name() throws IOException {
+    public void fileUploadIOE() throws IOException {
         when(fsMock.persistFile(any(TemporaryFileInput.class), eq(cType))).thenThrow(new IOException());
 
         collector.fileUpload(fuEventMock);
 
         verify(fcMock).addMessage(eq("fileInput"), any(FacesMessage.class));
         assertThat(collector.getTemporalFileItems(), empty());
+        verify(pfMock,never()).executeScript("createFileItems();");
     }
 
     @Test

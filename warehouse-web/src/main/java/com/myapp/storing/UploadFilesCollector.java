@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import com.myapp.utils.PrimeFacesBean;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -20,9 +21,11 @@ import java.util.Queue;
 @Named
 @ViewScoped
 public class UploadFilesCollector implements Serializable {
-    private static final long serialVersionUID = -4345494309854758123L;
+    private static final long serialVersionUID = 2816000489613843682L;
     @Inject
     private FacesContext facesContext;
+    @Inject
+    private PrimeFacesBean primeFacesBean;
     @EJB
     private FileStore fileStore;
     private Queue<FileItem> temporalFileItems = new LinkedList<>();
@@ -46,6 +49,7 @@ public class UploadFilesCollector implements Serializable {
             fileItem.setSize(uploadedFile.getSize());
 
             temporalFileItems.add(fileItem);
+            primeFacesBean.getInstance().executeScript("createFileItems();");
         } catch (IOException e) {
             e.printStackTrace();
             facesContext.addMessage("fileInput", new FacesMessage("File download fail. Try again."));

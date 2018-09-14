@@ -102,8 +102,8 @@ public class Item implements Serializable {
         this.dType = dType;
     }
 
-    @Size(max = 30)
-    @Column(length = 30)
+    @Size(max = 20)
+    @Column(length = 20)
     public String getName() {
         return name;
     }

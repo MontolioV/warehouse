@@ -4,6 +4,7 @@ import com.myapp.storing.FetchImageController;
 import com.myapp.storing.FileItem;
 import com.myapp.storing.FileStore;
 import com.myapp.storing.ItemStore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -38,17 +39,29 @@ public class FetchImageControllerTest {
     private FileItem itemMock;
     @Mock
     private Path pathMock;
+    private byte[] bytes = new byte[0];
+
+    @Before
+    public void setUp() throws Exception {
+        mockStatic(Files.class);
+        when(isMock.getItemById(anyLong())).thenReturn(itemMock);
+        when(itemMock.getHash()).thenReturn("");
+        when(Files.readAllBytes(pathMock)).thenReturn(bytes);
+    }
+
+    @Test
+    public void getPreviewFromFileItem() throws IOException {
+        when(fsMock.getPreviewPath(anyString())).thenReturn(pathMock);
+
+        byte[] previewFromFileItem = controller.getPreviewFromFileItem(anyLong());
+        assertThat(previewFromFileItem, sameInstance(bytes));
+    }
 
     @Test
     public void getImageFromFileItem() throws IOException {
-        byte[] bytes = new byte[0];
-        mockStatic(Files.class);
-        when(isMock.getItemById(anyLong(), anyString())).thenReturn(itemMock);
-        when(itemMock.getHash()).thenReturn("");
-        when(fsMock.getPreview(anyString())).thenReturn(pathMock);
-        when(Files.readAllBytes(pathMock)).thenReturn(bytes);
+        when(fsMock.getFilePath(anyString())).thenReturn(pathMock);
 
-        byte[] imageFromFileItem = controller.getImageFromFileItem(anyLong(), anyString());
+        byte[] imageFromFileItem = controller.getImageFromFileItem(anyLong());
         assertThat(imageFromFileItem, sameInstance(bytes));
     }
 }

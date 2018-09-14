@@ -112,20 +112,26 @@
                     <p:dataTable value="#{itemSearch.items}" var="item" widgetVar="itemTable"
                                  filteredValue="#{itemSearch.filteredItems}"
                                  emptyMessage="No items found!"
+                                 resizableColumns="true"
                                  paginator="true" rowsPerPageTemplate="20,50,100"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                         <f:facet name="header">
                             Accessible items
                         </f:facet>
-                        <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" >
-                            <p:link value="#{item.id}" outcome="/public/show-item">
+                        <p:column styleClass="column-buttons">
+                            <p:button icon="ui-icon-search" outcome="/public/show-item">
                                 <f:param name="id" value="#{item.id}"/>
-                            </p:link>
+                            </p:button>
                         </p:column>
-                        <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains">
+                        <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" styleClass="column-id">
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+                        <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains"
+                                  styleClass="column-name">
                             <h:outputText value="#{item.name}"/>
                         </p:column>
-                        <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains">
+                        <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains"
+                                  styleClass="column-owner">
                             <p:link value="#{item.owner}" outcome="/public/items">
                                 <f:param name="owner" value="#{item.owner}"/>
                             </p:link>
@@ -140,7 +146,7 @@
                             </h:panelGroup>
                         </p:column>
                         <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
-                                  filterFunction="#{itemSearch.filterByDate}">
+                                  filterFunction="#{itemSearch.filterByDate}" styleClass="column-date">
                             <f:facet name="filter">
                                 <p:calendar pattern="yyyy.MM.dd" timeZone="#{itemSearch.viewTimezone}" styleClass="resizable-calendar">
                                     <p:ajax event="dateSelect" onstart="PF('itemTable').filter();return false;" global="false"/>
@@ -151,7 +157,8 @@
                                 <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss Z"/>
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="Item type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact">
+                        <p:column headerText="Type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact"
+                                  styleClass="column-type">
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('itemTable').filter()" style="min-width: 0">
                                     <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
@@ -160,7 +167,8 @@
                             </f:facet>
                             <h:outputText value="#{item.dType}"/>
                         </p:column>
-                        <p:column headerText="Visibility" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals">
+                        <p:column headerText="Visibility" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals"
+                                  styleClass="column-visibility">
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('itemTable').filter()" style="min-width: 0">
                                     <f:converter converterId="javax.faces.Boolean"/>

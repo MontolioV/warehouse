@@ -14,9 +14,15 @@ public class FetchImageController {
     @EJB
     private FileStore fileStore;
 
-    public byte[] getImageFromFileItem(long id, String userName) throws IOException {
-        String hash = ((FileItem) itemStore.getItemById(id, userName)).getHash();
-        Path path = fileStore.getPreview(hash);
+    public byte[] getPreviewFromFileItem(long id) throws IOException {
+        String hash = ((FileItem) itemStore.getItemById(id)).getHash();
+        Path path = fileStore.getPreviewPath(hash);
+        return Files.readAllBytes(path);
+    }
+
+    public byte[] getImageFromFileItem(long id) throws IOException {
+        String hash = ((FileItem) itemStore.getItemById(id)).getHash();
+        Path path = fileStore.getFilePath(hash);
         return Files.readAllBytes(path);
     }
 }

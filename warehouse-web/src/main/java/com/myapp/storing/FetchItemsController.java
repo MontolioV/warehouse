@@ -70,13 +70,7 @@ public class FetchItemsController {
     }
 
     public String fetchById() {
-        Principal userPrincipal = externalContext.getUserPrincipal();
-        String username = null;
-        if (userPrincipal != null) {
-            username = userPrincipal.getName();
-        }
-
-        item = itemStore.getItemById(id, username);
+        item = itemStore.getItemById(id);
         if (item == null) {
             return "missing-item-error";
         } else {

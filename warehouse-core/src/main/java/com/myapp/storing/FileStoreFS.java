@@ -53,7 +53,12 @@ public class FileStoreFS implements FileStore {
     }
 
     @Override
-    public Path getPreview(String hash) {
+    public Path getFilePath(String hash) {
+        return storageConfig.getStorageRoot().resolve(hash);
+    }
+
+    @Override
+    public Path getPreviewPath(String hash) {
         return storageConfig.getPreviewRoot().resolve(hash + PREVIEW_FILENAME_EXTENSION);
     }
 

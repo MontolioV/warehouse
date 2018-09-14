@@ -19,6 +19,7 @@ import java.util.*;
 @Named
 @ViewScoped
 public class UserManagementController implements Serializable {
+    private static final long serialVersionUID = -7408410601164201800L;
     @Inject
     private FacesContext facesContext;
     @EJB

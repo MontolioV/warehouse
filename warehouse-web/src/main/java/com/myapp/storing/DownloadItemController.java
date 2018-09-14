@@ -23,8 +23,7 @@ public class DownloadItemController {
 
     public void downloadAndSaveItem() throws IOException {
         ExternalContext ec = facesContext.getExternalContext();
-        String user = ec.getUserPrincipal() == null ? null : ec.getUserPrincipal().getName();
-        FileItem item = (FileItem) itemStore.getItemById(id, user);
+        FileItem item = (FileItem) itemStore.getItemById(id);
 
         ec.responseReset();
         ec.setResponseContentType(item.getContentType());

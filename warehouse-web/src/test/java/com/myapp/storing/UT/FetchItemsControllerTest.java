@@ -17,7 +17,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.faces.context.ExternalContext;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,18 +107,7 @@ public class FetchItemsControllerTest {
     public void fetchById() {
         Item item = new Item();
         controller.setId(0L);
-        when(isMock.getItemById(0L, LOGIN_VALID)).thenReturn(item);
-
-        controller.fetchById();
-        assertThat(controller.getItem(), sameInstance(item));
-    }
-
-    @Test
-    public void fetchByIdAnonymous() {
-        Item item = new Item();
-        controller.setId(0L);
-        when(ecMock.getUserPrincipal()).thenReturn(null);
-        when(isMock.getItemById(0L, null)).thenReturn(item);
+        when(isMock.getItemById(0L)).thenReturn(item);
 
         controller.fetchById();
         assertThat(controller.getItem(), sameInstance(item));

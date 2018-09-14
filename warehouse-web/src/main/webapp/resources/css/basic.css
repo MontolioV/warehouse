@@ -57,6 +57,11 @@ body {
     max-width: 80%;
 }
 
+#showImageDialog {
+    max-width: 100%;
+    max-height: 100vh;
+}
+
 .flex-vertical {
     display: flex;
     flex-direction: column;
@@ -110,6 +115,28 @@ body {
 
 .resizable-calendar.ui-calendar input {
     max-width: 90%;
+}
+
+.column-buttons {
+    width: 42px;
+}
+.column-id {
+    width: 62px;
+}
+.column-type {
+    width: 82px;
+}
+.column-name {
+    width: 165px;
+}
+.column-owner {
+    width: 165px;
+}
+.column-date {
+    width: 170px;
+}
+.column-visibility {
+    width: 82px;
 }
 
 /*
@@ -262,6 +289,12 @@ textarea, input[type="text"], input[type="password"] {
     background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
 }
 
+.imagePreview {
+    max-width: 200px;
+    max-height: 200px;
+    cursor: zoom-in;
+}
+
 /*
 .tagsContainer {
     display: flex;
@@ -280,11 +313,6 @@ textarea, input[type="text"], input[type="password"] {
     display: block;
     border: 1px solid gray;
     padding: 10px;
-}
-
-.imagePreview {
-    max-width: 200px;
-    max-height: 200px;
 }
 
 button.largeButton, input[type="button"].largeButton, input[type="submit"].largeButton, .largeButton {

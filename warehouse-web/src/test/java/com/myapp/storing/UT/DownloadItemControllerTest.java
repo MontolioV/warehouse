@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.security.Principal;
 
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
@@ -49,7 +48,7 @@ public class DownloadItemControllerTest {
         when(principalMock.getName()).thenReturn("");
         when(fcMock.getExternalContext()).thenReturn(ecMock);
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
-        when(isMock.getItemById(anyLong(), anyString())).thenReturn(itemMock);
+        when(isMock.getItemById(anyLong())).thenReturn(itemMock);
         when(itemMock.getSize()).thenReturn(10L);
         when(itemMock.getContentType()).thenReturn("getContentType");
         when(itemMock.getHash()).thenReturn("hash");

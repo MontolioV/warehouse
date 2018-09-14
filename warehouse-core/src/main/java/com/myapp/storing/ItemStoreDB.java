@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Date;
@@ -36,16 +35,15 @@ public class ItemStoreDB implements ItemStore{
 
     @Override
     public List<Item> getAllAccessibleItems() {
-        String owner = sessionContext.getCallerPrincipal().getName();
         return em.createNamedQuery(Item.GET_ALL_ACCESSIBLE, Item.class)
-                .setParameter(Item.OWNER_PARAM, owner)
+                .setParameter(Item.OWNER_PARAM, getPrincipalName())
                 .getResultList();
     }
 
     @Override
-    public Item getItemById(long id, String userName) {
+    public Item getItemById(long id) {
         Item item = em.find(Item.class, id);
-        if (item != null && (item.isShared() || item.getOwner().equals(userName))) {
+        if (item != null && (item.isShared() || item.getOwner().equals(getPrincipalName()))) {
             return item;
         } else {
             return null;
@@ -107,10 +105,14 @@ public class ItemStoreDB implements ItemStore{
 
     @Override
     public List<Item> executeCustomSelectQuery(CriteriaQuery<Item> criteriaQuery) {
-        String principalName = sessionContext.getCallerPrincipal().getName();
+        String principalName = getPrincipalName();
         List<Item> resultList = em.createQuery(criteriaQuery).getResultList();
         return resultList.stream()
                 .filter(item -> item.isShared() || item.getOwner().equals(principalName))
                 .collect(Collectors.toList());
+    }
+
+    private String getPrincipalName() {
+        return sessionContext.getCallerPrincipal().getName();
     }
 }

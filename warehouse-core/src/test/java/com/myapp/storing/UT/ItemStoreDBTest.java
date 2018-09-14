@@ -14,9 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -90,9 +88,10 @@ public class ItemStoreDBTest {
 
     @Test
     public void getItemByIdShared() {
+        when(principalMock.getName()).thenReturn(LOGIN_INVALID);
         when(itemMock.isShared()).thenReturn(true);
 
-        Item result = itemStoreDB.getItemById(anyLong(), anyString());
+        Item result = itemStoreDB.getItemById(1L);
         assertThat(result, sameInstance(itemMock));
     }
 
@@ -101,10 +100,11 @@ public class ItemStoreDBTest {
         when(itemMock.isShared()).thenReturn(false);
         when(itemMock.getOwner()).thenReturn(LOGIN_VALID);
 
-        Item result = itemStoreDB.getItemById(0, LOGIN_VALID);
+        Item result = itemStoreDB.getItemById(0);
         assertThat(result, sameInstance(itemMock));
 
-        result = itemStoreDB.getItemById(0, LOGIN_INVALID);
+        when(principalMock.getName()).thenReturn(LOGIN_INVALID);
+        result = itemStoreDB.getItemById(0);
         assertThat(result, nullValue());
     }
 
@@ -112,7 +112,7 @@ public class ItemStoreDBTest {
     public void getItemByIdMissing() {
         when(emMock.find(eq(Item.class), anyLong())).thenReturn(null);
 
-        Item result = itemStoreDB.getItemById(anyLong(), anyString());
+        Item result = itemStoreDB.getItemById(1L);
         assertThat(result, nullValue());
     }
 

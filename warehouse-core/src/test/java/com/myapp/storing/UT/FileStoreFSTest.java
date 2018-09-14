@@ -121,9 +121,16 @@ public class FileStoreFSTest {
     }
 
     @Test
-    public void getPreview() {
+    public void getFilePath() {
+        when(storageRootPathMock.resolve(hash)).thenReturn(pathMock);
+        Path preview = fileStoreFS.getFilePath(hash);
+        assertThat(preview, is(pathMock));
+    }
+
+    @Test
+    public void getPreviewPath() {
         when(previewRootPathMock.resolve(hash + PREVIEW_FILENAME_EXTENSION)).thenReturn(pathMock);
-        Path preview = fileStoreFS.getPreview(hash);
+        Path preview = fileStoreFS.getPreviewPath(hash);
         assertThat(preview, is(pathMock));
     }
 

@@ -1,7 +1,6 @@
 package com.myapp.storing;
 
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
@@ -16,7 +15,7 @@ public interface ItemStore {
 
     List<Item> getAllAccessibleItems();
 
-    Item getItemById(long id, String userName);
+    Item getItemById(long id);
 
     Set<String> getHashesOfFileItems();
 

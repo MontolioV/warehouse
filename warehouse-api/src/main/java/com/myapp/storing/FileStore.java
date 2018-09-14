@@ -15,7 +15,9 @@ public interface FileStore {
 
     void uploadFile(String fileHash, OutputStream outputStream) throws IOException;
 
-    Path getPreview(String hash);
+    Path getFilePath(String hash);
+
+    Path getPreviewPath(String hash);
 
     Set<String> getHashesOfAllStoredFiles();
 

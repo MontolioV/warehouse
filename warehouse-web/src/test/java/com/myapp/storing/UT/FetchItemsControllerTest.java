@@ -313,7 +313,7 @@ public class FetchItemsControllerTest {
         Whitelist whitelist = mock(Whitelist.class);
 
         when(tiMock.getText()).thenReturn("rawText");
-        PowerMockito.when(Whitelist.basic()).thenReturn(whitelist);
+        PowerMockito.when(Whitelist.relaxed()).thenReturn(whitelist);
         PowerMockito.when(Jsoup.clean("rawText", whitelist)).thenReturn("sanitisedText");
 
         controller.setTextItem(tiMock);
@@ -323,5 +323,13 @@ public class FetchItemsControllerTest {
         controller.setTextItem(null);
         s = controller.sanitisedText();
         assertThat(s, nullValue());
+    }
+
+    @Test
+    public void getLinkToItem() {
+        controller.setWebAppAddress("waa/");
+        controller.setId(10L);
+        String linkToItem = controller.getLinkToItem();
+        assertThat(linkToItem,is("waa/public/show-item.jsf?id=10"));
     }
 }

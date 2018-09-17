@@ -4,6 +4,7 @@ import com.myapp.utils.QueryTarget;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
@@ -30,6 +31,8 @@ public class FetchItemsController {
     private TagStore tagStore;
     @EJB
     private ItemTagLikeQueryBuilder likeQueryBuilder;
+    @Resource(lookup = "java:/strings/webAppAddress")
+    private String webAppAddress;
     private List<Item> items = new ArrayList<>();
     private Long id;
     private Item item;
@@ -151,7 +154,11 @@ public class FetchItemsController {
             return null;
         }
         String text = textItem.getText();
-        return Jsoup.clean(text, Whitelist.basic());
+        return Jsoup.clean(text, Whitelist.relaxed());
+    }
+
+    public String getLinkToItem() {
+        return webAppAddress + "public/show-item.jsf?id=" + id;
     }
 
     //Getters & Setters
@@ -282,5 +289,13 @@ public class FetchItemsController {
 
     public void setFileItem(FileItem fileItem) {
         this.fileItem = fileItem;
+    }
+
+    public String getWebAppAddress() {
+        return webAppAddress;
+    }
+
+    public void setWebAppAddress(String webAppAddress) {
+        this.webAppAddress = webAppAddress;
     }
 }

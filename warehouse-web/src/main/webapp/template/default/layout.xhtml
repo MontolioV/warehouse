@@ -10,11 +10,11 @@
 </h:head>
 
 <h:body>
-    <ui:insert name="header">
-        <ui:include src="/template/default/header.xhtml"/>
-    </ui:insert>
-
     <h:panelGroup id="mainDiv" layout="block">
+        <ui:insert name="header">
+            <ui:include src="/template/default/header.xhtml"/>
+        </ui:insert>
+
         <h:panelGroup id="base" layout="block">
             <ui:insert name="body">
                 <ui:include src="/template/default/body.xhtml"/>

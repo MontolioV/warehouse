@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:o="http://omnifaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
             <title>Show text item</title>
+            <h:outputScript name="js/clipboard.js"/>
             <f:metadata>
                 <f:viewParam name="id" value="#{viewVars.id}"/>
                 <f:viewParam name="id" value="#{fetchItemsController.id}"/>
@@ -26,64 +26,73 @@
                 <o:graphicImage dataURI="true" lastModified="#{fetchItemsController.fileItem.creationDate}"
                                 value="#{fetchImageController.getImageFromFileItem(viewVars.id)}"/>
             </p:dialog>
+
+            <p:growl id="growl" life="3000" keepAlive="true"/>
+            <h:form>
+                <p:remoteCommand name="cbMessage" action="#{facesMessenger.addInfoMessage('Copied to clipboard')}" update="growl"/>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:button title="Download" outcome="download.jsf?id=#{param['id']}" icon="fa fa-download"
+                                  rendered="#{not empty fetchItemsController.fileItem}"/>
+                        <p:commandButton id="copyToCB" title="Copy text" icon="fa fa-copy"
+                                         onclick="copyTextToClipboard();cbMessage();"
+                                         rendered="#{not empty fetchItemsController.textItem}"/>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:button title="Delete" outcome="delete-item.jsf?id=#{param['id']}" icon="fa fa-trash-o"
+                                  rendered="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsModerator()}"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+
             <h:panelGroup layout="block" styleClass="flex-vertical">
-                <h:panelGroup layout="block" styleClass="flex-horizontal flex-not-resizable">
-                    <h:form>
-                        <h:panelGroup layout="block" styleClass="flex-vertical">
-                            <c:if test="#{fetchItemsController.itemIsUsersOwn() or roleCheckerController.checkIsModerator()}">
-                                <p:button value="Delete" outcome="delete-item.jsf?id=#{param['id']}" icon="fa fa-fw fa-remove"/>
-                            </c:if>
-                            <c:if test="#{not empty fetchItemsController.fileItem}">
-                                <p:button value="Download" outcome="download.jsf?id=#{param['id']}" icon="fa fa-fw fa-download"/>
-                            </c:if>
-                        </h:panelGroup>
-                    </h:form>
-                    <c:if test="#{not empty fetchItemsController.fileItem and fetchItemsController.fileIsImage()}">
-                        <p:panel header="Preview">
-                            <o:graphicImage dataURI="true" lastModified="#{fetchItemsController.fileItem.creationDate}"
-                                            value="#{fetchImageController.getPreviewFromFileItem(viewVars.id)}"
-                                            styleClass="imagePreview" onclick="PF('imageDialog').show();"/>
-                        </p:panel>
-                    </c:if>
-                </h:panelGroup>
-
-                <c:if test="#{not empty fetchItemsController.textItem}">
-                    <p:panel header="Text">
-                        <p:outputLabel escape="false" styleClass="textLabel" value="#{fetchItemsController.sanitisedText()}"/>
+                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                    <p:panel header="Preview" styleClass="flex-not-resizable"
+                             rendered="#{not empty fetchItemsController.fileItem and fetchItemsController.fileIsImage()}">
+                        <o:graphicImage dataURI="true" lastModified="#{fetchItemsController.fileItem.creationDate}"
+                                        value="#{fetchImageController.getPreviewFromFileItem(viewVars.id)}"
+                                        styleClass="imagePreview" onclick="PF('imageDialog').show();"/>
                     </p:panel>
-                </c:if>
-
-                <p:panel header="Info">
-                    <h:panelGroup layout="block" styleClass="flex-horizontal">
-                        <h:panelGroup layout="block" styleClass="flex-vertical">
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel value="Owner"/>
-                                <p:link value="#{fetchItemsController.item.owner}" outcome="/public/items">
-                                    <f:param name="owner" value="#{fetchItemsController.item.owner}"/>
-                                </p:link>
-                            </h:panelGroup>
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel value="Item name"/>
-                                <p:outputLabel value="#{fetchItemsController.item.name}"/>
-                            </h:panelGroup>
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <p:outputLabel value="Item description"/>
-                                <p:outputLabel value="#{fetchItemsController.item.description}"/>
-                            </h:panelGroup>
-                        </h:panelGroup>
-                        <h:panelGroup layout="block" styleClass="flex-vertical">
-                            <p:outputLabel value="Tags"/>
-                            <h:panelGroup layout="block" styleClass="flex-horizontal">
+                    <p:panel header="Info">
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
                                 <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                    <ui:repeat value="#{fetchItemsController.item.tags}" var="tag">
-                                        <p:link value="#{tag.name}" outcome="/public/items">
-                                            <f:param name="tag" value="#{tag.name}"/>
-                                        </p:link>
-                                    </ui:repeat>
+                                    <p:outputLabel value="Owner"/>
+                                    <p:link value="#{fetchItemsController.item.owner}" outcome="/public/items">
+                                        <f:param name="owner" value="#{fetchItemsController.item.owner}"/>
+                                    </p:link>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel value="Item name"/>
+                                    <p:outputLabel value="#{fetchItemsController.item.name}"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <p:outputLabel value="Item description"/>
+                                    <p:outputLabel value="#{fetchItemsController.item.description}"/>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <p:outputLabel value="Tags"/>
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                    <h:panelGroup layout="block" styleClass="flex-horizontal">
+                                        <ui:repeat value="#{fetchItemsController.item.tags}" var="tag">
+                                            <p:link value="#{tag.name}" outcome="/public/items">
+                                                <f:param name="tag" value="#{tag.name}"/>
+                                            </p:link>
+                                        </ui:repeat>
+                                    </h:panelGroup>
                                 </h:panelGroup>
                             </h:panelGroup>
                         </h:panelGroup>
-                    </h:panelGroup>
+                    </p:panel>
+                    <p:panel header="Link" styleClass="flex-not-resizable">
+                        <p:barcode value="#{fetchItemsController.getLinkToItem()}" type="qr"/>
+                    </p:panel>
+                </h:panelGroup>
+
+                <p:panel header="Text" rendered="#{not empty fetchItemsController.textItem}">
+                    <p:outputLabel id="textContainer" escape="false" styleClass="textLabel"
+                                   value="#{fetchItemsController.sanitisedText()}"/>
                 </p:panel>
             </h:panelGroup>
         </ui:define>

@@ -78,10 +78,7 @@ body {
     margin: 0 5px 0 0;
     flex: 1 1;
 }
-.flex-resizable>* {
-    flex: 1 1;
-}
-.flex-not-resizable>* {
+.flex-not-resizable {
     flex: 0 0;
 }
 .flex-no-wrap {
@@ -137,6 +134,11 @@ body {
 }
 .column-visibility {
     width: 82px;
+}
+
+button .ui-icon {
+    width: 18px;
+    height: 18px;
 }
 
 /*
@@ -236,6 +238,7 @@ textarea, input[type="text"], input[type="password"] {
     flex-direction: column;
 }
 #base {
+    min-width: 575px;
     flex-grow: 1;
     margin: 20px 50px 0 50px;
     padding: 30px;

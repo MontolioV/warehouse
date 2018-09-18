@@ -256,6 +256,23 @@ textarea, input[type="text"], input[type="password"] {
     color: white;
 }
 
+#scroller {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 900;
+}
+#scroller * {
+    opacity: 0.3;
+}
+#scroller:hover * {
+    opacity: 0.5;
+}
+#scroller:active * {
+    opacity: 0.8;
+}
+
 .dataTable {
     border: 1px solid #1C62A6;
     border-collapse: separate;

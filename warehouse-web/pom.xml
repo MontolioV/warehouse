@@ -13,6 +13,11 @@
 
     <name>warehouse-web</name>
 
+    <properties>
+        <maven.build.timestamp.format>yyyy_MM_dd_HH_mm_ss</maven.build.timestamp.format>
+        <timestamp>${maven.build.timestamp}</timestamp>
+    </properties>
+
     <repositories>
         <repository>
             <id>primefaces</id>
@@ -98,6 +103,58 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>js-version-timestamp</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${project.basedir}/src/main/webapp/resources/js/timestamp_version</sourceFile>
+                            <destinationFile>src/main/webapp/resources/js/${timestamp}</destinationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>js-version-revert</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${project.basedir}/src/main/webapp/resources/js/${timestamp}</sourceFile>
+                            <destinationFile>src/main/webapp/resources/js/timestamp_version</destinationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>css-version-timestamp</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${project.basedir}/src/main/webapp/resources/css/timestamp_version</sourceFile>
+                            <destinationFile>src/main/webapp/resources/css/${timestamp}</destinationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>css-version-revert</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${project.basedir}/src/main/webapp/resources/css/${timestamp}</sourceFile>
+                            <destinationFile>src/main/webapp/resources/css/timestamp_version</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

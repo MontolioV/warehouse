@@ -135,6 +135,9 @@ body {
 .column-visibility {
     width: 82px;
 }
+.column-tags {
+    min-width: 100px;
+}
 
 button .ui-icon {
     width: 18px;
@@ -271,6 +274,10 @@ textarea, input[type="text"], input[type="password"] {
 }
 #scroller:active * {
     opacity: 0.8;
+}
+
+#qrCodePanel {
+    margin: 0;
 }
 
 .dataTable {

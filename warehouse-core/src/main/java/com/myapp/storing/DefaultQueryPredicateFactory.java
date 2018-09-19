@@ -37,6 +37,7 @@ public class DefaultQueryPredicateFactory implements QueryPredicateFactory {
     public CriteriaQuery<Item> makeItemCriteriaQuery(@NotNull Predicate predicate) {
         itemQuery.where(predicate);
         itemQuery.distinct(true);
+        itemQuery.orderBy(criteriaBuilder.desc(itemRoot.get(Item_.id)));
         return itemQuery;
     }
 

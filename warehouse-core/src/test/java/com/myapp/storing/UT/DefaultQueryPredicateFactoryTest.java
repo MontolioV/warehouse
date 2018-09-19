@@ -43,6 +43,8 @@ public class DefaultQueryPredicateFactoryTest {
     @Mock
     private Predicate notNullPredMock;
     @Mock
+    private Path ii_idPath;
+    @Mock
     private Path ii_namePath;
     @Mock
     private Path ii_ownerPath;
@@ -58,6 +60,8 @@ public class DefaultQueryPredicateFactoryTest {
     private Path ii_sharedPath;
     @Mock
     private Path ii_typePath;
+    @Mock
+    private Order orderMock;
     private CriteriaBuilder cbMock;
     private Root<Item> itemRootMock;
     private Root<Tag> tagRootMock;
@@ -89,6 +93,8 @@ public class DefaultQueryPredicateFactoryTest {
         when(cqMock.from(Item.class)).thenReturn(itemRootMock);
         when(cqMock.from(Tag.class)).thenReturn(tagRootMock);
         when(cbMock.and(intermediatePredMock1, notNullPredMock)).thenReturn(expectedPredMock);
+        when(cbMock.desc(ii_idPath)).thenReturn(orderMock);
+        when(itemRootMock.get(Item_.id)).thenReturn(ii_idPath);
         when(itemRootMock.get(Item_.name)).thenReturn(ii_namePath);
         when(itemRootMock.get(Item_.owner)).thenReturn(ii_ownerPath);
         when(tagRootMock.get(Tag_.name)).thenReturn(tt_namePath);
@@ -122,6 +128,7 @@ public class DefaultQueryPredicateFactoryTest {
         CriteriaQuery<Item> query = factory.makeItemCriteriaQuery(expectedPredMock);
         verify(cqMock).distinct(true);
         verify(cqMock).where(expectedPredMock);
+        verify(cqMock).orderBy(orderMock);
         assertThat(query, sameInstance(cqMock));
     }
 

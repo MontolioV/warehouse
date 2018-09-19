@@ -119,7 +119,7 @@
                             Accessible items
                         </f:facet>
                         <p:column styleClass="column-buttons">
-                            <p:button icon="ui-icon-search" outcome="/public/show-item">
+                            <p:button icon="ui-icon-search" outcome="/public/show-item" target="_blank">
                                 <f:param name="id" value="#{item.id}"/>
                             </p:button>
                         </p:column>
@@ -136,7 +136,8 @@
                                 <f:param name="owner" value="#{item.owner}"/>
                             </p:link>
                         </p:column>
-                        <p:column headerText="Tags" filterBy="#{item.tags}" filterMatchMode="contains">
+                        <p:column headerText="Tags" filterBy="#{item.tags}" filterMatchMode="contains"
+                                  styleClass="column-tags">
                             <h:panelGroup layout="block" styleClass="flex-horizontal">
                                 <ui:repeat value="#{item.tags}" var="tag">
                                     <p:link value="#{tag.name}" outcome="/public/items">

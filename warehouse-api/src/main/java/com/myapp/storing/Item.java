@@ -21,7 +21,8 @@ import static com.myapp.storing.Item.*;
 @DiscriminatorColumn(name = "dType")
 @NamedQueries({
         @NamedQuery(name = Item.GET_ALL, query = "select i from Item i"),
-        @NamedQuery(name = Item.GET_ALL_ACCESSIBLE, query = "select i from Item i where i.shared=true or i.owner=:" + OWNER_PARAM),
+        @NamedQuery(name = Item.GET_ALL_ACCESSIBLE, query = "select i from Item i where i.shared=true or i.owner=:" + OWNER_PARAM
+                                                         +" order by i.id desc"),
         @NamedQuery(name = Item.GET_ALL_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM),
         @NamedQuery(name = Item.GET_LAST_SHARED, query = "select i from Item i where i.shared=true order by i.creationDate desc"),
         @NamedQuery(name = Item.GET_LAST_OF_CLASS, query = "select i from Item i where type(i)=:" + CLASS_PARAM

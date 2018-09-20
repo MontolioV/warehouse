@@ -20,6 +20,8 @@ public interface AccountStore {
 
     Optional<Account> getAccountByTokenHash(@NotBlank String tokenHash);
 
+    Optional<Account> getAccountByEmail(@NotBlank String email);
+
     List<Account> getAllAccounts();
 
     void activateAccount(@NotBlank String tokenHash);

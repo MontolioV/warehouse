@@ -11,8 +11,10 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 
 /**
+ *
  * <p>Created by MontolioV on 18.07.18.
  */
+@Deprecated
 @Constraint(validatedBy = UniqueValidator.class)
 @Target(value = {METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

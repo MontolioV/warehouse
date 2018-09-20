@@ -3,7 +3,6 @@ package com.myapp.storing;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class FileItem extends Item {
     private static final String PREFIX = "com.myapp.storing.FileItem.";
     public static final String GET_ALL_HASHES = PREFIX + "GET_ALL_HASHES";
     public static final String GET_TOTAL_SIZE_BY_OWNER = PREFIX + "GET_TOTAL_SIZE_BY_OWNER";
-    public static final int MAX_SIZE_BYTE = (int) 1_000_000_000;
+    public static final int MAX_SIZE_BYTE = 1_000_000_000;
 
     private String nativeName;
     private String contentType;
@@ -45,6 +44,7 @@ public class FileItem extends Item {
     }
 
     @NotBlank
+    @Column(nullable = false)
     public String getNativeName() {
         return nativeName;
     }
@@ -54,6 +54,7 @@ public class FileItem extends Item {
     }
 
     @NotBlank
+    @Column(nullable = false)
     public String getContentType() {
         return contentType;
     }
@@ -62,7 +63,6 @@ public class FileItem extends Item {
         this.contentType = contentType;
     }
 
-    @NotNull
     @Max(MAX_SIZE_BYTE)
     public long getSize() {
         return size;
@@ -73,6 +73,7 @@ public class FileItem extends Item {
     }
 
     @NotBlank
+    @Column(nullable = false)
     public String getHash() {
         return hash;
     }

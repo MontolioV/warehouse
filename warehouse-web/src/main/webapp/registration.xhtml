@@ -6,7 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough" xmlns:o="http://omnifaces.org/ui">
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
@@ -15,58 +15,45 @@
         </ui:define>
 
         <ui:define name="body">
-            <h:form id="reg_form">
-                <h:panelGroup layout="block" styleClass="mirrorContainer mediumForm centered">
-                    <h:outputLabel value="Registration"/>
+            <h:form id="reg_form" styleClass="flex-vertical flex-c-ax-center">
+                <p:messages id="messages"/>
 
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Login" for="login"/>
-                        <h:inputText id="login" value="#{registrationController.account.login}" required="true"
-                                     a:autofocus="true">
-                            <f:ajax event="blur" render="m_login"/>
-                            <f:validateBean validationGroups="com.myapp.validation.groups.Gui"/>
-                        </h:inputText>
-                        <h:message id="m_login" for="login"/>
+                <p:panel header="Registration" styleClass="medium-box">
+                    <h:panelGroup layout="block" styleClass="flex-vertical">
+                        <h:panelGroup styleClass="flex-horizontal p-align-start">
+                            <p:outputLabel id="l_login" value="Login" for="login"/>
+                            <p:inputText id="login" value="#{registrationController.account.login}" required="true"
+                                         a:autofocus="true">
+                                <p:ajax event="blur" update="@this l_login messages"/>
+                                <f:validator binding="#{loginValidator}"/>
+                            </p:inputText>
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel value="Password" for="password"/>
+                            <p:password id="password" feedback="true" required="true" match="passwordConf"
+                                        value="#{registrationController.account.passHash}"
+                                        binding="#{registrationController.passwordConfirm}"
+                                        validatorMessage="You must confirm password!"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel value="Confirm password" for="passwordConf"/>
+                            <p:password id="passwordConf" required="true" value="#{registrationController.passwordConfirm}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block" styleClass="flex-horizontal">
+                            <p:outputLabel id="l_email" value="Email" for="email"/>
+                            <p:inputText id="email" value="#{registrationController.account.email}" required="true">
+                                <p:ajax event="blur" update="@this l_email messages"/>
+                                <f:validator binding="#{emailValidator}"/>
+                            </p:inputText>
+                        </h:panelGroup>
+
+                        <p:commandButton value="Registration" action="#{registrationController.registration}"
+                                         process="@form" update="@form"/>
                     </h:panelGroup>
-
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Password" for="password"/>
-                        <h:inputSecret id="password" value="#{registrationController.password}" required="true">
-                            <f:ajax event="blur"
-                                    execute="@this passwordConf"
-                                    listener="#{registrationController.passwordConfirmation}"
-                                    render="m_password"/>
-                        </h:inputSecret>
-                        <h:message id="m_password" for="password"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Confirm password" for="passwordConf"/>
-                        <h:inputSecret id="passwordConf" value="#{registrationController.passwordConfirm}" required="true">
-                            <f:ajax event="blur"
-                                    execute="@this password"
-                                    listener="#{registrationController.passwordConfirmation}"
-                                    render="m_passwordConf"/>
-                        </h:inputSecret>
-                        <h:message id="m_passwordConf" for="passwordConf"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup layout="block" styleClass="mirror">
-                        <h:outputLabel value="Email" for="email"/>
-                        <h:inputText id="email" value="#{registrationController.account.email}" required="true">
-                            <f:ajax event="blur" render="m_email"/>
-                            <o:validateBean validationGroups="com.myapp.validation.groups.Gui"/>
-                        </h:inputText>
-                        <h:message id="m_email" for="email"/>
-                    </h:panelGroup>
-
-                    <p:commandButton value="Registration" action="#{registrationController.registration}"
-                                     actionListener="#{registrationController.passwordConfirmation}"
-                                     process="@form" update="@form"
-                                     styleClass="decoratedButton"/>
-
-                    <h:messages globalOnly="true" layout="table"/>
-                </h:panelGroup>
+                </p:panel>
             </h:form>
         </ui:define>
     </ui:composition>

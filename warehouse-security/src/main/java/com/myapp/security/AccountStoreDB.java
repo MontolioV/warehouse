@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.myapp.security.Account.EMAIL_PARAM;
 import static com.myapp.security.Account.LOGIN_PARAM;
 import static com.myapp.security.Roles.Const.*;
 import static com.myapp.security.Token.HASH_PARAM;
@@ -86,6 +87,19 @@ public class AccountStoreDB implements AccountStore {
         try {
             Account account = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
                     .setParameter(HASH_PARAM, tokenHash)
+                    .getSingleResult();
+            em.detach(account);
+            return Optional.of(account);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Account> getAccountByEmail(@NotBlank String email) {
+        try {
+            Account account = em.createNamedQuery(Account.GET_BY_EMAIL, Account.class)
+                    .setParameter(EMAIL_PARAM, email)
                     .getSingleResult();
             em.detach(account);
             return Optional.of(account);

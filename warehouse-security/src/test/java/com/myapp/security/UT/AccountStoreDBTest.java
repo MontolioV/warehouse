@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.myapp.security.Account.EMAIL_PARAM;
 import static com.myapp.security.Account.LOGIN_PARAM;
 import static com.myapp.security.Roles.*;
 import static com.myapp.security.Token.HASH_PARAM;
@@ -56,6 +57,7 @@ public class AccountStoreDBTest implements CommonChecks {
     private long accountMockID = 2L;
     private long accountNonExistingID = 3L;
     private String[] badPasswords = {"Shrt12", "NoNumerals", "nocapitals238",};
+    private String newUniqueEmail = "newUniqueEmail@newUniqueEmail";
 
     @Before
     public void setUp() throws Exception {
@@ -81,11 +83,14 @@ public class AccountStoreDBTest implements CommonChecks {
         when(emMock.createNamedQuery(Account.GET_BY_LOGIN, Account.class)).thenReturn(getByLoginQueryMock);
         TypedQuery<Account> getByTokenHashMock = mock(TypedQuery.class);
         when(emMock.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)).thenReturn(getByTokenHashMock);
+        TypedQuery<Account> getByEmailMock = mock(TypedQuery.class);
+        when(emMock.createNamedQuery(Account.GET_BY_EMAIL, Account.class)).thenReturn(getByEmailMock);
 
         ArrayList<Account> accountsEmpty = new ArrayList<>();
         TypedQuery<Account> uniqueLoginQueryMock = mock(TypedQuery.class);
         when(getByLoginQueryMock.setParameter(LOGIN_PARAM, accountNew.getLogin())).thenReturn(uniqueLoginQueryMock);
         when(getByTokenHashMock.setParameter(HASH_PARAM, TOKEN_HASH_INVALID)).thenReturn(uniqueLoginQueryMock);
+        when(getByEmailMock.setParameter(EMAIL_PARAM, newUniqueEmail)).thenReturn(uniqueLoginQueryMock);
         when(uniqueLoginQueryMock.getResultList()).thenReturn(accountsEmpty);
         when(uniqueLoginQueryMock.getSingleResult()).thenThrow(new NoResultException());
 
@@ -94,6 +99,7 @@ public class AccountStoreDBTest implements CommonChecks {
         TypedQuery<Account> existingLoginQueryMock = mock(TypedQuery.class);
         when(getByLoginQueryMock.setParameter(LOGIN_PARAM, accountExisting.getLogin())).thenReturn(existingLoginQueryMock);
         when(getByTokenHashMock.setParameter(HASH_PARAM, TOKEN_HASH_VALID)).thenReturn(existingLoginQueryMock);
+        when(getByEmailMock.setParameter(EMAIL_PARAM, EMAIL_VALID)).thenReturn(existingLoginQueryMock);
         when(existingLoginQueryMock.getResultList()).thenReturn(accountsNotEmpty);
         when(existingLoginQueryMock.getSingleResult()).thenReturn(accountExisting);
 
@@ -185,6 +191,16 @@ public class AccountStoreDBTest implements CommonChecks {
 
         assertTrue(accountTokenValid.isPresent());
         assertFalse(accountTokenInvalid.isPresent());
+        verify(emMock).detach(accountExisting);
+    }
+
+    @Test
+    public void getAccountByEmail() {
+        Optional<Account> accountEmailValid = accountStoreDB.getAccountByEmail(EMAIL_VALID);
+        Optional<Account> accountEmailInvalid = accountStoreDB.getAccountByEmail(newUniqueEmail);
+
+        assertTrue(accountEmailValid.isPresent());
+        assertFalse(accountEmailInvalid.isPresent());
         verify(emMock).detach(accountExisting);
     }
 

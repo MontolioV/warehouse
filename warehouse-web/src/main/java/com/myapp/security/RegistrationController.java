@@ -32,7 +32,7 @@ public class RegistrationController {
         } catch (LoginExistsException e) {
             facesContext.addMessage("reg_form:login", new FacesMessage("Login already exists!"));
         } catch (UnsecurePasswordException e) {
-            facesContext.addMessage("reg_form:password", new FacesMessage("Password is not secure!"));
+            facesContext.addMessage("reg_form:password", new FacesMessage(FacesMessage.SEVERITY_WARN, "Password is not secure!", null));
         }
     }
 

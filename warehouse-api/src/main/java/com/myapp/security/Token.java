@@ -24,7 +24,8 @@ import static com.myapp.security.Token.*;
         @NamedQuery(name = DELETE_EXPIRED_TO_DATE, query = "delete from Token t where t.expiredDate < :" + DATE_PARAM),
 })
 @Table(indexes = {
-        @Index(columnList = "TOKEN_HASH", unique = true)
+        @Index(columnList = "tokenHash", unique = true),
+        @Index(columnList = "expiredDate"),
 })
 @XmlRootElement
 public class Token implements Serializable {
@@ -66,7 +67,6 @@ public class Token implements Serializable {
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "TOKEN_TYPE")
     public TokenType getTokenType() {
         return tokenType;
     }
@@ -77,7 +77,6 @@ public class Token implements Serializable {
 
     @NotNull
     @PastOrPresent
-    @Column(nullable = false)
     public Date getCreationDate() {
         return creationDate;
     }
@@ -88,7 +87,6 @@ public class Token implements Serializable {
 
     @NotNull
     @Future
-    @Column(nullable = false)
     public Date getExpiredDate() {
         return expiredDate;
     }
@@ -98,7 +96,7 @@ public class Token implements Serializable {
     }
 
     @NotBlank
-    @Column(name = "TOKEN_HASH", nullable = false, unique = true)
+    @Column(nullable = false)
     public String getTokenHash() {
         return tokenHash;
     }
@@ -120,7 +118,6 @@ public class Token implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, tokenHash, tokenType, creationDate);
     }
 }

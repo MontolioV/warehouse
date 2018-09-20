@@ -23,6 +23,7 @@ import static com.myapp.storing.Tag.NAME_PARAM;
 })
 @Table(indexes = {
         @Index(columnList = "name", unique = true),
+        @Index(columnList = "lazyItemCounter"),
 })
 public class Tag implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Tag.";
@@ -68,7 +69,7 @@ public class Tag implements Serializable {
     @NotBlank
     @Size(max = 30)
     @Pattern(regexp = "[\\d\\p{javaLowerCase}\\p{Punct}]*")
-    @Column(unique = true, nullable = false, length = 30)
+    @Column(nullable = false)
     public String getName() {
         return name;
     }

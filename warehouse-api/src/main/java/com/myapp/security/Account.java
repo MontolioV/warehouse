@@ -1,8 +1,5 @@
 package com.myapp.security;
 
-import com.myapp.validation.constraints.Unique;
-import com.myapp.validation.groups.Gui;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -26,8 +23,8 @@ import static com.myapp.security.Token.HASH_PARAM;
         @NamedQuery(name = GET_BY_TOKEN_HASH, query = "select a from Account a inner join a.tokens t where t.tokenHash=:" + HASH_PARAM),
 })
 @Table(indexes = {
-        @Index(columnList = "LOGIN", unique = true),
-        @Index(columnList = "EMAIL", unique = true)
+        @Index(columnList = "login", unique = true),
+        @Index(columnList = "email", unique = true)
 })
 @XmlRootElement
 public class Account implements Serializable {
@@ -89,9 +86,6 @@ public class Account implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 30)
-    @Unique(groups = Gui.class, entityClass = Account.class,
-            queryName = GET_BY_LOGIN, queryParameterName = LOGIN_PARAM)
-    @Column(unique = true)
     public String getLogin() {
         return login;
     }
@@ -112,9 +106,6 @@ public class Account implements Serializable {
     @NotNull
     @Email()
     @Size(max = 320)
-    @Unique(groups = Gui.class, entityClass = Account.class,
-            queryName = GET_BY_EMAIL, queryParameterName = EMAIL_PARAM)
-    @Column(unique = true)
     public String getEmail() {
         return email;
     }
@@ -142,7 +133,6 @@ public class Account implements Serializable {
     @Size(min = 1)
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     public Set<Roles> getRoles() {
         return roles;
     }

@@ -35,6 +35,8 @@ import static com.myapp.storing.Item.*;
 })
 @Table(indexes = {
         @Index(columnList = "owner"),
+        @Index(columnList = "name"),
+        @Index(columnList = "creationDate"),
 })
 public class Item implements Serializable {
     private static final String PREFIX = "com.myapp.storing.Item.";

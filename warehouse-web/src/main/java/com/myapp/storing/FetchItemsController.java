@@ -1,6 +1,5 @@
 package com.myapp.storing;
 
-import com.myapp.utils.QueryTarget;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -9,67 +8,29 @@ import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaQuery;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.StringUtils.isAllBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * <p>Created by MontolioV on 18.04.18.
  */
 @Model
 public class FetchItemsController {
+    @Resource(lookup = "java:/strings/webAppAddress")
+    private String webAppAddress;
     @Inject
     private ExternalContext externalContext;
     @EJB
     private ItemStore itemStore;
-    @EJB
-    private TagStore tagStore;
-    @EJB
-    private ItemTagLikeQueryBuilder likeQueryBuilder;
-    @Resource(lookup = "java:/strings/webAppAddress")
-    private String webAppAddress;
-    private List<Item> items = new ArrayList<>();
-    private Long id;
+    private List<Item> recentItems = new ArrayList<>();
+    private long id;
     private Item item;
     private TextItem textItem;
     private FileItem fileItem;
-    private List<String> itemNames;
-    private List<String> itemOwners;
-    private List<String> tags;
-    private String itemNameParam;
-    private String itemOwnerParam;
-    private String tagParam;
-    private boolean tagsConjunction = false;
-
-    public void initFilterParams() {
-        if (isAllBlank(itemNameParam, itemOwnerParam, tagParam)) {
-            if (externalContext.getUserPrincipal() != null) {
-                itemOwners = new ArrayList<>();
-                itemOwners.add("'" + externalContext.getUserPrincipal().getName() + "'");
-            }
-        } else {
-            if (isNotBlank(itemNameParam)) {
-                itemNames = new ArrayList<>();
-                itemNames.add("'" + itemNameParam + "'");
-            }
-            if (isNotBlank(itemOwnerParam)) {
-                itemOwners = new ArrayList<>();
-                itemOwners.add("'" + itemOwnerParam + "'");
-            }
-            if (isNotBlank(tagParam)) {
-                tags = new ArrayList<>();
-                tags.add("'" + tagParam + "'");
-            }
-        }
-    }
 
     public void fetchRecentItems() {
-        items = itemStore.getTenLastSharedItems();
+        recentItems = itemStore.getTenLastSharedItems();
     }
 
     public String fetchById() {
@@ -91,47 +52,6 @@ public class FetchItemsController {
         }else if (item.getdType().equals(FileItem.class.getSimpleName())) {
             fileItem = (FileItem) item;
         }
-    }
-
-    public void filteredFetch() {
-        if (itemNames != null && !itemNames.isEmpty()) {
-            likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_NAME);
-            likeQuerySequence(itemNames);
-        }
-        if (itemOwners != null && !itemOwners.isEmpty()) {
-            likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_OWNER);
-            likeQuerySequence(itemOwners);
-        }
-        if (tags != null && !tags.isEmpty()) {
-            likeQueryBuilder.selectPredicateTarget(QueryTarget.ITEM_JOIN_TAG_NAME);
-            likeQuerySequence(tags);
-        }
-
-        CriteriaQuery<Item> itemCriteriaQuery = likeQueryBuilder.constructItemQuery();
-        if (itemCriteriaQuery != null) {
-            items = itemStore.executeCustomSelectQuery(itemCriteriaQuery);
-
-            if (tagsConjunction && tags != null && !tags.isEmpty()) {
-                ensureTagConjunction();
-            }
-        }
-    }
-
-    private void likeQuerySequence(List<String> strings) {
-        likeQueryBuilder.constructLikePredicates(strings.toArray(new String[0]));
-        likeQueryBuilder.generateWherePredicates(false);
-    }
-
-    private void ensureTagConjunction() {
-        likeQueryBuilder.selectPredicateTarget(QueryTarget.TAG_NAME);
-        likeQueryBuilder.constructLikePredicates(tags.toArray(new String[0]));
-        likeQueryBuilder.generateWherePredicates(false);
-        List<Tag> tags = tagStore.executeCustomSelectQuery(likeQueryBuilder.constructTagQuery());
-
-        items = items.stream()
-                .filter(item1 -> item1.getTags().size() >= tags.size())
-                .filter(item1 -> item1.getTags().containsAll(tags))
-                .collect(Collectors.toList());
     }
 
     public boolean fileIsImage() {
@@ -163,27 +83,27 @@ public class FetchItemsController {
 
     //Getters & Setters
 
-    public ItemStore getItemStore() {
-        return itemStore;
+    public String getWebAppAddress() {
+        return webAppAddress;
     }
 
-    public void setItemStore(ItemStore itemStore) {
-        this.itemStore = itemStore;
+    public void setWebAppAddress(String webAppAddress) {
+        this.webAppAddress = webAppAddress;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<Item> getRecentItems() {
+        return recentItems;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void setRecentItems(List<Item> recentItems) {
+        this.recentItems = recentItems;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -193,86 +113,6 @@ public class FetchItemsController {
 
     public void setItem(Item item) {
         this.item = item;
-    }
-
-    public ExternalContext getExternalContext() {
-        return externalContext;
-    }
-
-    public void setExternalContext(ExternalContext externalContext) {
-        this.externalContext = externalContext;
-    }
-
-    public ItemTagLikeQueryBuilder getLikeQueryBuilder() {
-        return likeQueryBuilder;
-    }
-
-    public void setLikeQueryBuilder(ItemTagLikeQueryBuilder likeQueryBuilder) {
-        this.likeQueryBuilder = likeQueryBuilder;
-    }
-
-    public List<String> getItemNames() {
-        return itemNames;
-    }
-
-    public void setItemNames(List<String> itemNames) {
-        this.itemNames = itemNames;
-    }
-
-    public List<String> getItemOwners() {
-        return itemOwners;
-    }
-
-    public void setItemOwners(List<String> itemOwners) {
-        this.itemOwners = itemOwners;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public String getItemNameParam() {
-        return itemNameParam;
-    }
-
-    public void setItemNameParam(String itemNameParam) {
-        this.itemNameParam = itemNameParam;
-    }
-
-    public String getItemOwnerParam() {
-        return itemOwnerParam;
-    }
-
-    public void setItemOwnerParam(String itemOwnerParam) {
-        this.itemOwnerParam = itemOwnerParam;
-    }
-
-    public String getTagParam() {
-        return tagParam;
-    }
-
-    public void setTagParam(String tagParam) {
-        this.tagParam = tagParam;
-    }
-
-    public boolean isTagsConjunction() {
-        return tagsConjunction;
-    }
-
-    public void setTagsConjunction(boolean tagsConjunction) {
-        this.tagsConjunction = tagsConjunction;
-    }
-
-    public TagStore getTagStore() {
-        return tagStore;
-    }
-
-    public void setTagStore(TagStore tagStore) {
-        this.tagStore = tagStore;
     }
 
     public TextItem getTextItem() {
@@ -289,13 +129,5 @@ public class FetchItemsController {
 
     public void setFileItem(FileItem fileItem) {
         this.fileItem = fileItem;
-    }
-
-    public String getWebAppAddress() {
-        return webAppAddress;
-    }
-
-    public void setWebAppAddress(String webAppAddress) {
-        this.webAppAddress = webAppAddress;
     }
 }

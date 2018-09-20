@@ -21,7 +21,7 @@ public class FetchTagsController {
         tagCloudModel = new DefaultTagCloudModel();
         tags.forEach(tag -> tagCloudModel.addTag(new DefaultTagCloudItem(
                 tag.getName(),
-                "public/items-search.jsf?tag=" + tag.getName(),
+                "public/items.jsf?tag=" + tag.getName(),
                 tag.getLazyItemCounter())));
     }
 

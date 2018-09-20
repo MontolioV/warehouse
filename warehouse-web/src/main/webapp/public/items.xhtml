@@ -6,6 +6,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:compc="http://xmlns.jcp.org/jsf/composite/core"
       xmlns:o="http://omnifaces.org/ui">
 
 <h:body>
@@ -26,8 +27,6 @@
         </ui:define>
 
         <ui:define name="body">
-            <p:ajaxStatus oncomplete="convertDates()"/>
-
             <h:form prependId="false" style="display: none">
                 <h:inputText id="localTimezone" value="#{itemSearch.viewTimezone}">
                     <f:ajax/>
@@ -184,7 +183,7 @@
                 </h:form>
             </h:panelGroup>
 
-            <script type="text/javascript">convertDates();</script>
+            <compc:jsTimeConverter/>
         </ui:define>
     </ui:composition>
 </h:body>

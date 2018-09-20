@@ -44,6 +44,11 @@ body {
     font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
 }
 
+button .ui-icon {
+    width: 18px;
+    height: 18px;
+}
+
 .small-box {
     min-width: 300px;
     max-width: 30%;
@@ -55,11 +60,6 @@ body {
 .large-box {
     min-width: 800px;
     max-width: 80%;
-}
-
-#showImageDialog {
-    max-width: 100%;
-    max-height: 100vh;
 }
 
 .flex-vertical {
@@ -80,6 +80,12 @@ body {
 }
 .flex-not-resizable {
     flex: 0 0;
+}
+.flex-gr-2 {
+    flex-grow: 2;
+}
+.flex-gr-3 {
+    flex-grow: 3;
 }
 .flex-no-wrap {
     flex-wrap: nowrap;
@@ -139,9 +145,24 @@ body {
     min-width: 100px;
 }
 
-button .ui-icon {
-    width: 18px;
-    height: 18px;
+
+.imagePreview {
+    max-width: 200px;
+    max-height: 200px;
+    cursor: zoom-in;
+}
+
+.largeButton {
+    min-width: 300px;
+    height: 100px;
+}
+
+.arrow-link {
+    text-decoration: none;
+}
+
+.arrow-link:hover {
+    color: #ff8b20
 }
 
 /*
@@ -276,8 +297,25 @@ textarea, input[type="text"], input[type="password"] {
     opacity: 0.8;
 }
 
+#welcomeButtonsPanel {
+    min-width: 500px;
+}
+
+#welcomePanel {
+    height: available;
+}
+
 #qrCodePanel {
     margin: 0;
+}
+
+#tagCloud {
+    width: auto;
+}
+
+#showImageDialog {
+    max-width: 100%;
+    max-height: 100vh;
 }
 
 .dataTable {
@@ -314,12 +352,6 @@ textarea, input[type="text"], input[type="password"] {
 }
 .dataTableRowEven td {
     background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
-}
-
-.imagePreview {
-    max-width: 200px;
-    max-height: 200px;
-    cursor: zoom-in;
 }
 
 /*

@@ -18,20 +18,36 @@
         </ui:define>
 
         <ui:define name="body">
-            <p:tagCloud model="#{fetchTagsController.tagCloudModel}"/>
-            <h:panelGroup layout="block" styleClass="base">
-                <h:panelGrid columns="1">
-                    <h:panelGrid columns="2">
-                        <h:button outcome="/public/create-text-item.xhtml" value="Create text item"
-                                  styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton largeButton"/>
-                        <h:button outcome="/public/create-file-item.xhtml" value="Create file item"
-                                  styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only decoratedButton largeButton"/>
-                    </h:panelGrid>
-                    <h:outputLabel value="10 recent shares:"/>
-                </h:panelGrid>
+            <h:panelGroup layout="block" styleClass="flex-horizontal">
+                <h:panelGroup id="welcomeButtonsPanel" layout="block" styleClass="flex-vertical flex-gr-3">
+                    <h:panelGroup layout="block" styleClass="flex-horizontal">
+                        <p:button outcome="/public/create-text-item" value="Create text item" styleClass="largeButton"/>
+                        <p:button outcome="/public/create-file-item" value="Create file item" styleClass="largeButton"/>
+                    </h:panelGroup>
+                    <p:panel id="welcomePanel" header="Welcome" styleClass="flex-gr-2">
+                        <h:outputText value="Hi there! Want some data transfer?"/>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="flex-vertical">
+                    <p:tagCloud id="tagCloud" model="#{fetchTagsController.tagCloudModel}"/>
 
-                <compc:itemsTable items="#{fetchItemsController.items}"/>
+                    <p:dataList value="#{fetchItemsController.recentItems}" var="item" type="ordered">
+                        <f:facet name="header">
+                            10 recent shares
+                        </f:facet>
+                        <h:panelGroup>
+                            <h:outputText value="#{item.creationDate}" styleClass="js-time-convert">
+                                <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss Z"/>
+                            </h:outputText>
+                            <h:outputText value=" #{item.name} "/>
+                            <p:link outcome="/public/show-item?id=#{item.id}"
+                                    styleClass="arrow-link fa fa-mail-forward fa-2x"/>
+                        </h:panelGroup>
+                    </p:dataList>
+                </h:panelGroup>
             </h:panelGroup>
+
+            <compc:jsTimeConverter/>
         </ui:define>
     </ui:composition>
 </h:body>

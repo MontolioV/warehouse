@@ -11,3 +11,24 @@ $(document).ready(function () {
         }
     });
 });
+
+function copyTextToClipboard() {
+    var text = document.getElementById('textContainer').innerHTML;
+    function listener(e) {
+        e.clipboardData.setData('text/html', text);
+        e.clipboardData.setData('text/plain', text);
+        e.preventDefault();
+    }
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+}
+
+function convertDates() {
+    $('.js-time-convert').each(function () {
+        var dateString = $(this).text();
+        var toLocalDate = moment(dateString, 'YYYY.MM.DD HH:mm:ss Z');
+        $(this).text(toLocalDate.format('YYYY.MM.DD HH:mm:ss'));
+        $(this).removeClass('js-time-convert');
+    });
+}

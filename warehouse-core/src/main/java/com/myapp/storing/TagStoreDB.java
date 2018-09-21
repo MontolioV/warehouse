@@ -6,10 +6,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +57,6 @@ public class TagStoreDB implements TagStore{
         List<Tag> resultList = em.createNamedQuery(Tag.GET_MOST_POPULAR, Tag.class)
                 .setMaxResults(amount)
                 .getResultList();
-        resultList.sort(Comparator.comparing(Tag::getName));
         return resultList;
     }
 

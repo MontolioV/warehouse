@@ -14,9 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +115,6 @@ public class TagStoreDBTest {
 
         List<Tag> result = tagStoreDB.fetchMostPopularTags(7);
         assertThat(result, sameInstance(tags));
-        assertThat(result.get(0).getName(), is("abc"));
     }
 
     @Test

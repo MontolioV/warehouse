@@ -1,41 +1,17 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css?family=Muli');
 
+/*main color 56ACFF*/
+
 /*
-!*main color 56ACFF*!
-!*
-
 @media only screen and (max-width: 1000px){
-    body {
-        background: linear-gradient(
-                to right,
-                palegreen,
-                #ebee5c 5%,
-                #d5fff3 5%,
-                #d5fff3 95%,
-                #ebee5c 95%,
-                palegreen
-        );
-    }
-
-    table {
-        !*border: 1px solid black;*!
-        width: 88%;
-        margin-left: 6%;
-        margin-right: 6%;
-    }
 }
 
 @media only screen and (min-width: 1000px){
-    table {
-        !*border: 1px solid black;*!
-        width: 70%;
-        margin-left: 15%;
-        margin-right: 15%;
-    }
+
 }
-*!
 */
+
 html, body {
     margin: 0;
 }
@@ -145,7 +121,6 @@ button .ui-icon {
     min-width: 100px;
 }
 
-
 .imagePreview {
     max-width: 200px;
     max-height: 200px;
@@ -165,49 +140,6 @@ button .ui-icon {
     color: #ff8b20
 }
 
-/*
-table {
-    !*border: 1px solid black;*!
-    width: 70%;
-    margin-left: 15%;
-    margin-right: 15%;
-}
-
-textarea, input[type="text"], input[type="password"] {
-    border: 1px solid #1C62A6;
-    background: linear-gradient(to bottom, #c2ddff, #eff8ff 30%);
-}
-
-.decoratedButton, .ui-button.decoratedButton {
-    background-color: #56ACFF;
-    border: 1px solid #1C62A6;
-    color: white;
-    text-align: center;
-    padding: 10px 20px;
-    min-width: 150px;
-    white-space: nowrap;
-}
-.decoratedButton:focus{
-    background-color: #4694d7;
-    outline: none;
-}
-.decoratedButton::-moz-focus-inner {
-    border: 0;
-}
-.decoratedButton:hover {
-    box-shadow: 0 0 10px 3px lightgray;
-}
-.decoratedButton:active {
-    background: #4080bd;
-}
-
-.ui-corner-all.decoratedButton {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-    border-radius: 0;
-}
-
-*/
 #nameBoard {
     color: #56ACFF;
     color: rgba(30,144,255,0.7);
@@ -354,74 +286,6 @@ textarea, input[type="text"], input[type="password"] {
     background: linear-gradient(to right, #6ea4d7, #83C2FF  3px);
 }
 
-/*
-.tagsContainer {
-    display: flex;
-    flex-wrap: wrap;
-}
-.tagsContainer * {
-    !*border: 1px solid red;*!
-    margin: 3px;
-}
-
-.textEditor, .textLabel {
-    background: rgba(255, 212, 73, 0.11);
-    margin: 10px 0;
-}
-.textLabel {
-    display: block;
-    border: 1px solid gray;
-    padding: 10px;
-}
-
-button.largeButton, input[type="button"].largeButton, input[type="submit"].largeButton, .largeButton {
-    font-size: large;
-    width: 200px;
-    height: 100px;
-    margin: 10%;
-}
-
-.mediumForm{
-    width: 50%;
-}
-.smallForm{
-    width: 30%;
-}
-.centered {
-    margin: auto;
-}
-
-.mirrorContainer {
-    text-align: center;
-}
-.mirrorContainer > * {
-    margin: auto;
-}
-.mirrorContainer > :first-child {
-    font-size: larger;
-    margin-bottom: 50px;
-}
-.mirrorContainer > .mirror {
-    display: flex;
-    align-items: flex-start;
-}
-.mirrorContainer > .mirror > * {
-    flex: none;
-    margin: 10px 1%;
-}
-.mirrorContainer > .mirror > :nth-child(1) {
-    width: 25%;
-    text-align: right;
-}
-.mirrorContainer > .mirror > :nth-child(2) {
-    width: 65%;
-}
-.mirrorContainer > .mirror > :nth-child(3) {
-    width: 50%;
-    color: red;
-    overflow-wrap: break-word;
-    border-radius: 100px;
-}*/
 .borderless, .borderless .ui-widget-content {
     border: none;
 }

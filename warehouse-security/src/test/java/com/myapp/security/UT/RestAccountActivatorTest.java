@@ -94,7 +94,7 @@ public class RestAccountActivatorTest {
         verify(asMock).getAccountByLogin(LOGIN_VALID);
         verify(tsMock).createToken(accountMock, EMAIL_VERIFICATION, 1, DAYS);
         verify(mmMock).sendEmail(EMAIL_VALID, MAIL_SUBJECT, "<h1>Hi, " + LOGIN_VALID + "!</h1>" +
-                "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account:</p>");
+                "<p>Follow <a href='http://uriWithQParam.com'>link</a> to verify your account.</p>");
         assertThat(response, sameInstance(responseMock));
     }
 

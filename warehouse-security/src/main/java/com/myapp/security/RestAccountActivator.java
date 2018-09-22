@@ -27,7 +27,7 @@ import java.util.Optional;
 public class RestAccountActivator implements AccountActivator {
     public static final String MAIL_SUBJECT = "Account verification";
     public static final String MAIL_TEXT = "<h1>Hi, %s!</h1>" +
-            "<p>Follow <a href='%s'>link</a> to verify your account:</p>";
+            "<p>Follow <a href='%s'>link</a> to verify your account.</p>";
     public static final String QP_TOKEN = "token";
 
     @EJB

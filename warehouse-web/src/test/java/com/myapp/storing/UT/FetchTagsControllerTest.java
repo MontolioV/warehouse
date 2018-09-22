@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +39,15 @@ public class FetchTagsControllerTest {
         assertThat(tagCloudItem.getLabel(), is(tag.getName()));
         assertThat(tagCloudItem.getStrength(), is(5));
         assertThat(tagCloudItem.getUrl(), is("public/items.jsf?tag=tag"));
+    }
+
+    @Test
+    public void initNoTags() {
+        ArrayList<Tag> tags = new ArrayList<>();
+        when(tsMock.fetchMostPopularTags(anyInt())).thenReturn(tags);
+
+        controller.init();
+        assertTrue(controller.getTagCloudModel().getTags().isEmpty());
     }
 
     @Test

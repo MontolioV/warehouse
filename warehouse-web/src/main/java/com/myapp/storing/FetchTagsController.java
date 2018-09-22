@@ -22,6 +22,9 @@ public class FetchTagsController {
     public void init() {
         tagCloudModel = new DefaultTagCloudModel();
         List<Tag> tags = tagStore.fetchMostPopularTags(20);
+        if (tags == null || tags.isEmpty()) {
+            return;
+        }
         Tag mostPopularTag = tags.get(0);
         if (mostPopularTag == null || mostPopularTag.getLazyItemCounter() < 1) {
             return;

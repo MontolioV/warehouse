@@ -31,39 +31,49 @@
 
                     <h:form>
                         <p:panel header="Change password">
-                            <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
-                                <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
                                     <p:outputLabel for="oldPassword" value="Old password"/>
                                     <p:password id="oldPassword" required="true">
                                         <f:validator binding="#{rightPasswordValidator}"/>
                                     </p:password>
+                                </h:panelGroup>
 
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
                                     <p:outputLabel for="newPassword" value="New password"/>
                                     <p:password id="newPassword" feedback="true" required="true" match="confirm"
                                                 value="#{personalCabinetController.newPassword}"
                                                 binding="#{personalCabinetController.newPasswordInput}"
                                                 validatorMessage="You must confirm new password!"/>
+                                </h:panelGroup>
 
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
                                     <p:outputLabel for="confirm" value="Confirm"/>
                                     <p:password id="confirm" required="true"/>
-                                </p:panelGrid>
-                                <p:commandButton value="Submit" action="#{personalCabinetController.changePassword()}"
-                                                 process="@form" update="@form accountInfo messages"
-                                                 styleClass="decoratedButton"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
+                                    <p:commandButton value="Submit" action="#{personalCabinetController.changePassword()}"
+                                                     process="@form" update="@form accountInfo messages"
+                                                     styleClass="decoratedButton"/>
+                                </h:panelGroup>
                             </h:panelGroup>
                         </p:panel>
                     </h:form>
 
                     <h:form>
                         <p:panel header="Change email">
-                            <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
-                                <p:panelGrid columns="2" layout="grid" styleClass="borderless">
+                            <h:panelGroup layout="block" styleClass="flex-vertical">
+                                <h:panelGroup layout="block" styleClass="flex-horizontal">
                                     <p:outputLabel for="newEmail" value="New email"/>
                                     <p:inputText id="newEmail" value="#{personalCabinetController.email}" required="true"/>
-                                </p:panelGrid>
-                                <p:commandButton value="Submit" action="#{personalCabinetController.changeEmail()}"
-                                                 process="@form" update="@form accountInfo messages"
-                                                 styleClass="decoratedButton"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-center">
+                                    <p:commandButton value="Submit" action="#{personalCabinetController.changeEmail()}"
+                                                     process="@form" update="@form accountInfo messages"
+                                                     styleClass="decoratedButton"/>
+                                </h:panelGroup>
                             </h:panelGroup>
                         </p:panel>
                     </h:form>

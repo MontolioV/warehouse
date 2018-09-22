@@ -5,6 +5,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.myapp.storing.Item.OWNER_PARAM;
 
@@ -80,5 +81,22 @@ public class FileItem extends Item {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileItem)) return false;
+        if (!super.equals(o)) return false;
+        FileItem fileItem = (FileItem) o;
+        return size == fileItem.size &&
+                Objects.equals(nativeName, fileItem.nativeName) &&
+                Objects.equals(contentType, fileItem.contentType) &&
+                Objects.equals(hash, fileItem.hash);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), nativeName, contentType, size, hash);
     }
 }

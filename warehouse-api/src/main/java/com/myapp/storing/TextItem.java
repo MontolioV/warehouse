@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>Created by MontolioV on 17.04.18.
@@ -30,5 +31,19 @@ public class TextItem extends Item {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TextItem)) return false;
+        if (!super.equals(o)) return false;
+        TextItem textItem = (TextItem) o;
+        return Objects.equals(text, textItem.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), text);
     }
 }

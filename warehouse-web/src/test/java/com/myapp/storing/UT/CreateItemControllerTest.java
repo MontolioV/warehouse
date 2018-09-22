@@ -149,12 +149,12 @@ public class CreateItemControllerTest {
     public void createFileItems() {
         LinkedList<FileItem> linkedList = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
-            FileItem temporalFileItem = new FileItem();
-            temporalFileItem.setContentType(cType);
-            temporalFileItem.setHash(PASS_HASH_VALID);
-            temporalFileItem.setNativeName(fName);
-            temporalFileItem.setSize(fSize);
-            linkedList.add(temporalFileItem);
+            FileItem fileItemMock = mock(FileItem.class);
+            when(fileItemMock.getContentType()).thenReturn(cType);
+            when(fileItemMock.getHash()).thenReturn(PASS_HASH_VALID);
+            when(fileItemMock.getNativeName()).thenReturn(fName);
+            when(fileItemMock.getSize()).thenReturn(fSize);
+            linkedList.add(fileItemMock);
         }
         when(ufCollectorMock.getTemporalFileItems()).thenReturn(linkedList);
 
@@ -176,11 +176,10 @@ public class CreateItemControllerTest {
             verify(tsMock).saveTag(tag3, value);
             verify(tsMock).saveTag(tagExisting, value);
 
+            verify(value).setName(fileItem.getName());
+            verify(value).setDescription(fileItem.getDescription());
+            verify(value).setShared(fileItem.isShared());
             assertThat(fileItem, not(sameInstance(value)));
-            assertThat(value.getName(), is(fileItem.getName()));
-            assertThat(value.getDescription(), is(fileItem.getDescription()));
-            assertTrue(value.isShared());
-            assertTrue(fileItem.isShared());
         }
         assertThat(allValues.get(0), not(sameInstance(allValues.get(1))));
     }

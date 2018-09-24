@@ -154,6 +154,7 @@ button .ui-icon {
 }
 
 #topBar {
+    height: 64px;
     padding-bottom: 5px;
     display: flex;
     background: linear-gradient(to top, rgba(208, 240, 255, 0), #5d5a6f 3px, #0A59A6 5px, #56ACFF 5px);
@@ -162,7 +163,7 @@ button .ui-icon {
     top: 0;
     z-index: 1000;
 }
-#topBar button {
+#topBar button, #topBar a {
     background: #56ACFF none;
     border: none;
     color: white;
@@ -177,7 +178,7 @@ button .ui-icon {
     -webkit-border-radius: 0;
     border-radius: 0;
 }
-#topBar button:hover {
+#topBar button:hover, #topBar a:hover {
     background-color: white;
     color: black;
     box-shadow: 0 0 10px 3px lightgray;
@@ -185,6 +186,14 @@ button .ui-icon {
 
 #topBar button.authenticationFirst {
     margin-left: auto;
+}
+#changeLanguage {
+    background: #56ACFF url("#{resource['img:translate_white.svg']}") no-repeat center;
+    min-width: 55px;
+    height: available;
+}
+#changeLanguage:hover {
+    background: white url("#{resource['img:translate_black.svg']}") no-repeat center;
 }
 
 #mainDiv {

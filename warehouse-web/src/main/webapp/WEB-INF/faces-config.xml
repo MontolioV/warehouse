@@ -9,10 +9,10 @@
             <default-locale>en</default-locale>
             <supported-locale>en</supported-locale>
             <supported-locale>ru</supported-locale>
-            <supported-locale>ua</supported-locale>
+            <supported-locale>uk</supported-locale>
         </locale-config>
         <resource-bundle>
-            <base-name>com.myapp.i18n</base-name>
+            <base-name>com.myapp.i18n.messages</base-name>
             <var>msg</var>
         </resource-bundle>
     </application>

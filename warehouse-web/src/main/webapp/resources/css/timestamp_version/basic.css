@@ -187,13 +187,16 @@ button .ui-icon {
 #topBar button.authenticationFirst {
     margin-left: auto;
 }
-#changeLanguage {
+#topBar a.changeLanguage {
     background: #56ACFF url("#{resource['img:translate_white.svg']}") no-repeat center;
+    background-origin: content-box;
+    padding: 15px 0;
     min-width: 55px;
     height: available;
 }
-#changeLanguage:hover {
+#topBar a.changeLanguage:hover {
     background: white url("#{resource['img:translate_black.svg']}") no-repeat center;
+    background-origin: content-box;
 }
 
 #mainDiv {

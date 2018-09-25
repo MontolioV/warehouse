@@ -2,16 +2,13 @@ package com.myapp.utils;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>Created by MontolioV on 21.09.18.
@@ -19,12 +16,10 @@ import java.util.Set;
 @Named
 @SessionScoped
 public class LocaleManager implements Serializable {
-    private static final long serialVersionUID = 2508031035491269471L;
+    private static final long serialVersionUID = 8916258104996647192L;
     @Inject
     private ExternalContext externalContext;
-    @Inject
-    private UIViewRoot viewRoot;
-    private Locale currentLocale;
+    private Locale currentLocale = new Locale("en");
     private Map<String,Locale> availableLocales = new HashMap<>();
 
     @PostConstruct
@@ -33,26 +28,22 @@ public class LocaleManager implements Serializable {
         availableLocales.put("ru", new Locale("ru"));
         availableLocales.put("uk", new Locale("uk"));
 
-        String language = externalContext.getRequestLocale().getLanguage();
-        currentLocale = availableLocales.get(language);
+        if (externalContext.getRequestLocale() != null) {
+            String language = externalContext.getRequestLocale().getLanguage();
+            if (availableLocales.containsKey(language)) {
+                currentLocale = availableLocales.get(language);
+            }
+        }
     }
 
-    public void changeLocale(ValueChangeEvent event) {
-        String newValue = (String) event.getNewValue();
-        Locale newLocale = availableLocales.get(newValue);
-        viewRoot.setLocale(newLocale);
-        currentLocale = newLocale;
-    }
-
-    public String test() {
-        return String.valueOf(Math.random());
+    public void changeLocale(String localeCode) {
+        Locale newLocale = availableLocales.get(localeCode);
+        if (newLocale != null) {
+            currentLocale = newLocale;
+        }
     }
 
     //Setters & Getters
-
-    public Set<String> getLocaleShortcuts() {
-        return availableLocales.keySet();
-    }
 
     public Locale getCurrentLocale() {
         return currentLocale;
@@ -60,5 +51,13 @@ public class LocaleManager implements Serializable {
 
     public void setCurrentLocale(Locale currentLocale) {
         this.currentLocale = currentLocale;
+    }
+
+    public Map<String, Locale> getAvailableLocales() {
+        return availableLocales;
+    }
+
+    public void setAvailableLocales(Map<String, Locale> availableLocales) {
+        this.availableLocales = availableLocales;
     }
 }

@@ -236,10 +236,6 @@ public class ItemSearch implements Serializable {
 
     //Setters & Getters
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public String getROOT() {
         return ROOT;
     }

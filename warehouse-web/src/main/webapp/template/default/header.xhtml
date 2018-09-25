@@ -17,9 +17,7 @@
             <p:button value="Private" outcome="/private/index" rendered="#{roleCheckerController.checkIsUser()}"/>
             <p:button value="Moderation" outcome="/moderation/index" rendered="#{roleCheckerController.checkIsModerator()}"/>
             <p:button value="Admin" outcome="/admin/index" rendered="#{roleCheckerController.checkIsAdmin()}"/>
-            <!--<p:link id="changeLanguage" outcome="/index">-->
-
-            <!--</p:link>-->
+            <p:commandLink outcome="/index" styleClass="changeLanguage" onclick="PF('langDialog').show();"/>
 
             <c:choose>
                 <c:when test="#{empty request.userPrincipal}">
@@ -37,6 +35,16 @@
                 </c:otherwise>
             </c:choose>
         </h:form>
+
+        <p:dialog widgetVar="langDialog" modal="true" header="Choose a language:" width="300" height="200">
+            <h:form>
+                <h:panelGroup layout="block" styleClass="flex-vertical">
+                    <p:commandLink value="English" action="#{localeManager.changeLocale('en')}" ajax="false"/>
+                    <p:commandLink value="Русский" action="#{localeManager.changeLocale('ru')}" ajax="false"/>
+                    <p:commandLink value="Українська" action="#{localeManager.changeLocale('uk')}" ajax="false"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
     </ui:composition>
 </h:body>
 </html>

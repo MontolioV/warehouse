@@ -11,7 +11,7 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Warehouse</title>
+            <title>#{msg['home.title']}</title>
             <f:metadata>
                 <f:viewAction action="#{fetchItemsController.fetchRecentItems}"/>
             </f:metadata>
@@ -21,11 +21,11 @@
             <h:panelGroup layout="block" styleClass="flex-horizontal">
                 <h:panelGroup id="welcomeButtonsPanel" layout="block" styleClass="flex-vertical flex-gr-3">
                     <h:panelGroup layout="block" styleClass="flex-horizontal">
-                        <p:button outcome="/public/create-text-item" value="Create text item" styleClass="largeButton"/>
-                        <p:button outcome="/public/create-file-item" value="Create file item" styleClass="largeButton"/>
+                        <p:button outcome="/public/create-text-item" value="#{msg['textItem.button']}" styleClass="largeButton"/>
+                        <p:button outcome="/public/create-file-item" value="#{msg['fileItem.button']}" styleClass="largeButton"/>
                     </h:panelGroup>
-                    <p:panel id="welcomePanel" header="Welcome" styleClass="flex-gr-2">
-                        <h:outputText value="Hi there! Want some data transfer?"/>
+                    <p:panel id="welcomePanel" header="#{msg['welcome']}" styleClass="flex-gr-2">
+                        <h:outputText value="#{msg['welcome.message']}"/>
                     </p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="flex-vertical">
@@ -33,7 +33,7 @@
 
                     <p:dataList value="#{fetchItemsController.recentItems}" var="item" type="ordered">
                         <f:facet name="header">
-                            10 recent shares
+                            #{msg['recentShares']}
                         </f:facet>
                         <h:panelGroup>
                             <h:outputText value="#{item.creationDate}" styleClass="js-time-convert">

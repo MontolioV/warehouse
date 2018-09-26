@@ -11,7 +11,7 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Authentication</title>
+            <title>#{msg['authentication.title']}</title>
             <f:metadata>
                 <f:viewAction action="#{formAuthenticationController.checkCookie()}"/>
             </f:metadata>
@@ -20,25 +20,25 @@
         <ui:define name="body">
             <h:form styleClass="flex-vertical flex-c-ax-center">
                 <p:messages globalOnly="true" showDetail="true"/>
-                <p:panel header="Authentication" styleClass="medium-box">
+                <p:panel header="#{msg['authentication.title']}" styleClass="medium-box">
                     <h:panelGroup layout="block" styleClass="flex-vertical">
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel value="Login" for="login"/>
+                            <p:outputLabel value="#{msg['username']}" for="login"/>
                             <p:inputText id="login" value="#{formAuthenticationController.login}"
                                          required="true" a:autofocus="true"/>
                         </h:panelGroup>
 
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel value="Password" for="password"/>
+                            <p:outputLabel value="#{msg['password']}" for="password"/>
                             <p:password id="password" value="#{formAuthenticationController.password}" required="true"/>
                         </h:panelGroup>
 
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel value="Remember me" for="rememberme"/>
+                            <p:outputLabel value="#{msg['rememberMe']}" for="rememberme"/>
                             <p:selectBooleanCheckbox id="rememberme" value="#{formAuthenticationController.rememberMe}"/>
                         </h:panelGroup>
 
-                        <p:commandButton value="Submit" action="#{formAuthenticationController.submit}"
+                        <p:commandButton value="#{msg['submit']}" action="#{formAuthenticationController.submit}"
                                          process="@form" update="@form"/>
                     </h:panelGroup>
                 </p:panel>

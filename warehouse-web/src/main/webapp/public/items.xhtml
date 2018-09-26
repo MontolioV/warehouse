@@ -15,7 +15,7 @@
             <h:outputScript library="js" name="timezone.js"/>
             <h:outputScript library="webjars" name="momentjs/2.22.2/moment.js"/>
             <h:outputScript library="webjars" name="moment-timezone/0.5.21/builds/moment-timezone-with-data.js"/>
-            <title>Items</title>
+            <title>#{msg['items.search.title']}</title>
             <f:metadata>
                 <f:viewParam name="name" value="#{itemSearch.itemNameParam}"/>
                 <f:viewParam name="owner" value="#{itemSearch.itemOwnerParam}"/>
@@ -34,7 +34,7 @@
             </h:form>
 
             <h:panelGroup layout="block" styleClass="flex-vertical">
-                <p:fieldset legend="Query" toggleable="true" collapsed="true">
+                <p:fieldset legend="#{msg['items.search.query']}" toggleable="true" collapsed="true">
                     <h:form id="queryForm">
                         <p:organigram id="organigram"
                                       value="#{itemSearch.rootNode}"
@@ -55,26 +55,26 @@
                         </p:organigram>
 
                         <p:contextMenu for="organigram" nodeType="#{itemSearch.ROOT}">
-                            <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
-                            <p:menuitem value="Reset" update="organigram" icon="fa fa-rotate-left" actionListener="#{itemSearch.resetRoot()}"/>
+                            <p:menuitem value="#{msg['organigram.add']}" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
+                            <p:menuitem value="#{msg['organigram.reset']}" update="organigram" icon="fa fa-rotate-left" actionListener="#{itemSearch.resetRoot()}"/>
                         </p:contextMenu>
                         <p:contextMenu for="organigram" nodeType="#{itemSearch.INTERNAL}">
-                            <p:menuitem value="Add" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
-                            <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
+                            <p:menuitem value="#{msg['organigram.add']}" update="organigram" icon="fa fa-plus" onclick="PF('createCondition').show()"/>
+                            <p:menuitem value="#{msg['organigram.remove']}" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
                         </p:contextMenu>
                         <p:contextMenu for="organigram" nodeType="#{itemSearch.LEAF}">
-                            <p:menuitem value="Remove" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
+                            <p:menuitem value="#{msg['organigram.remove']}" update="organigram" icon="fa fa-remove" actionListener="#{itemSearch.removeSelectedNode()}"/>
                         </p:contextMenu>
-                        <p:commandButton value="Submit" process="@form" update="@form tableForm"
+                        <p:commandButton value="#{msg['submit']}" process="@form" update="@form tableForm"
                                          action="#{itemSearch.parseAndRunQuery()}"
                                          oncomplete="PF('itemTable').clearFilters();">
                             <p:resetInput target="tableForm"/>
                         </p:commandButton>
 
-                        <p:dialog id="createCondition" widgetVar="createCondition" header="New condition">
+                        <p:dialog id="createCondition" widgetVar="createCondition" header="#{msg['organigram.condition.new']}">
                             <h:panelGroup layout="block" styleClass="flex-vertical">
                                 <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                    <p:outputLabel for="types" value="Type"/>
+                                    <p:outputLabel for="types" value="#{msg['organigram.condition.type']}"/>
                                     <p:selectOneMenu id="types" value="#{itemSearch.condition.conditionType}">
                                         <f:selectItems value="#{ConditionType}"/>
                                         <p:ajax event="change" process="createCondition" update="createCondition"
@@ -83,22 +83,22 @@
                                     </p:selectOneMenu>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{itemSearch.stringInputRendered}" layout="block" styleClass="flex-horizontal">
-                                    <p:outputLabel for="conditionString" value="Value"/>
+                                    <p:outputLabel for="conditionString" value="#{msg['organigram.condition.value']}"/>
                                     <p:inputText id="conditionString" value="#{itemSearch.condition.object}"/>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{itemSearch.dateInputRendered}" layout="block" styleClass="flex-horizontal">
-                                    <p:outputLabel for="types" value="Between"/>
+                                    <p:outputLabel value="#{msg['organigram.condition.value.between']}"/>
                                     <p:calendar value="#{itemSearch.conditionDateInterval.fromDate}"
                                                 pattern="yyyy.MM.dd HH:mm:ss" timeZone="#{itemSearch.viewTimezone}"/>
                                     <p:calendar value="#{itemSearch.conditionDateInterval.toDate}"
                                                 pattern="yyyy.MM.dd HH:mm:ss" timeZone="#{itemSearch.viewTimezone}"/>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{itemSearch.likeInputRendered}" layout="block" styleClass="flex-horizontal">
-                                    <p:outputLabel for="conditionLike" value="Like"/>
+                                    <p:outputLabel for="conditionLike" value="#{msg['organigram.condition.value.like']}"/>
                                     <p:selectBooleanCheckbox id="conditionLike" value="#{itemSearch.condition.like}"/>
                                 </h:panelGroup>
 
-                                <p:commandButton value="Add condition"
+                                <p:commandButton value="#{msg['organigram.condition.add']}"
                                                  action="#{itemSearch.addNode()}"
                                                  process="createCondition" update="@form"
                                                  oncomplete="PF('createCondition').hide()"/>
@@ -115,37 +115,37 @@
                                  paginator="true" rowsPerPageTemplate="20,50,100"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
                         <f:facet name="header">
-                            Accessible items
+                            #{msg['items.search.accessible']}
                         </f:facet>
                         <p:column styleClass="column-buttons">
                             <p:button icon="ui-icon-search" outcome="/public/show-item" target="_blank">
                                 <f:param name="id" value="#{item.id}"/>
                             </p:button>
                         </p:column>
-                        <p:column headerText="id" sortBy="#{item.id}" filterBy="#{item.id}" styleClass="column-id">
+                        <p:column headerText="#{msg['id']}" sortBy="#{item.id}" filterBy="#{item.id}" styleClass="column-id">
                             <h:outputText value="#{item.id}"/>
                         </p:column>
-                        <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains"
+                        <p:column headerText="#{msg['item.name']}" sortBy="#{item.name}" filterBy="#{item.name}" filterMatchMode="contains"
                                   styleClass="column-name">
                             <h:outputText value="#{item.name}"/>
                         </p:column>
-                        <p:column headerText="Owner" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains"
+                        <p:column headerText="#{msg['item.owner']}" sortBy="#{item.owner}" filterBy="#{item.owner}" filterMatchMode="contains"
                                   styleClass="column-owner">
                             <p:link value="#{item.owner}" outcome="/public/items">
                                 <f:param name="owner" value="#{item.owner}"/>
                             </p:link>
                         </p:column>
-                        <p:column headerText="Tags" filterBy="#{item.tags}" filterMatchMode="contains"
+                        <p:column headerText="#{msg['tags']}" filterBy="#{tags}" filterMatchMode="contains"
                                   styleClass="column-tags">
                             <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <ui:repeat value="#{item.tags}" var="tag">
+                                <ui:repeat value="#{tags}" var="tag">
                                     <p:link value="#{tag.name}" outcome="/public/items">
                                         <f:param name="tag" value="#{tag.name}"/>
                                     </p:link>
                                 </ui:repeat>
                             </h:panelGroup>
                         </p:column>
-                        <p:column headerText="Creation date" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
+                        <p:column headerText="#{msg['item.creationDate']}" sortBy="#{item.creationDate}" filterBy="#{item.creationDate}"
                                   filterFunction="#{itemSearch.filterByDate}" styleClass="column-date">
                             <f:facet name="filter">
                                 <p:calendar pattern="yyyy.MM.dd" timeZone="#{itemSearch.viewTimezone}" styleClass="resizable-calendar">
@@ -157,27 +157,27 @@
                                 <f:convertDateTime pattern="yyyy.MM.dd HH:mm:ss Z"/>
                             </h:outputText>
                         </p:column>
-                        <p:column headerText="Type" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact"
+                        <p:column headerText="#{msg['item.type']}" sortBy="#{item.dType}" filterBy="#{item.dType}" filterMatchMode="exact"
                                   styleClass="column-type">
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('itemTable').filter()" style="min-width: 0">
-                                    <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{msg['all']}" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{itemSearch.itemTypes}"/>
                                 </p:selectOneMenu>
                             </f:facet>
                             <h:outputText value="#{item.dType}"/>
                         </p:column>
-                        <p:column headerText="Visibility" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals"
+                        <p:column headerText="#{msg['visibility']}" sortBy="#{item.shared}" filterBy="#{item.shared}" filterMatchMode="equals"
                                   styleClass="column-visibility">
                             <f:facet name="filter">
                                 <p:selectOneMenu onchange="PF('itemTable').filter()" style="min-width: 0">
                                     <f:converter converterId="javax.faces.Boolean"/>
-                                    <f:selectItem itemValue="" itemLabel="All"/>
-                                    <f:selectItem itemValue="true" itemLabel="Shared"/>
-                                    <f:selectItem itemValue="false" itemLabel="Private"/>
+                                    <f:selectItem itemValue="" itemLabel="#{msg['all']}"/>
+                                    <f:selectItem itemValue="true" itemLabel="#{msg['visibility.shared']}"/>
+                                    <f:selectItem itemValue="false" itemLabel="#{msg['visibility.private']}"/>
                                 </p:selectOneMenu>
                             </f:facet>
-                            <h:outputText value="#{item.shared ? 'Shared' : 'Private'}"/>
+                            <h:outputText value="#{item.shared ? msg['visibility.shared'] : msg['visibility.private']}"/>
                         </p:column>
                     </p:dataTable>
                 </h:form>

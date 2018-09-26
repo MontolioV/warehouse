@@ -9,17 +9,17 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Delete items</title>
+            <title>#{msg['deleteItem']}</title>
         </ui:define>
 
         <ui:define name="body">
             <h:form>
                 <p:growl id="growl" life="5000" showDetail="true"/>
                 <h:panelGroup layout="block" styleClass="flex-horizontal flex-m-ax-center">
-                    <p:panel header="Enter item id to delete" styleClass="medium-box">
+                    <p:panel header="#{msg['deleteItem.description']}" styleClass="medium-box">
                         <h:panelGroup layout="block" styleClass="flex-vertical">
                             <p:inputText id="input" value="#{deleteItemController.id}"/>
-                            <p:commandButton value="Delete" action="#{deleteItemController.deleteByIDNoRedirect()}"
+                            <p:commandButton value="#{msg['delete']}" action="#{deleteItemController.deleteByIDNoRedirect()}"
                                              styleClass="decoratedButton" update="growl"/>
                         </h:panelGroup>
                     </p:panel>

@@ -11,17 +11,17 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Registration</title>
+            <title>#{msg['registration']}</title>
         </ui:define>
 
         <ui:define name="body">
             <h:form id="reg_form" styleClass="flex-vertical flex-c-ax-center">
                 <p:messages id="messages"/>
 
-                <p:panel header="Registration" styleClass="medium-box">
+                <p:panel header="#{msg['registration']}" styleClass="medium-box">
                     <h:panelGroup layout="block" styleClass="flex-vertical">
                         <h:panelGroup styleClass="flex-horizontal p-align-start">
-                            <p:outputLabel id="l_login" value="Login" for="login"/>
+                            <p:outputLabel id="l_login" value="#{msg['username']}" for="login"/>
                             <p:inputText id="login" value="#{registrationController.account.login}" required="true"
                                          a:autofocus="true">
                                 <p:ajax event="blur" update="@this l_login messages"/>
@@ -30,7 +30,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel value="Password" for="password"/>
+                            <p:outputLabel value="#{msg['password']}" for="password"/>
                             <p:password id="password" feedback="true" required="true" match="passwordConf"
                                         value="#{registrationController.account.passHash}"
                                         binding="#{registrationController.passwordConfirm}"
@@ -38,19 +38,19 @@
                         </h:panelGroup>
 
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel value="Confirm password" for="passwordConf"/>
+                            <p:outputLabel value="#{msg['password.confirm']}" for="passwordConf"/>
                             <p:password id="passwordConf" required="true" value="#{registrationController.passwordConfirm}"/>
                         </h:panelGroup>
 
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:outputLabel id="l_email" value="Email" for="email"/>
+                            <p:outputLabel id="l_email" value="#{msg['email']}" for="email"/>
                             <p:inputText id="email" value="#{registrationController.account.email}" required="true">
                                 <p:ajax event="blur" update="@this l_email messages"/>
                                 <f:validator binding="#{emailValidator}"/>
                             </p:inputText>
                         </h:panelGroup>
 
-                        <p:commandButton value="Registration" action="#{registrationController.registration}"
+                        <p:commandButton value="#{msg['registration.create']}" action="#{registrationController.registration}"
                                          process="@form" update="@form"/>
                     </h:panelGroup>
                 </p:panel>

@@ -10,19 +10,20 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Create text item</title>
+            <title>#{msg['textItem.create.title']}</title>
         </ui:define>
 
         <ui:define name="body">
             <h:form>
-                <p:panel header="Create text item">
+                <p:panel header="#{msg['textItem.create.title']}">
                     <h:panelGroup layout="block" styleClass="flex-vertical">
-                        <p:commandButton value="Create" action="#{createItemController.createTextItem()}"
+                        <p:commandButton value="#{msg['textItem.create']}"
+                                         action="#{createItemController.createTextItem()}"
                                          process="@form" update="@form"
                                          styleClass="decoratedButton"/>
 
                         <p:message id="m_text" for="text"/>
-                        <p:textEditor id="text" value="#{createItemController.textItem.text}" height="300" styleClass="textEditor"/>
+                        <p:textEditor id="text" value="#{createItemController.textItem.text}" height="300"/>
 
                         <compc:itemInput item="#{createItemController.textItem}" createController="#{createItemController}"/>
                     </h:panelGroup>

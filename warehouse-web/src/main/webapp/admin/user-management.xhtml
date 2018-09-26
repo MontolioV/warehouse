@@ -11,7 +11,7 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>User management</title>
+            <title>#{msg['userManagement']}</title>
         </ui:define>
 
         <ui:define name="body">
@@ -20,15 +20,15 @@
                 <h:panelGroup layout="block" styleClass="medium-box flex-horizontal">
                     <h:form  id="usersListForm" styleClass="flex-vertical flex-m-ax-center flex-c-ax-center">
                         <h:panelGroup layout="block" styleClass="flex-horizontal flex-no-wrap">
-                            <p:outputLabel for="login" value="Login"/>
+                            <p:outputLabel for="login" value="#{msg['username']}"/>
                             <p:inputText id="login" value="#{userManagementController.login}"/>
                         </h:panelGroup>
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
-                            <p:commandButton id="singleFind" value="Find user"
+                            <p:commandButton id="singleFind" value="#{msg['findUser']}"
                                              action="#{userManagementController.fetchSingleAccount()}"
                                              process="@this login"
                                              update="login editGroup tableContainer messages"/>
-                            <p:commandButton id="allFind" value="Show all users"
+                            <p:commandButton id="allFind" value="#{msg['showAllUsers']}"
                                              action="#{userManagementController.fetchAccounts()}"
                                              update="login editGroup tableContainer messages"/>
                         </h:panelGroup>
@@ -41,13 +41,13 @@
                             <h:panelGrid columns="1">
                                 <h:panelGrid columns="2">
                                     <p:selectBooleanCheckbox id="isActive" value="#{userManagementController.active}"/>
-                                    <p:outputLabel for="isActive" value="Is active"/>
+                                    <p:outputLabel for="isActive" value="#{msg['isActive']}"/>
                                 </h:panelGrid>
-                                <p:selectManyCheckbox layout="pageDirection" label="Roles" value="#{userManagementController.roles}">
+                                <p:selectManyCheckbox layout="pageDirection" label="#{msg['roles']}" value="#{userManagementController.roles}">
                                     <f:selectItems value="#{Roles}"/>
                                 </p:selectManyCheckbox>
 
-                                <p:commandButton value="Save"
+                                <p:commandButton value="#{msg['save']}"
                                                  action="#{userManagementController.updateAccount()}"
                                                  process="@form" update="@form tableContainer messages"
                                                  styleClass="decoratedButton"/>
@@ -64,26 +64,26 @@
                                  rowClasses="dataTableRowOdd,dataTableRowEven"
                                  value="#{userManagementController.accountList}" var="account">
                         <h:column>
-                            <f:facet name="header">id</f:facet>
+                            <f:facet name="header">#{msg['id']}</f:facet>
                             #{account.id}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">login</f:facet>
+                            <f:facet name="header">#{msg['username']}</f:facet>
                             <h:commandLink value="#{account.login}" action="#{userManagementController.changeLogin(account.login)}">
                                 <f:ajax render="@all"/>
                             </h:commandLink>
                         </h:column>
                         <h:column>
-                            <f:facet name="header">email</f:facet>
+                            <f:facet name="header">#{msg['email']}</f:facet>
                             #{account.email}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">active</f:facet>
+                            <f:facet name="header">#{msg['isActive']}</f:facet>
 
                             #{account.active}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">roles</f:facet>
+                            <f:facet name="header">#{msg['roles']}</f:facet>
                             #{account.roles}
                         </h:column>
                     </h:dataTable>

@@ -16,14 +16,14 @@
             <h:form>
                 <h:panelGroup layout="block" styleClass="flex-vertical">
                     <h:panelGroup layout="block" styleClass="flex-horizontal">
-                        <p:panel header="#{msg['services.header']}">
-                            <p:link value="#{msg['services.userManagement']}" outcome="user-management"/>
+                        <p:panel header="#{msg['services']}">
+                            <p:link value="#{msg['userManagement']}" outcome="user-management"/>
                         </p:panel>
                         <p:panel header="#{msg['actions.header']}">
                             <h:panelGroup layout="block" styleClass="flex-vertical">
-                                <p:commandButton value="#{msg['actions.deleteAllItems']}" action="#{deleteItemController.deleteAll()}"
+                                <p:commandButton value="#{msg['deleteAllItems']}" action="#{deleteItemController.deleteAll()}"
                                                  update="messages" process=""/>
-                                <p:commandButton value="#{msg['actions.cleanup']}" action="#{deleteItemController.cleanupFileStorage()}"
+                                <p:commandButton value="#{msg['cleanup']}" action="#{deleteItemController.cleanupFileStorage()}"
                                                  update="messages"/>
                             </h:panelGroup>
                         </p:panel>

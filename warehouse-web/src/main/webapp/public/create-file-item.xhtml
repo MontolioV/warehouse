@@ -10,19 +10,20 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Create file item</title>
+            <title>#{msg['fileItem.create.title']}</title>
         </ui:define>
 
         <ui:define name="body">
             <p:growl id="growl" life="5000" keepAlive="true"/>
-            <p:panel header="Create file item">
+            <p:panel header="#{msg['fileItem.create.title']}">
                 <h:form enctype="multipart/form-data">
                     <h:panelGroup layout="block" styleClass="flex-vertical">
-                        <p:outputLabel for="fileInput" value="File"/>
+                        <p:outputLabel for="fileInput" value="#{msg['file']}"/>
                         <p:fileUpload id="fileInput" required="true" mode="advanced"
                                       fileUploadListener="#{uploadFilesCollector.fileUpload}"
                                       sizeLimit="1000000000" multiple="true" fileLimit="20"
-                                      uploadLabel="Create" sequential="true"/>
+                                      uploadLabel="#{msg['fileItem.create']}" cancelLabel="#{msg['fileItem.clean']}"
+                                      sequential="true"/>
                     </h:panelGroup>
                 </h:form>
                 <h:form>

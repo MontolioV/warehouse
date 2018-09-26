@@ -9,13 +9,13 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Private</title>
+            <title>#{msg['private.index.title']}</title>
         </ui:define>
 
         <ui:define name="body">
             <h:panelGroup layout="block" styleClass="flex-horizontal">
-                <p:panel header="Services">
-                    <p:link value="Personal cabinet" outcome="personal-cabinet"/>
+                <p:panel header="#{msg['services']}">
+                    <p:link value="#{msg['personalCabinet']}" outcome="personal-cabinet"/>
                 </p:panel>
             </h:panelGroup>
         </ui:define>

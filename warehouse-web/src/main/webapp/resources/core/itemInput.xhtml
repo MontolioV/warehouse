@@ -17,30 +17,30 @@
     <h:panelGroup layout="block" styleClass="flex-vertical">
         <h:panelGroup layout="block" styleClass="flex-horizontal">
             <h:panelGroup layout="block" styleClass="flex-vertical">
-                <p:outputLabel value="Name" for="name"/>
+                <p:outputLabel value="#{msg['item.name']}" for="name"/>
                 <p:inputText id="name" value="#{cc.attrs.item.name}" a:autofocus="true"/>
                 <p:message id="m_name" for="name"/>
 
                 <h:panelGroup layout="block" styleClass="flex-vertical flex-c-ax-start" rendered="#{not empty p:userPrincipal()}">
-                    <p:outputLabel value="Is shared" for="share"/>
+                    <p:outputLabel value="#{msg['item.isShared']}" for="share"/>
                     <p:selectBooleanCheckbox id="share" value="#{cc.attrs.item.shared}"/>
                     <p:message id="m_share" for="share"/>
                 </h:panelGroup>
 
-                <p:outputLabel value="Description" for="description"/>
+                <p:outputLabel value="#{msg['item.description']}" for="description"/>
                 <p:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="11"/>
                 <p:message id="m_description" for="description"/>
             </h:panelGroup>
             <h:panelGroup layout="block" styleClass="flex-horizontal flex-not-resizable">
                 <h:panelGroup layout="block" styleClass="flex-vertical">
-                    <p:outputLabel for="existingTags" value="Tags"/>
+                    <p:outputLabel for="existingTags" value="#{msg['tags.available']}"/>
                     <p:pickList id="existingTags" value="#{cc.attrs.createController.existingTagNamesDualListModel}"
                                 var="tagName" itemLabel="#{tagName}" itemValue="#{tagName}" howCheckbox="true"
                                 filterMatchMode="contains" showSourceFilter="true" showTargetFilter="true">
-                        <f:facet name="sourceCaption">Available tags</f:facet>
-                        <f:facet name="targetCaption">Tags for item</f:facet>
+                        <f:facet name="sourceCaption">#{msg['tags.available']}</f:facet>
+                        <f:facet name="targetCaption">#{msg['tags.assigned']}</f:facet>
                     </p:pickList>
-                    <p:outputLabel for="newTags" value="Create tags, one per string"/>
+                    <p:outputLabel for="newTags" value="#{msg['tags.new']}"/>
                     <p:inputTextarea id="newTags" value="#{cc.attrs.createController.newTagNames}"
                                      queryDelay="1000" rows="3" minQueryLength="1"
                                      completeMethod="#{cc.attrs.createController.autocompleteTags}"

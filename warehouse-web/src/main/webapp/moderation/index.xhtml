@@ -9,13 +9,13 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Moderator</title>
+            <title>#{msg['moderator.index.title']}</title>
         </ui:define>
 
         <ui:define name="body">
             <h:panelGroup layout="block" styleClass="flex-horizontal">
-                <p:panel header="Services">
-                    <p:link value="Delete item" outcome="delete-items"/>
+                <p:panel header="#{msg['services']}">
+                    <p:link value="#{msg['deleteItem']}" outcome="delete-items"/>
                 </p:panel>
             </h:panelGroup>
         </ui:define>

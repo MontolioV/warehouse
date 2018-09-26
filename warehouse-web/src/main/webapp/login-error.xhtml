@@ -9,12 +9,12 @@
 <h:body>
     <ui:composition template="/template/default/layout.xhtml">
         <ui:define name="htmlHead">
-            <title>Login error</title>
+            <title>#{msg['login.error.title']}</title>
         </ui:define>
 
         <ui:define name="body">
-            <p:panel header="Authentication fail!">
-                <p:outputLabel value="Ensure entered credentials are valid and your account was activated."/>
+            <p:panel header="#{msg['login.error.header']}">
+                <p:outputLabel value="#{msg['login.error.message']}"/>
             </p:panel>
         </ui:define>
     </ui:composition>

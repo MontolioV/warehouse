@@ -115,6 +115,8 @@ public class Item implements Serializable {
         this.name = name;
     }
 
+    @Size(max = 150)
+    @Column(length = 150)
     public String getDescription() {
         return description;
     }

@@ -135,10 +135,10 @@
                                 <f:param name="owner" value="#{item.owner}"/>
                             </p:link>
                         </p:column>
-                        <p:column headerText="#{msg['tags']}" filterBy="#{tags}" filterMatchMode="contains"
+                        <p:column headerText="#{msg['tags']}" filterBy="#{item.tags}" filterMatchMode="contains"
                                   styleClass="column-tags">
                             <h:panelGroup layout="block" styleClass="flex-horizontal">
-                                <ui:repeat value="#{tags}" var="tag">
+                                <ui:repeat value="#{item.tags}" var="tag">
                                     <p:link value="#{tag.name}" outcome="/public/items">
                                         <f:param name="tag" value="#{tag.name}"/>
                                     </p:link>

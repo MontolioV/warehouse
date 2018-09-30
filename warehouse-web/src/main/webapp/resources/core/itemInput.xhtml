@@ -28,7 +28,8 @@
                 </h:panelGroup>
 
                 <p:outputLabel value="#{msg['item.description']}" for="description"/>
-                <p:inputTextarea id="description" value="#{cc.attrs.item.description}" rows="11"/>
+                <p:inputTextarea id="description" value="#{cc.attrs.item.description}"
+                                 rows="#{empty p:userPrincipal() ? 14 : 11}"/>
                 <p:message id="m_description" for="description"/>
             </h:panelGroup>
             <h:panelGroup layout="block" styleClass="flex-horizontal flex-not-resizable">

@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import com.myapp.utils.PrimeFacesBean;
 import org.primefaces.model.DualListModel;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class CreateItemController {
     @Inject
     private FacesContext facesContext;
+    @Inject
+    private PrimeFacesBean primeFacesBean;
     @EJB
     private ItemStore itemStore;
     @EJB
@@ -88,6 +91,14 @@ public class CreateItemController {
 
     public List<String> autocompleteTags(String query) {
         return tagStore.fetchTagsNameStartsWith(query).stream().map(Tag::getName).collect(Collectors.toList());
+    }
+
+    public void preUploadValidation() {
+        primeFacesBean.getInstance().executeScript("preUploadValidation();");
+    }
+
+    public void startUpload() {
+        primeFacesBean.getInstance().executeScript("PF('uploader').upload();");
     }
 
     //Getters & Setters

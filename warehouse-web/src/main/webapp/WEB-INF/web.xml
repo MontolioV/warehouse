@@ -16,6 +16,14 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
+        <param-value>${warehouse.captcha.key.public}</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>
+        <param-value>${warehouse.captcha.key.private}</param-value>
+    </context-param>
 
     <security-constraint>
         <web-resource-collection>

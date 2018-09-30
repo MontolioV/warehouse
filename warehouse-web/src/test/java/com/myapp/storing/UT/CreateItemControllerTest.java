@@ -1,6 +1,7 @@
 package com.myapp.storing.UT;
 
 import com.myapp.storing.*;
+import com.myapp.utils.PrimeFacesBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DualListModel;
 
 import javax.faces.application.FacesMessage;
@@ -49,6 +51,10 @@ public class CreateItemControllerTest {
     @Mock
     private FacesContext fcMock;
     @Mock
+    private PrimeFacesBean pfbMock;
+    @Mock
+    private PrimeFaces pfMock;
+    @Mock
     private ExternalContext ecMock;
     private Principal principalMock;
     private ArrayList<String> tags;
@@ -69,6 +75,7 @@ public class CreateItemControllerTest {
         when(ecMock.getUserPrincipal()).thenReturn(principalMock);
         when(principalMock.getName()).thenReturn(LOGIN_VALID);
         when(tsMock.fetchTagNames()).thenReturn(tagNamesSource);
+        when(pfbMock.getInstance()).thenReturn(pfMock);
 
         FileItem temporalFileItem = new FileItem();
         temporalFileItem.setContentType(cType);
@@ -231,5 +238,17 @@ public class CreateItemControllerTest {
         assertThat(controller.getPrincipal(), sameInstance(principalMock));
         assertThat(dlm.getSource(), containsInAnyOrder(tagExisting));
         assertTrue(dlm.getTarget().isEmpty());
+    }
+
+    @Test
+    public void preUploadValidation() {
+        controller.preUploadValidation();
+        verify(pfMock).executeScript("preUploadValidation();");
+    }
+
+    @Test
+    public void startUpload() {
+        controller.startUpload();
+        verify(pfMock).executeScript("PF('uploader').upload();");
     }
 }

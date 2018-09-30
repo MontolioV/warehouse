@@ -140,6 +140,10 @@ button .ui-icon {
     color: #ff8b20
 }
 
+.ui-button.ui-widget.ui-fileupload-upload {
+    display: none;
+}
+
 #nameBoard {
     color: #56ACFF;
     color: rgba(30,144,255,0.7);
@@ -247,6 +251,12 @@ button .ui-icon {
 
 #welcomePanel {
     height: available;
+}
+
+#welcomePanel_content p {
+    margin-top: 10px;
+    text-align: justify;
+    line-height: 130%;
 }
 
 #qrCodePanel {

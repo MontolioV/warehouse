@@ -19,7 +19,7 @@ public class DownloadItemController {
     private ItemStore itemStore;
     @EJB
     private FileStore fileStore;
-    private long id;
+    private Long id;
 
     public void downloadAndSaveItem() throws IOException {
         ExternalContext ec = facesContext.getExternalContext();
@@ -52,11 +52,11 @@ public class DownloadItemController {
         this.itemStore = itemStore;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

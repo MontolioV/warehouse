@@ -24,7 +24,7 @@ public class FetchItemsController {
     @EJB
     private ItemStore itemStore;
     private List<Item> recentItems = new ArrayList<>();
-    private long id;
+    private Long id;
     private Item item;
     private TextItem textItem;
     private FileItem fileItem;
@@ -99,11 +99,11 @@ public class FetchItemsController {
         this.recentItems = recentItems;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

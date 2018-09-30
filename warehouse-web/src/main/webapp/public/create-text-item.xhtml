@@ -15,8 +15,10 @@
 
         <ui:define name="body">
             <h:form>
+                <p:messages/>
                 <p:panel header="#{msg['textItem.create.title']}">
                     <h:panelGroup layout="block" styleClass="flex-vertical">
+                        <p:captcha label="Captcha" rendered="#{empty p:userPrincipal()}"/>
                         <p:commandButton value="#{msg['textItem.create']}"
                                          action="#{createItemController.createTextItem()}"
                                          process="@form" update="@form"

@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.enterprise.inject.Model;
 import javax.faces.application.FacesMessage;
@@ -17,6 +18,8 @@ import static com.myapp.security.Roles.Const.MODERATOR;
 public class DeleteItemController {
     @Inject
     private FacesContext facesContext;
+    @Resource(lookup = "java:/strings/webAppAddress")
+    private String webAppAddress;
     @EJB
     private ItemStore itemStore;
     @EJB
@@ -38,7 +41,7 @@ public class DeleteItemController {
 
     public void deleteByIDAndGoHome() throws IOException {
         deleteByIDNoRedirect();
-        facesContext.getExternalContext().redirect(facesContext.getExternalContext().getApplicationContextPath());
+        facesContext.getExternalContext().redirect(webAppAddress);
     }
 
     public void deleteAll() {
@@ -66,5 +69,13 @@ public class DeleteItemController {
 
     public void setItemStore(ItemStore itemStore) {
         this.itemStore = itemStore;
+    }
+
+    public String getWebAppAddress() {
+        return webAppAddress;
+    }
+
+    public void setWebAppAddress(String webAppAddress) {
+        this.webAppAddress = webAppAddress;
     }
 }

@@ -16,20 +16,32 @@
         <ui:define name="body">
             <p:growl id="growl" life="5000" keepAlive="true"/>
             <p:panel header="#{msg['fileItem.create.title']}">
-                <h:form enctype="multipart/form-data">
+                <p:messages id="messages"/>
+                <h:form>
                     <h:panelGroup layout="block" styleClass="flex-vertical">
-                        <p:outputLabel for="fileInput" value="#{msg['file']}"/>
-                        <p:fileUpload id="fileInput" required="true" mode="advanced"
-                                      fileUploadListener="#{uploadFilesCollector.fileUpload}"
-                                      sizeLimit="1000000000" multiple="true" fileLimit="20"
-                                      uploadLabel="#{msg['fileItem.create']}" cancelLabel="#{msg['fileItem.clean']}"
-                                      sequential="true"/>
+                        <p:captcha label="Captcha" rendered="#{empty p:userPrincipal()}"/>
+                        <p:commandButton value="#{msg['fileItem.create']}" action="#{createItemController.preUploadValidation()}"
+                                         process="@form" update="messages"/>
                     </h:panelGroup>
                 </h:form>
-                <h:form>
+                <h:form enctype="multipart/form-data">
+                    <h:panelGroup layout="block" styleClass="flex-vertical">
+                        <p:fileUpload id="fileInput" required="true" mode="advanced" widgetVar="uploader"
+                                      fileUploadListener="#{uploadFilesCollector.fileUpload}"
+                                      multiple="true" sequential="true"
+                                      sizeLimit="#{empty p:userPrincipal() ? 10000000 : 1000000000}"
+                                      fileLimit="#{empty p:userPrincipal() ? 1 : 20}"
+                                      label="#{msg['fileItem.choose']}" cancelLabel="#{msg['fileItem.clean']}"
+                                      invalidSizeMessage="#{msg['fileItem.invalidSize']}"
+                                      fileLimitMessage="#{msg['fileItem.fileLimit']}"/>
+                    </h:panelGroup>
+                </h:form>
+                <h:form id="itemForm">
+                    <p:remoteCommand name="preUploadValidation" action="#{createItemController.startUpload}"
+                                     process="@form" update="@form messages"/>
                     <p:remoteCommand name="createFileItems" action="#{createItemController.createFileItems}"
                                      process="@form" update="@form growl"/>
-                    <compc:itemInput item="#{createItemController.fileItem}" createController="#{createItemController}"/>
+                    <compc:itemInput id="itemComposite" item="#{createItemController.fileItem}" createController="#{createItemController}"/>
                 </h:form>
             </p:panel>
         </ui:define>

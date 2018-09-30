@@ -3,5 +3,6 @@
 **/target/
 *.iml
 **/*.log
+**/credentials_filter.properties
 
 

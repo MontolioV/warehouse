@@ -43,7 +43,9 @@
                                     <p:selectBooleanCheckbox id="isActive" value="#{userManagementController.active}"/>
                                     <p:outputLabel for="isActive" value="#{msg['isActive']}"/>
                                 </h:panelGrid>
-                                <p:selectManyCheckbox layout="pageDirection" label="#{msg['roles']}" value="#{userManagementController.roles}">
+                                <p:selectManyCheckbox layout="pageDirection" label="#{msg['roles']}"
+                                                      value="#{userManagementController.roles}"
+                                                      converter="omnifaces.GenericEnumConverter">
                                     <f:selectItems value="#{Roles}"/>
                                 </p:selectManyCheckbox>
 

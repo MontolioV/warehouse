@@ -50,6 +50,8 @@
                             </p:inputText>
                         </h:panelGroup>
 
+                        <p:captcha label="captcha"/>
+
                         <p:commandButton value="#{msg['registration.create']}" action="#{registrationController.registration}"
                                          process="@form" update="@form"/>
                     </h:panelGroup>

@@ -25,11 +25,15 @@
                         <p:button outcome="/public/create-file-item" value="#{msg['fileItem.button']}" styleClass="largeButton"/>
                     </h:panelGroup>
                     <p:panel id="welcomePanel" header="#{msg['welcome']}" styleClass="flex-gr-2">
-                        <h:outputText value="#{msg['welcome.message']}"/>
+                        <h:panelGroup styleClass="flex-vertical">
+                            <p>#{msg['welcome.header']}</p>
+                            <p>#{msg['welcome.message']}</p>
+                            <p>#{msg['welcome.disclaimer']}</p>
+                        </h:panelGroup>
                     </p:panel>
                 </h:panelGroup>
                 <h:panelGroup layout="block" styleClass="flex-vertical">
-                    <p:tagCloud id="tagCloud" model="#{fetchTagsController.tagCloudModel}"/>
+                    <p:tagCloud id="tagCloud" model="#{fetchTagsController.tagCloudModel}" styleClass="flex-gr-2"/>
 
                     <p:dataList value="#{fetchItemsController.recentItems}" var="item" type="ordered">
                         <f:facet name="header">

@@ -54,6 +54,10 @@ public class RestAccountActivatorTest {
     @Mock
     private UriBuilder ubEmptyMock;
     @Mock
+    private UriBuilder ubUriMock;
+    @Mock
+    private UriBuilder ubRSMock;
+    @Mock
     private UriBuilder ubClassMock;
     @Mock
     private UriBuilder ubSetMock;
@@ -77,7 +81,9 @@ public class RestAccountActivatorTest {
         when(accountMock.getLogin()).thenReturn(LOGIN_VALID);
         when(accountMock.getId()).thenReturn(1L);
         when(uiMock.getBaseUriBuilder()).thenReturn(ubEmptyMock);
-        when(ubEmptyMock.path(RestAccountActivator.class)).thenReturn(ubClassMock);
+        when(ubEmptyMock.uri(webAppAddress)).thenReturn(ubRSMock);
+        when(ubRSMock.path("rs")).thenReturn(ubUriMock);
+        when(ubUriMock.path(RestAccountActivator.class)).thenReturn(ubClassMock);
         when(ubClassMock.queryParam(QP_TOKEN, TOKEN_HASH_VALID)).thenReturn(ubSetMock);
         when(ubSetMock.build(anyVararg())).thenReturn(uriActivation);
         when(asMock.getAccountByLogin(LOGIN_VALID)).thenReturn(Optional.of(accountMock));

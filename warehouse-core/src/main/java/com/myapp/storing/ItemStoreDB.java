@@ -1,6 +1,8 @@
 package com.myapp.storing;
 // TODO: 03.09.18 Must change packages structure to provide isolation
 
+import com.myapp.security.BanControl;
+
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
@@ -56,6 +58,7 @@ public class ItemStoreDB implements ItemStore{
         return new HashSet<>(resultList);
     }
 
+    @BanControl
     @Override
     public void persistItems(Item... items) {
         for (Item item : items) {

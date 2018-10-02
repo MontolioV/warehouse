@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.myapp.security.Account.EMAIL_PARAM;
-import static com.myapp.security.Account.LOGIN_PARAM;
+import static com.myapp.security.Account.*;
 import static com.myapp.security.Roles.Const.*;
 import static com.myapp.security.Token.HASH_PARAM;
 
@@ -130,6 +129,17 @@ public class AccountStoreDB implements AccountStore {
                 .setParameter(HASH_PARAM, tokenHash)
                 .getSingleResult();
         account.setActive(true);
+    }
+
+    @Override
+    public boolean isActiveSelf() {
+        String login = sessionContext.getCallerPrincipal().getName();
+        if (login.equals("anonymous")) {
+            return true;
+        }
+        return em.createNamedQuery(GET_IS_ACTIVE_BY_LOGIN, Boolean.class)
+                .setParameter(LOGIN_PARAM, login)
+                .getSingleResult();
     }
 
     @Override

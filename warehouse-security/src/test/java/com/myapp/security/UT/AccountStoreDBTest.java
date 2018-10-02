@@ -228,6 +228,27 @@ public class AccountStoreDBTest implements CommonChecks {
     }
 
     @Test
+    public void isActiveSelf() {
+        TypedQuery<Boolean> queryMock = mock(TypedQuery.class);
+        TypedQuery<Boolean> queryReadyMock = mock(TypedQuery.class);
+        when(emMock.createNamedQuery(Account.GET_IS_ACTIVE_BY_LOGIN, Boolean.class)).thenReturn(queryMock);
+        when(queryMock.setParameter(LOGIN_PARAM, LOGIN_VALID)).thenReturn(queryReadyMock);
+
+        when(queryReadyMock.getSingleResult()).thenReturn(true);
+        assertTrue(accountStoreDB.isActiveSelf());
+
+        when(queryReadyMock.getSingleResult()).thenReturn(false);
+        assertFalse(accountStoreDB.isActiveSelf());
+    }
+
+    @Test
+    public void isActiveSelfAnonymous() {
+        when(contextMock.getCallerPrincipal()).thenReturn(principalMock);
+        when(principalMock.getName()).thenReturn("anonymous");
+        assertTrue(accountStoreDB.isActiveSelf());
+    }
+
+    @Test
     public void changeExistingAccountStatus() {
         accountStoreDB.changeAccountStatus(accountMockID, true);
         verify(emMock).find(Account.class, accountMockID);

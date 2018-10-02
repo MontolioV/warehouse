@@ -24,7 +24,7 @@
                             <p:outputLabel id="l_login" value="#{msg['username']}" for="login"/>
                             <p:inputText id="login" value="#{registrationController.account.login}" required="true"
                                          a:autofocus="true">
-                                <p:ajax event="blur" update="@this l_login messages"/>
+                                <p:ajax update="@this l_login messages"/>
                                 <f:validator binding="#{loginValidator}"/>
                             </p:inputText>
                         </h:panelGroup>
@@ -45,7 +45,7 @@
                         <h:panelGroup layout="block" styleClass="flex-horizontal">
                             <p:outputLabel id="l_email" value="#{msg['email']}" for="email"/>
                             <p:inputText id="email" value="#{registrationController.account.email}" required="true">
-                                <p:ajax event="blur" update="@this l_email messages"/>
+                                <p:ajax update="@this l_email messages"/>
                                 <f:validator binding="#{emailValidator}"/>
                             </p:inputText>
                         </h:panelGroup>

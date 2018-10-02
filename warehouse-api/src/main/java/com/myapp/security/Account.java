@@ -21,6 +21,7 @@ import static com.myapp.security.Token.HASH_PARAM;
         @NamedQuery(name = GET_BY_LOGIN, query = "select a from Account a where a.login = :" + LOGIN_PARAM),
         @NamedQuery(name = GET_BY_EMAIL, query = "select a from Account a where a.email = :" + EMAIL_PARAM),
         @NamedQuery(name = GET_BY_TOKEN_HASH, query = "select a from Account a inner join a.tokens t where t.tokenHash=:" + HASH_PARAM),
+        @NamedQuery(name = GET_IS_ACTIVE_BY_LOGIN, query = "select a.active from Account a where a.login = :" + LOGIN_PARAM),
 })
 @Table(indexes = {
         @Index(columnList = "login", unique = true),
@@ -33,6 +34,7 @@ public class Account implements Serializable {
     public static final String GET_BY_LOGIN = PREFIX + "GET_BY_LOGIN";
     public static final String GET_BY_EMAIL = PREFIX + "GET_BY_EMAIL";
     public static final String GET_BY_TOKEN_HASH = PREFIX + "GET_BY_TOKEN_HASH";
+    public static final String GET_IS_ACTIVE_BY_LOGIN = PREFIX + "GET_IS_ACTIVE_BY_LOGIN";
     public static final String LOGIN_PARAM = "LOGIN_PARAM";
     public static final String EMAIL_PARAM = "EMAIL_PARAM";
 
@@ -105,7 +107,7 @@ public class Account implements Serializable {
 
     @NotNull
     @Email()
-    @Size(max = 320)
+    @Size(max = 255)
     public String getEmail() {
         return email;
     }

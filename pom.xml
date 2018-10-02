@@ -115,13 +115,6 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyclient</artifactId>
-            <version>10.14.1.0</version>
-            <scope>test</scope>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.jboss.shrinkwrap.resolver/shrinkwrap-resolver-depchain -->
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>

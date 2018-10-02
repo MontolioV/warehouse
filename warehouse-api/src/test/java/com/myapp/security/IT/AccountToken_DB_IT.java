@@ -27,8 +27,7 @@ import static com.myapp.utils.TestSecurityConstants.*;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AccountToken_DB_IT extends AbstractITArquillianWithEM {
     public static final String HASH = "someHash";
@@ -110,6 +109,9 @@ public class AccountToken_DB_IT extends AbstractITArquillianWithEM {
         Account accountFromTokenHash = em.createNamedQuery(Account.GET_BY_TOKEN_HASH, Account.class)
                 .setParameter(HASH_PARAM, TOKEN_HASH_VALID)
                 .getSingleResult();
+        boolean isActiveFromLogin = em.createNamedQuery(Account.GET_IS_ACTIVE_BY_LOGIN, Boolean.class)
+                .setParameter(LOGIN_PARAM, LOGIN_VALID)
+                .getSingleResult();
         assertThat(accountFromAll.getLogin(), is(LOGIN_VALID));
         assertThat(accountFromAll.getEmail(), is(EMAIL_VALID));
         assertThat(accountFromAll.getPassHash(), is(PASS_HASH_VALID));
@@ -120,6 +122,7 @@ public class AccountToken_DB_IT extends AbstractITArquillianWithEM {
         assertThat(accountFromAll, allOf(sameInstance(accountFromLogin),
                                          sameInstance(accountFromEmail),
                                          sameInstance(accountFromTokenHash)));
+        assertFalse(isActiveFromLogin);
 
         List<Token> tokensFromAll = em.createNamedQuery(Token.GET_ALL, Token.class)
                 .getResultList();

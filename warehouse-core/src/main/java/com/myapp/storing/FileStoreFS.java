@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import com.myapp.security.BanControl;
 import com.myapp.utils.Hasher;
 import com.myapp.utils.ImagePreviewMaker;
 import com.myapp.utils.MD5;
@@ -32,6 +33,7 @@ public class FileStoreFS implements FileStore {
     @Inject
     private ImagePreviewMaker imagePreviewMaker;
 
+    @BanControl
     @Override
     public String persistFile(TemporaryFileInput temporaryFileInput, @NotNull String contentType) throws IOException {
         String hash = hasher.makeHash(temporaryFileInput.getInputStream());

@@ -1,5 +1,6 @@
 package com.myapp.storing;
 
+import com.myapp.security.BanControl;
 import com.myapp.utils.PrimeFacesBean;
 import org.primefaces.model.DualListModel;
 
@@ -97,6 +98,7 @@ public class CreateItemController {
         primeFacesBean.getInstance().executeScript("preUploadValidation();");
     }
 
+    @BanControl
     public void startUpload() {
         primeFacesBean.getInstance().executeScript("PF('uploader').upload();");
     }
